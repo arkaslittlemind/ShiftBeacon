@@ -1,0 +1,459 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<title>ShiftBeacon - Manager Dashboard</title>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="theme.css" />
+<style>
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--font-sans);
+  }
+
+  .shell {
+    display: grid;
+    grid-template-columns: 220px 1fr;
+    min-height: 100vh;
+  }
+
+  nav.sidebar {
+    background: var(--text);
+    color: var(--bg);
+    border-right: var(--border-w-lg) solid var(--border);
+    padding: 20px 0;
+    display: flex;
+    flex-direction: column;
+  }
+  .brand {
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: 19px;
+    letter-spacing: -0.02em;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 0 20px 22px;
+    border-bottom: 2px solid #2b3f3a;
+    margin-bottom: 10px;
+  }
+  .brand .dot {
+    width: 10px;
+    height: 10px;
+    background: var(--accent);
+    border: 2px solid var(--bg);
+    display: inline-block;
+  }
+  nav.sidebar a {
+    color: #a9c3ba;
+    text-decoration: none;
+    font-size: 13px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+    padding: 12px 20px;
+    border-left: 4px solid transparent;
+  }
+  nav.sidebar a.active {
+    color: var(--bg);
+    background: #1c2f29;
+    border-left-color: var(--accent);
+  }
+  .sidebar .spacer { flex: 1; }
+  .sidebar .orgcard {
+    margin: 16px 20px 0;
+    padding: 12px 14px;
+    background: #1c2f29;
+    border: 2px solid #2b3f3a;
+    font-size: 12px;
+    color: #a9c3ba;
+  }
+  .sidebar .orgcard strong {
+    display: block;
+    color: var(--bg);
+    font-size: 13px;
+    margin-bottom: 3px;
+  }
+
+  main {
+    padding: 28px 32px 40px;
+  }
+
+  .page-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    margin-bottom: 22px;
+    flex-wrap: wrap;
+    gap: 14px;
+  }
+  .page-head h1 {
+    font-family: var(--font-display);
+    font-size: 28px;
+    margin: 0 0 4px;
+  }
+  .page-head p {
+    margin: 0;
+    color: var(--muted);
+    font-size: 14px;
+  }
+  .config-btn {
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: 13px;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    padding: 11px 18px;
+    background: var(--surface);
+    color: var(--text);
+    border: var(--border-w) solid var(--border);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow-sm);
+    cursor: pointer;
+  }
+
+  .metrics {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 18px;
+    margin-bottom: 24px;
+  }
+  .metric-card {
+    background: var(--surface);
+    border: var(--border-w) solid var(--border);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow-md);
+    padding: 18px 20px;
+  }
+  .metric-card .label {
+    font-family: var(--font-display);
+    font-size: 12px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--muted);
+    margin-bottom: 10px;
+  }
+  .metric-card .value-row {
+    display: flex;
+    align-items: baseline;
+    gap: 10px;
+  }
+  .metric-card .value {
+    font-family: var(--font-display);
+    font-size: 32px;
+    font-weight: 700;
+  }
+  .metric-card .delta {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--accent);
+  }
+  .metric-card .delta.down { color: var(--danger); }
+
+  .sparkline {
+    margin-top: 12px;
+    display: flex;
+    align-items: flex-end;
+    gap: 4px;
+    height: 40px;
+    border-top: 2px solid var(--border);
+    padding-top: 6px;
+  }
+  .sparkline span {
+    flex: 1;
+    background: var(--accent);
+    border: 2px solid var(--border);
+  }
+  .sparkline.alt span { background: var(--surface-sunk); }
+  .sparkline.alt span.hi { background: var(--accent); }
+
+  .donut-row {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin-top: 10px;
+  }
+  .donut {
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    border: 5px solid var(--border);
+    background:
+      conic-gradient(var(--accent) 0turn 0.68turn, var(--surface-sunk) 0.68turn 1turn);
+    flex-shrink: 0;
+  }
+  .donut-row .cap {
+    font-size: 12px;
+    color: var(--muted);
+  }
+
+  .panels {
+    display: grid;
+    grid-template-columns: 1.4fr 1fr;
+    gap: 20px;
+  }
+
+  .panel {
+    background: var(--surface);
+    border: var(--border-w) solid var(--border);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow-md);
+    overflow: hidden;
+  }
+  .panel h2 {
+    font-family: var(--font-display);
+    font-size: 15px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    margin: 0;
+    padding: 16px 20px;
+    border-bottom: var(--border-w) solid var(--border);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .panel h2 .count {
+    background: var(--accent);
+    color: var(--accent-ink);
+    font-size: 12px;
+    font-weight: 700;
+    padding: 3px 10px;
+    border: 2px solid var(--border);
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+  }
+  thead th {
+    text-align: left;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--muted);
+    padding: 10px 20px;
+    border-bottom: 2px solid var(--border);
+  }
+  tbody td {
+    padding: 12px 20px;
+    border-bottom: 1px solid var(--border-soft);
+    vertical-align: middle;
+  }
+  tbody tr:last-child td { border-bottom: none; }
+  .staffname {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-weight: 600;
+  }
+  .staffname .dot {
+    width: 8px;
+    height: 8px;
+    background: var(--accent);
+    border: 2px solid var(--border);
+    flex-shrink: 0;
+  }
+  .badge {
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+    padding: 3px 8px;
+    border: 2px solid var(--border);
+    background: var(--badge-active-bg);
+    color: var(--badge-active-text);
+    display: inline-block;
+  }
+  .badge.out {
+    background: var(--surface);
+    color: var(--muted);
+  }
+
+  .history-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+  .history-list li {
+    padding: 12px 20px;
+    border-bottom: 1px solid var(--border-soft);
+    font-size: 13px;
+  }
+  .history-list li:last-child { border-bottom: none; }
+  .history-list .name {
+    font-weight: 600;
+    display: flex;
+    justify-content: space-between;
+  }
+  .history-list .name .hrs { color: var(--accent); font-family: var(--font-display); font-weight: 700; }
+  .history-list .meta {
+    color: var(--muted);
+    font-size: 12px;
+    margin-top: 3px;
+  }
+  .history-list .note {
+    margin-top: 6px;
+    background: var(--surface-alt);
+    border-radius: var(--radius);
+    border-left: 3px solid var(--accent);
+    padding: 7px 10px;
+    font-size: 12px;
+    color: var(--text);
+  }
+</style>
+</head>
+<body>
+  <div class="shell">
+    <nav class="sidebar">
+      <div class="brand"><span class="dot"></span>ShiftBeacon</div>
+      <a href="#">Overview</a>
+      <a class="active" href="#">Live staff</a>
+      <a href="#">Shift history</a>
+      <a href="#">Analytics</a>
+      <a href="#">Workplace config</a>
+      <div class="spacer"></div>
+      <div class="orgcard">
+        <strong>Riverside Care Home</strong>
+        2.0 km radius &middot; 18 staff
+      </div>
+    </nav>
+
+    <main>
+      <div class="page-head">
+        <div>
+          <h1>Live staff overview</h1>
+          <p>Riverside Care Home &middot; Tuesday, 25 August</p>
+        </div>
+        <button class="config-btn">Edit Workplace</button>
+      </div>
+
+      <div class="metrics">
+        <div class="metric-card">
+          <div class="label">Avg. hours / day</div>
+          <div class="value-row">
+            <div class="value">7.6h</div>
+            <div class="delta">&#9650; 0.4h</div>
+          </div>
+          <div class="sparkline">
+            <span style="height:40%"></span>
+            <span style="height:55%"></span>
+            <span style="height:48%"></span>
+            <span style="height:70%"></span>
+            <span style="height:62%"></span>
+            <span style="height:85%"></span>
+            <span style="height:100%"></span>
+          </div>
+        </div>
+
+        <div class="metric-card">
+          <div class="label">Clock-ins today</div>
+          <div class="value-row">
+            <div class="value">14</div>
+            <div class="delta down">&#9660; 2</div>
+          </div>
+          <div class="sparkline alt">
+            <span style="height:50%"></span>
+            <span style="height:65%"></span>
+            <span class="hi" style="height:90%"></span>
+            <span style="height:40%"></span>
+            <span style="height:60%"></span>
+            <span style="height:35%"></span>
+            <span class="hi" style="height:75%"></span>
+          </div>
+        </div>
+
+        <div class="metric-card">
+          <div class="label">On shift right now</div>
+          <div class="value-row">
+            <div class="value">9 / 18</div>
+          </div>
+          <div class="donut-row">
+            <div class="donut"></div>
+            <div class="cap">68% of scheduled staff<br />currently clocked in</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="panels">
+        <div class="panel">
+          <h2>Currently clocked in <span class="count">9 staff</span></h2>
+          <table>
+            <thead>
+              <tr>
+                <th>Staff</th>
+                <th>Clocked in</th>
+                <th>Duration</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><div class="staffname"><span class="dot"></span>Jamie Morgan</div></td>
+                <td>08:02</td>
+                <td>2h 14m</td>
+                <td><span class="badge">On shift</span></td>
+              </tr>
+              <tr>
+                <td><div class="staffname"><span class="dot"></span>Priya Nair</div></td>
+                <td>07:55</td>
+                <td>2h 21m</td>
+                <td><span class="badge">On shift</span></td>
+              </tr>
+              <tr>
+                <td><div class="staffname"><span class="dot"></span>Tunde Okafor</div></td>
+                <td>08:11</td>
+                <td>2h 05m</td>
+                <td><span class="badge">On shift</span></td>
+              </tr>
+              <tr>
+                <td><div class="staffname"><span class="dot"></span>Elena Voss</div></td>
+                <td>06:40</td>
+                <td>3h 36m</td>
+                <td><span class="badge">On shift</span></td>
+              </tr>
+              <tr>
+                <td><div class="staffname" style="opacity:.55"><span class="dot" style="background:var(--faint)"></span>Callum Reid</div></td>
+                <td>&ndash;</td>
+                <td>&ndash;</td>
+                <td><span class="badge out">Off shift</span></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="panel">
+          <h2>Recent shift history</h2>
+          <ul class="history-list">
+            <li>
+              <div class="name">Callum Reid <span class="hrs">7.8h</span></div>
+              <div class="meta">Mon 24 Aug &middot; 08:00 &ndash; 15:48</div>
+            </li>
+            <li>
+              <div class="name">Sara Khatun <span class="hrs">8.1h</span></div>
+              <div class="meta">Mon 24 Aug &middot; 07:52 &ndash; 16:00</div>
+              <div class="note">"Covered handover, left note for night shift."</div>
+            </li>
+            <li>
+              <div class="name">Jamie Morgan <span class="hrs">7.9h</span></div>
+              <div class="meta">Sun 23 Aug &middot; 08:05 &ndash; 16:02</div>
+            </li>
+            <li>
+              <div class="name">Priya Nair <span class="hrs">8.4h</span></div>
+              <div class="meta">Sun 23 Aug &middot; 07:48 &ndash; 16:12</div>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </main>
+  </div>
+</body>
+</html>

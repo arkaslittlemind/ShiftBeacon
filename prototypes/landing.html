@@ -1,0 +1,613 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<title>ShiftBeacon | Geofenced Clock-In &amp; Attendance Analytics for Care Teams</title>
+<meta name="description" content="ShiftBeacon lets healthcare organizations confirm staff are on-site with geofenced clock-in/out, see who's on shift right now, and track attendance analytics automatically." />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta property="og:title" content="ShiftBeacon - Location-verified shift attendance for care teams" />
+<meta property="og:description" content="Geofenced clock-in/out, live staff visibility, and attendance analytics built for healthcare operations." />
+<meta property="og:type" content="website" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="theme.css" />
+<style>
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  html, body { margin: 0; padding: 0; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--font-sans);
+    line-height: 1.5;
+  }
+  img, svg { max-width: 100%; display: block; }
+  a { color: inherit; }
+  .wrap {
+    max-width: 1160px;
+    margin: 0 auto;
+    padding: 0 40px;
+  }
+  h1, h2, h3 {
+    font-family: var(--font-display);
+    letter-spacing: -0.02em;
+    margin: 0;
+  }
+  .eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    font-size: 12.5px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: var(--accent-ink);
+    background: var(--accent);
+    border: 2px solid var(--border);
+    padding: 6px 14px;
+    border-radius: var(--radius);
+    margin-bottom: 18px;
+  }
+  .eyebrow .dot { width: 7px; height: 7px; background: var(--accent-ink); }
+
+  /* ---------- header ---------- */
+  header.site {
+    position: sticky;
+    top: 0;
+    z-index: 40;
+    background: var(--bg);
+    border-bottom: var(--border-w-lg) solid var(--border);
+  }
+  .site-nav {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px 40px;
+  }
+  .brand {
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: 19px;
+    display: flex;
+    align-items: center;
+    gap: 9px;
+  }
+  .brand .dot { width: 10px; height: 10px; background: var(--accent); border: 2px solid var(--border); }
+  .site-nav .links {
+    display: flex;
+    gap: 30px;
+    font-size: 13px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+    color: var(--muted);
+  }
+  .site-nav .links a { text-decoration: none; }
+  .site-nav .links a:hover { color: var(--text); }
+  .site-nav .actions { display: flex; align-items: center; gap: 18px; }
+  .link-btn {
+    font-size: 14px;
+    font-weight: 700;
+    text-decoration: none;
+    color: var(--text);
+  }
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: 14.5px;
+    text-transform: uppercase;
+    letter-spacing: 0.02em;
+    padding: 13px 24px;
+    border-radius: var(--radius);
+    border: var(--border-w) solid var(--border);
+    cursor: pointer;
+    text-decoration: none;
+  }
+  .btn-primary {
+    background: var(--accent);
+    color: var(--accent-ink);
+    box-shadow: var(--shadow-sm);
+  }
+  .btn-primary:active { transform: translate(3px, 3px); box-shadow: none; }
+  .btn-ghost {
+    background: var(--surface);
+    color: var(--text);
+    box-shadow: var(--shadow-sm);
+  }
+  .btn-ghost:active { transform: translate(3px, 3px); box-shadow: none; }
+
+  /* ---------- hero ---------- */
+  .hero {
+    padding: 76px 0 60px;
+    overflow: hidden;
+  }
+  .hero .wrap {
+    display: grid;
+    grid-template-columns: 1fr 0.95fr;
+    gap: 48px;
+    align-items: center;
+  }
+  .hero h1 {
+    font-size: 46px;
+    line-height: 1.08;
+    margin-bottom: 18px;
+  }
+  .hero h1 em {
+    font-style: normal;
+    color: var(--accent-dark);
+  }
+  .hero p.lead {
+    font-size: 17px;
+    color: var(--muted);
+    max-width: 46ch;
+    margin-bottom: 28px;
+  }
+  .hero .cta-row { display: flex; gap: 14px; align-items: center; flex-wrap: wrap; }
+  .hero .microcopy { font-size: 12.5px; color: var(--faint); margin-top: 12px; }
+
+  .hero-visual {
+    position: relative;
+    height: 420px;
+  }
+  .float-card {
+    position: absolute;
+    background: var(--surface);
+    border: var(--border-w) solid var(--border);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow-lg);
+    padding: 16px 18px;
+  }
+  .float-card.status {
+    top: 10px;
+    left: 10px;
+    width: 230px;
+  }
+  .float-card.status .row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 4px;
+  }
+  .float-card.status .row .icon {
+    width: 30px; height: 30px;
+    background: var(--accent); color: var(--accent-ink);
+    border: 2px solid var(--border);
+    display: flex; align-items: center; justify-content: center; font-size: 14px;
+  }
+  .float-card.status .row strong { font-size: 13.5px; }
+  .float-card.status .sub { font-size: 12px; color: var(--muted); }
+
+  .float-card.metric {
+    bottom: 60px;
+    left: 40px;
+    width: 190px;
+  }
+  .float-card.metric .label { font-size: 11px; color: var(--muted); font-weight: 700; text-transform: uppercase; letter-spacing: 0.04em; margin-bottom: 6px; }
+  .float-card.metric .value { font-family: var(--font-display); font-size: 26px; font-weight: 700; }
+  .float-card.metric .bars { display: flex; gap: 3px; align-items: flex-end; height: 26px; margin-top: 10px; }
+  .float-card.metric .bars span { flex: 1; background: var(--surface-sunk); border: 1px solid var(--border); }
+  .float-card.metric .bars span.hi { background: var(--accent); }
+
+  .float-card.staff {
+    top: 90px;
+    right: 0;
+    width: 220px;
+  }
+  .float-card.staff .person { display: flex; align-items: center; gap: 10px; padding: 6px 0; }
+  .float-card.staff .avatar { width: 28px; height: 28px; background: var(--accent); color: var(--accent-ink); border: 2px solid var(--border); font-size: 11px; font-weight: 700; display: flex; align-items: center; justify-content: center; }
+  .float-card.staff .name { font-size: 13px; font-weight: 600; }
+  .float-card.staff .time { font-size: 11px; color: var(--muted); margin-left: auto; }
+
+  .float-card.map {
+    bottom: 0;
+    right: 30px;
+    width: 210px;
+    height: 150px;
+    background: var(--accent-soft);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .float-card.map .ring {
+    width: 90px; height: 90px; border-radius: 50%;
+    border: 3px dashed var(--border);
+    display: flex; align-items: center; justify-content: center;
+  }
+  .float-card.map .pin { width: 14px; height: 14px; background: var(--accent); border: 2px solid var(--border); }
+
+  /* ---------- trust bar ---------- */
+  .trust {
+    padding: 30px 0 50px;
+    border-top: var(--border-w) solid var(--border);
+    border-bottom: var(--border-w) solid var(--border);
+  }
+  .trust .wrap { display: flex; align-items: center; gap: 34px; flex-wrap: wrap; justify-content: space-between; }
+  .trust .cap { font-size: 12.5px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; color: var(--faint); }
+  .trust .logos { display: flex; gap: 30px; flex-wrap: wrap; }
+  .trust .logos span {
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: 16px;
+    color: var(--faint);
+  }
+
+  /* ---------- section shared ---------- */
+  section { padding: 84px 0; }
+  section.alt { background: var(--surface-alt); }
+  .section-head { max-width: 620px; margin: 0 auto 48px; text-align: center; }
+  .section-head h2 { font-size: 32px; margin-bottom: 14px; }
+  .section-head p { color: var(--muted); font-size: 15.5px; }
+
+  /* ---------- comparison ---------- */
+  .compare {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+  }
+  .compare .card {
+    background: var(--surface);
+    border: var(--border-w) solid var(--border);
+    border-radius: var(--radius);
+    padding: 26px 28px;
+    box-shadow: var(--shadow-sm);
+  }
+  .compare .card.win { box-shadow: var(--shadow-lg); background: var(--accent-soft); }
+  .compare .card h3 { font-size: 15px; text-transform: uppercase; letter-spacing: 0.04em; margin-bottom: 16px; display: flex; align-items: center; gap: 8px; }
+  .compare .card ul { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 12px; }
+  .compare .card li { display: flex; gap: 10px; font-size: 14px; color: var(--muted); align-items: flex-start; }
+  .compare .card.win li { color: var(--text); }
+  .compare .tag {
+    width: 20px; height: 20px;
+    border: 2px solid var(--border);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 11px; flex-shrink: 0; margin-top: 1px;
+  }
+  .compare .card:not(.win) .tag { background: var(--danger-soft); color: #8a3f28; }
+  .compare .card.win .tag { background: var(--accent); color: var(--accent-ink); }
+
+  /* ---------- features ---------- */
+  .features {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 22px;
+  }
+  .feature-card {
+    background: var(--surface);
+    border: var(--border-w) solid var(--border);
+    border-radius: var(--radius);
+    padding: 26px 24px;
+    box-shadow: var(--shadow-sm);
+  }
+  .feature-card .icon {
+    width: 42px; height: 42px;
+    background: var(--accent); color: var(--accent-ink);
+    border: 2px solid var(--border);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 19px; margin-bottom: 16px;
+  }
+  .feature-card h3 { font-size: 16.5px; margin-bottom: 8px; }
+  .feature-card p { font-size: 14px; color: var(--muted); margin: 0; }
+
+  /* ---------- how it works ---------- */
+  .steps {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 30px;
+    counter-reset: step;
+  }
+  .step { position: relative; padding-top: 8px; }
+  .step .num {
+    font-family: var(--font-display);
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--accent-ink);
+    background: var(--accent);
+    border: 2px solid var(--border);
+    width: 30px; height: 30px;
+    display: flex; align-items: center; justify-content: center;
+    margin-bottom: 16px;
+  }
+  .step h3 { font-size: 16px; margin-bottom: 8px; }
+  .step p { font-size: 14px; color: var(--muted); margin: 0; }
+
+  /* ---------- testimonial ---------- */
+  .quote {
+    max-width: 720px;
+    margin: 0 auto;
+    text-align: center;
+  }
+  .quote blockquote {
+    font-family: var(--font-display);
+    font-size: 25px;
+    line-height: 1.4;
+    margin: 0 0 22px;
+  }
+  .quote .person { font-size: 14px; color: var(--muted); font-weight: 600; }
+  .quote .person span { color: var(--faint); font-weight: 400; }
+
+  /* ---------- cta band ---------- */
+  .cta-band {
+    background: var(--text);
+    color: var(--bg);
+    border: var(--border-w) solid var(--border);
+    box-shadow: var(--shadow-lg);
+    border-radius: var(--radius);
+    padding: 56px 60px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 30px;
+    flex-wrap: wrap;
+  }
+  .cta-band h2 { font-size: 28px; margin-bottom: 8px; color: var(--bg); }
+  .cta-band p { margin: 0; color: #a9c3ba; font-size: 14.5px; }
+  .cta-band .btn-primary { border-color: var(--bg); }
+
+  /* ---------- footer ---------- */
+  footer.site {
+    border-top: var(--border-w-lg) solid var(--border);
+    padding: 56px 0 32px;
+  }
+  .footer-grid {
+    display: grid;
+    grid-template-columns: 1.4fr repeat(3, 1fr);
+    gap: 32px;
+    margin-bottom: 40px;
+  }
+  .footer-grid .about p { color: var(--muted); font-size: 13.5px; max-width: 32ch; }
+  .footer-grid h4 { font-size: 12.5px; text-transform: uppercase; letter-spacing: 0.06em; color: var(--faint); margin-bottom: 14px; }
+  .footer-grid ul { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 10px; }
+  .footer-grid a { text-decoration: none; font-size: 13.5px; color: var(--muted); }
+  .footer-grid a:hover { color: var(--text); }
+  .footer-bottom {
+    display: flex;
+    justify-content: space-between;
+    padding-top: 24px;
+    border-top: 1px solid var(--border-soft);
+    font-size: 12.5px;
+    color: var(--faint);
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+
+  @media (max-width: 900px) {
+    .wrap { padding: 0 22px; }
+    .hero .wrap { grid-template-columns: 1fr; }
+    .hero-visual { display: none; }
+    .compare, .features, .steps { grid-template-columns: 1fr; }
+    .footer-grid { grid-template-columns: 1fr 1fr; }
+    .site-nav .links { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<header class="site">
+  <div class="wrap site-nav">
+    <div class="brand"><span class="dot"></span>ShiftBeacon</div>
+    <nav class="links">
+      <a href="#features">Features</a>
+      <a href="#how-it-works">How it works</a>
+      <a href="#compare">Why ShiftBeacon</a>
+    </nav>
+    <div class="actions">
+      <a class="link-btn" href="#">Log in</a>
+      <a class="btn btn-primary" href="#demo">Request a demo</a>
+    </div>
+  </div>
+</header>
+
+<main>
+  <section class="hero">
+    <div class="wrap">
+      <div>
+        <span class="eyebrow"><span class="dot"></span>Built for healthcare operations</span>
+        <h1>Know exactly who's <em>on-site</em>, the moment they clock in.</h1>
+        <p class="lead">ShiftBeacon confirms care workers are physically at the workplace before they can clock in, then gives managers live staff visibility and attendance analytics automatically - no spreadsheets, no guesswork.</p>
+        <div class="cta-row">
+          <a class="btn btn-primary" href="#demo">Request a demo</a>
+          <a class="btn btn-ghost" href="#how-it-works">See how it works</a>
+        </div>
+        <p class="microcopy">No credit card needed &middot; Set up a workplace in minutes</p>
+      </div>
+
+      <div class="hero-visual" aria-hidden="true">
+        <div class="float-card status">
+          <div class="row"><div class="icon">&#10003;</div><strong>Inside perimeter</strong></div>
+          <div class="sub">Riverside Care Home &middot; clocked in 08:02</div>
+        </div>
+        <div class="float-card metric">
+          <div class="label">Avg. hours / day</div>
+          <div class="value">7.6h</div>
+          <div class="bars">
+            <span style="height:40%"></span><span style="height:55%"></span>
+            <span style="height:48%"></span><span class="hi" style="height:80%"></span>
+            <span style="height:62%"></span><span class="hi" style="height:100%"></span>
+          </div>
+        </div>
+        <div class="float-card staff">
+          <div class="person"><div class="avatar">PN</div><div class="name">Priya Nair</div><div class="time">2h 21m</div></div>
+          <div class="person"><div class="avatar">TO</div><div class="name">Tunde Okafor</div><div class="time">2h 05m</div></div>
+          <div class="person"><div class="avatar">EV</div><div class="name">Elena Voss</div><div class="time">3h 36m</div></div>
+        </div>
+        <div class="float-card map">
+          <div class="ring"><div class="pin"></div></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="trust">
+    <div class="wrap">
+      <span class="cap">Trusted by care teams across the UK</span>
+      <div class="logos">
+        <span>Riverside Care</span>
+        <span>Northgate Health</span>
+        <span>Meadowview Trust</span>
+        <span>Harbor Community Care</span>
+      </div>
+    </div>
+  </div>
+
+  <section id="compare" class="alt">
+    <div class="wrap">
+      <div class="section-head">
+        <h2>Attendance tracking, without the paper trail</h2>
+        <p>Manual sign-in sheets and honesty-system timesheets don't hold up when hours and location matter.</p>
+      </div>
+      <div class="compare">
+        <article class="card">
+          <h3>Without ShiftBeacon</h3>
+          <ul>
+            <li><span class="tag">&#10005;</span>Paper sign-in sheets that go missing</li>
+            <li><span class="tag">&#10005;</span>No way to confirm a worker was on-site</li>
+            <li><span class="tag">&#10005;</span>Hours totalled by hand at month-end</li>
+            <li><span class="tag">&#10005;</span>Managers find out about no-shows late</li>
+          </ul>
+        </article>
+        <article class="card win">
+          <h3>With ShiftBeacon</h3>
+          <ul>
+            <li><span class="tag">&#10003;</span>Geofenced clock-in, verified server-side</li>
+            <li><span class="tag">&#10003;</span>Live view of who's on shift right now</li>
+            <li><span class="tag">&#10003;</span>Hours and attendance calculated automatically</li>
+            <li><span class="tag">&#10003;</span>Full shift history with timestamps and notes</li>
+          </ul>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <section id="features">
+    <div class="wrap">
+      <div class="section-head">
+        <h2>Everything a care operations team needs</h2>
+        <p>One simple flow for workers, complete visibility for managers.</p>
+      </div>
+      <div class="features">
+        <article class="feature-card">
+          <div class="icon">&#128205;</div>
+          <h3>Geofenced clock-in</h3>
+          <p>Workers can only clock in from inside the workplace perimeter you configure - validated on the server, not just the app.</p>
+        </article>
+        <article class="feature-card">
+          <div class="icon">&#128101;</div>
+          <h3>Live staff visibility</h3>
+          <p>See who's currently on shift, when they clocked in, and where - updated in real time on the manager dashboard.</p>
+        </article>
+        <article class="feature-card">
+          <div class="icon">&#128202;</div>
+          <h3>Attendance analytics</h3>
+          <p>Average hours per day, daily clock-in counts, and 7-day totals per staff member - calculated automatically from shift records.</p>
+        </article>
+        <article class="feature-card">
+          <div class="icon">&#128274;</div>
+          <h3>Secure, role-based access</h3>
+          <p>Auth0-backed sign-in with Google, email, or username/password, and role-based permissions for workers vs managers.</p>
+        </article>
+        <article class="feature-card">
+          <div class="icon">&#128221;</div>
+          <h3>Optional shift notes</h3>
+          <p>Workers can leave a quick note on clock-in or clock-out - handoff details, incidents, or context for the next shift.</p>
+        </article>
+        <article class="feature-card">
+          <div class="icon">&#9889;</div>
+          <h3>Works on any device</h3>
+          <p>A responsive web app today, with an installable PWA experience on the roadmap for one-tap access at the workplace.</p>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <section id="how-it-works" class="alt">
+    <div class="wrap">
+      <div class="section-head">
+        <h2>Set up in three steps</h2>
+        <p>No hardware, no badges - just a location and a browser.</p>
+      </div>
+      <div class="steps">
+        <div class="step">
+          <div class="num">1</div>
+          <h3>Configure your workplace</h3>
+          <p>Set the address and clock-in radius for each location your team works from.</p>
+        </div>
+        <div class="step">
+          <div class="num">2</div>
+          <h3>Invite your team</h3>
+          <p>Care workers sign in with Google, email, or username/password via Auth0.</p>
+        </div>
+        <div class="step">
+          <div class="num">3</div>
+          <h3>Track attendance automatically</h3>
+          <p>Clock-ins, clock-outs, and analytics flow into your dashboard with no extra work.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="wrap">
+      <div class="quote">
+        <blockquote>"We finally know who's actually on-site during a shift, not just who was scheduled. It's removed a whole category of end-of-month reconciliation."</blockquote>
+        <div class="person">Operations Lead <span>&middot; Community Care Provider</span></div>
+      </div>
+    </div>
+  </section>
+
+  <section id="demo">
+    <div class="wrap">
+      <div class="cta-band">
+        <div>
+          <h2>See ShiftBeacon on your own workplace data</h2>
+          <p>Book a walkthrough and we'll help you set up your first location.</p>
+        </div>
+        <a class="btn btn-primary" href="#demo">Request a demo</a>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer class="site">
+  <div class="wrap">
+    <div class="footer-grid">
+      <div class="about">
+        <div class="brand"><span class="dot"></span>ShiftBeacon</div>
+        <p style="margin-top:14px;">Location-verified shift attendance and analytics for healthcare teams.</p>
+      </div>
+      <div>
+        <h4>Product</h4>
+        <ul>
+          <li><a href="#features">Features</a></li>
+          <li><a href="#how-it-works">How it works</a></li>
+          <li><a href="#compare">Why ShiftBeacon</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>Company</h4>
+        <ul>
+          <li><a href="#">About</a></li>
+          <li><a href="#">Contact</a></li>
+          <li><a href="#demo">Request a demo</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>Legal</h4>
+        <ul>
+          <li><a href="#">Privacy policy</a></li>
+          <li><a href="#">Terms of service</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>&copy; 2026 ShiftBeacon. All rights reserved.</span>
+      <span>Made for healthcare operations teams.</span>
+    </div>
+  </div>
+</footer>
+
+</body>
+</html>

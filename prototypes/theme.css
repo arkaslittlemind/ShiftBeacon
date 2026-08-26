@@ -1,0 +1,55 @@
+/* ShiftBeacon theme - the durable output of /prototype.
+   Neobrutalist healthcare-ops system, cooled down: chunky borders and hard
+   offset shadows stay, but the palette is a soothing cool sea-green/slate
+   instead of stark black/white/red. Port this block into the real app's
+   globals.css @theme when the first UI feature builds. */
+
+:root {
+  /* surfaces */
+  --bg: #eaf3f0;          /* pale cool mint - page background */
+  --surface: #ffffff;     /* cards, bars, inputs */
+  --surface-alt: #dcece6; /* alternating section band */
+  --surface-sunk: #e3f0ea; /* recessed areas (inputs, wells) */
+  --border: #16262b;      /* cool near-black slate, not pure #000 */
+  --border-soft: #cfe2da; /* light hairline dividers within a card */
+
+  /* text */
+  --text: #16262b;        /* primary - cool slate, not pure black */
+  --muted: #4d625f;       /* secondary, labels */
+  --faint: #8aa39d;       /* hints, timestamps */
+
+  /* accent */
+  --accent: #2e8b57;      /* Sea Green - primary actions, active/success */
+  --accent-dark: #1f6440; /* pressed/hover state */
+  --accent-soft: #d8eee1; /* gentle tinted backgrounds, badges */
+  --accent-ink: #ffffff;  /* text on accent */
+
+  /* status - cool, clinical, not alarming */
+  --danger: #b25a45;      /* outside perimeter, errors - muted terracotta */
+  --danger-soft: #f5e2da;
+  --danger-ink: #ffffff;
+  --warning: #b98a2e;
+  --warning-soft: #f5ecd6;
+
+  /* component states */
+  --badge-active-bg: var(--accent);
+  --badge-active-text: var(--accent-ink);
+  --badge-idle-bg: var(--surface);
+  --badge-idle-text: var(--muted);
+
+  /* shadow - hard offset, no blur (the neobrutalist signature) */
+  --shadow-sm: 3px 3px 0 var(--border);
+  --shadow-md: 5px 5px 0 var(--border);
+  --shadow-lg: 8px 8px 0 var(--border);
+
+  /* type */
+  --font-display: "Space Grotesk", "Archivo Black", system-ui, sans-serif;
+  --font-sans: "Inter", system-ui, sans-serif;
+
+  /* scale */
+  --radius: 4px;
+  --radius-lg: 6px;
+  --radius-pill: 6px;
+  --border-w: 3px;
+  --border-w-lg: 4px;
+}
