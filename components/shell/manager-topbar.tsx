@@ -5,8 +5,9 @@ import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 import { ManagerSidebarContent } from "@/components/shell/manager-sidebar-content";
 import { UserMenu } from "@/components/shell/user-menu";
+import type { CurrentUser } from "@/types/user";
 
-export function ManagerTopbar() {
+export function ManagerTopbar({ user }: { user: CurrentUser }) {
   return (
     <div className="flex items-center justify-between border-b border-border-soft px-4 py-3 md:justify-end md:px-8">
       <Sheet>
@@ -29,7 +30,7 @@ export function ManagerTopbar() {
         </SheetContent>
       </Sheet>
 
-      <UserMenu initials="AM" />
+      <UserMenu name={user.name} email={user.email} />
     </div>
   );
 }

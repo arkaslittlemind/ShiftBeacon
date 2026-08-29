@@ -14,10 +14,11 @@ import {
   SheetTrigger,
 } from "@/components/ui/sheet";
 import { UserMenu } from "@/components/shell/user-menu";
+import type { CurrentUser } from "@/types/user";
 
 const NAV_LINKS = [{ href: "/worker/home", label: "Home" }];
 
-export function WorkerTopNav() {
+export function WorkerTopNav({ user }: { user: CurrentUser }) {
   const pathname = usePathname();
 
   return (
@@ -82,7 +83,7 @@ export function WorkerTopNav() {
             </SheetContent>
           </Sheet>
 
-          <UserMenu initials="JM" />
+          <UserMenu name={user.name} email={user.email} />
         </div>
       </div>
     </header>

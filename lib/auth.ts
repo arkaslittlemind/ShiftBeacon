@@ -1,22 +1,32 @@
 import { redirect } from "next/navigation";
-import type { Role } from "@/types/user";
+import { auth0 } from "@/lib/auth0";
+import type { CurrentUser, Role } from "@/types/user";
 
-/**
- * TEMPORARY mock identity. Feature 3 (Auth0) replaces this with a real
- * session lookup behind the same two function signatures, so nothing that
- * calls getCurrentUser()/requireRole() needs to change when it lands.
- * Flip MOCK_ROLE (or set the MOCK_ROLE env var) to preview the other area.
- */
-const MOCK_ROLE: Role = (process.env.MOCK_ROLE as Role | undefined) ?? "CARE_WORKER";
+const ROLE_CLAIM = "https://shiftbeacon.app/role";
 
-export function getCurrentUser(): { role: Role } {
-  return { role: MOCK_ROLE };
+export async function getCurrentUser(): Promise<CurrentUser | null> {
+  const session = await auth0.getSession();
+  if (!session) {
+    return null;
+  }
+
+  const role = (session.user[ROLE_CLAIM] as Role | undefined) ?? "CARE_WORKER";
+
+  return {
+    role,
+    name: session.user.name ?? "",
+    email: session.user.email ?? "",
+  };
 }
 
-export function requireRole(role: Role): { role: Role } {
-  const user = getCurrentUser();
-  if (user.role !== role) {
-    redirect("/");
+export async function requireRole(
+  role: Role,
+  returnTo: string
+): Promise<{ status: "ok" | "forbidden"; user: CurrentUser }> {
+  const user = await getCurrentUser();
+  if (!user) {
+    redirect(`/auth/login?returnTo=${encodeURIComponent(returnTo)}`);
   }
-  return user;
+
+  return { status: user.role === role ? "ok" : "forbidden", user };
 }
