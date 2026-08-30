@@ -2,7 +2,13 @@ import { redirect } from "next/navigation";
 import { auth0 } from "@/lib/auth0";
 import type { CurrentUser, Role } from "@/types/user";
 
-const ROLE_CLAIM = "https://shiftbeacon.app/role";
+export const ROLE_CLAIM = "https://shiftbeacon.app/role";
+
+export function getRoleFromSession(session: {
+  user: { [key: string]: unknown };
+}): Role {
+  return (session.user[ROLE_CLAIM] as Role | undefined) ?? "CARE_WORKER";
+}
 
 export async function getCurrentUser(): Promise<CurrentUser | null> {
   const session = await auth0.getSession();
@@ -10,10 +16,8 @@ export async function getCurrentUser(): Promise<CurrentUser | null> {
     return null;
   }
 
-  const role = (session.user[ROLE_CLAIM] as Role | undefined) ?? "CARE_WORKER";
-
   return {
-    role,
+    role: getRoleFromSession(session),
     name: session.user.name ?? "",
     email: session.user.email ?? "",
   };
