@@ -1,0 +1,68 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../lib/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum Role {
+  CARE_WORKER
+  MANAGER
+}
+
+model Organization {
+  id                  String   @id @default(cuid())
+  name                String
+  latitude            Float
+  longitude           Float
+  clockInRadiusMeters Int
+  createdAt           DateTime @default(now())
+  updatedAt           DateTime @updatedAt
+
+  users  User[]
+  shifts Shift[]
+}
+
+model User {
+  id             String   @id @default(cuid())
+  auth0UserId    String   @unique
+  name           String
+  email          String
+  role           Role
+  organizationId String
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  organization Organization @relation(fields: [organizationId], references: [id])
+  shifts       Shift[]
+
+  @@index([organizationId])
+}
+
+model Shift {
+  id             String @id @default(cuid())
+  userId         String
+  organizationId String
+
+  clockInAt        DateTime
+  clockInLatitude  Float
+  clockInLongitude Float
+  clockInNote      String?
+
+  clockOutAt        DateTime?
+  clockOutLatitude  Float?
+  clockOutLongitude Float?
+  clockOutNote      String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user         User         @relation(fields: [userId], references: [id])
+  organization Organization @relation(fields: [organizationId], references: [id])
+
+  @@index([userId])
+  @@index([organizationId])
+  @@index([userId, clockOutAt])
+}
