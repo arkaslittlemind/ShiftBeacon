@@ -14,3 +14,9 @@ export type ShiftsResponse = {
   activeShift: ShiftResponse | null;
   history: ShiftResponse[];
 };
+
+export type ClockInInput = {
+  latitude: number;
+  longitude: number;
+  note?: string;
+};

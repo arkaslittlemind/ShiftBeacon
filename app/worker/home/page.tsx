@@ -1,20 +1,25 @@
-import { Clock } from "lucide-react";
 import { PageHeader } from "@/components/shell/page-header";
-import { EmptyState } from "@/components/shared/empty-state";
+import { PerimeterStatusBanner } from "@/components/worker/perimeter-status-banner";
+import { ClockInPanel } from "@/components/worker/clock-in-panel";
+import { getCurrentDbUser } from "@/lib/auth";
+import { getShiftsForUser } from "@/lib/services/shift-service";
 
-export default function WorkerHomePage() {
+export default async function WorkerHomePage() {
+  const user = await getCurrentDbUser();
+  const organization = user!.organization;
+  const { activeShift } = await getShiftsForUser(user!.id);
+
   return (
     <>
       <PageHeader
         eyebrow="Worker"
         title="Home"
-        description="Riverside Care Home"
+        description={`${organization.name} · ${organization.clockInRadiusMeters}m clock-in radius`}
       />
-      <EmptyState
-        icon={Clock}
-        title="Clock-in is coming soon"
-        description="Location-checked clock-in, shift duration, and your shift history will appear here in a later feature."
-      />
+      <div className="grid gap-4">
+        <PerimeterStatusBanner />
+        <ClockInPanel hasActiveShift={activeShift !== null} />
+      </div>
     </>
   );
 }
