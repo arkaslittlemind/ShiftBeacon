@@ -1,5 +1,6 @@
 import { redirect } from "next/navigation";
 import { auth0 } from "@/lib/auth0";
+import { findOrCreateCurrentUser, type UserWithOrganization } from "@/lib/services/user-service";
 import type { CurrentUser, Role } from "@/types/user";
 
 export const ROLE_CLAIM = "https://shiftbeacon.app/role";
@@ -21,6 +22,19 @@ export async function getCurrentUser(): Promise<CurrentUser | null> {
     name: session.user.name ?? "",
     email: session.user.email ?? "",
   };
+}
+
+export async function getCurrentDbUser(): Promise<UserWithOrganization | null> {
+  const session = await auth0.getSession();
+  if (!session) {
+    return null;
+  }
+
+  return findOrCreateCurrentUser(session.user.sub, {
+    name: session.user.name ?? "",
+    email: session.user.email ?? "",
+    role: getRoleFromSession(session),
+  });
 }
 
 export async function requireRole(

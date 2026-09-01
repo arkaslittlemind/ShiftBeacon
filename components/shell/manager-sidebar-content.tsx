@@ -4,7 +4,10 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
 
-const NAV_LINKS = [{ href: "/manager/dashboard", label: "Dashboard" }];
+const NAV_LINKS = [
+  { href: "/manager/dashboard", label: "Dashboard" },
+  { href: "/manager/workplace", label: "Workplace" },
+];
 
 export function ManagerSidebarContent() {
   const pathname = usePathname();
@@ -40,7 +43,9 @@ export function ManagerSidebarContent() {
         <strong className="mb-0.5 block text-[13px] text-background">
           Riverside Care Home
         </strong>
-        Workplace configuration coming soon
+        <Link href="/manager/workplace" className="underline underline-offset-2 hover:text-background">
+          Edit in Workplace settings
+        </Link>
       </div>
     </div>
   );
