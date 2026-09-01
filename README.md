@@ -1,4 +1,4 @@
-# ShiftBeacon
+# ShiftBeacon (WIP)
 
 A location-aware shift management application for healthcare teams. Care
 workers clock in and out of shifts from within a manager-configured workplace
