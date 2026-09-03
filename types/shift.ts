@@ -20,3 +20,9 @@ export type ClockInInput = {
   longitude: number;
   note?: string;
 };
+
+export type ClockOutInput = {
+  latitude?: number;
+  longitude?: number;
+  note?: string;
+};

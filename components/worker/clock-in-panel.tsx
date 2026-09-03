@@ -1,31 +1,19 @@
 "use client";
 
 import { useState } from "react";
-import { CheckCircle2 } from "lucide-react";
+import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { useGeolocation } from "./use-geolocation";
 
 type SubmitStatus = "idle" | "submitting" | "error";
 
-export function ClockInPanel({ hasActiveShift }: { hasActiveShift: boolean }) {
+export function ClockInPanel() {
+  const router = useRouter();
   const geolocation = useGeolocation();
   const [note, setNote] = useState("");
   const [status, setStatus] = useState<SubmitStatus>("idle");
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
-  const [clockedIn, setClockedIn] = useState(hasActiveShift);
-
-  if (clockedIn) {
-    return (
-      <div className="rounded-md border-(length:--border-w) border-border bg-card p-6 text-center shadow-md">
-        <CheckCircle2 className="mx-auto mb-2 size-8 text-primary" />
-        <p className="font-heading text-base font-bold">You&apos;re clocked in</p>
-        <p className="mt-1 text-sm text-muted-foreground">
-          Shift duration and clock-out will be available in a later update.
-        </p>
-      </div>
-    );
-  }
 
   async function handleClockIn() {
     if (!geolocation.coords) {
@@ -54,8 +42,7 @@ export function ClockInPanel({ hasActiveShift }: { hasActiveShift: boolean }) {
       return;
     }
 
-    setStatus("idle");
-    setClockedIn(true);
+    router.refresh();
   }
 
   return (

@@ -1,6 +1,6 @@
 import { prisma } from "@/lib/prisma";
 import { haversineDistanceMeters } from "@/lib/geo";
-import type { ClockInInput } from "@/types/shift";
+import type { ClockInInput, ClockOutInput } from "@/types/shift";
 
 const HISTORY_LIMIT = 50;
 
@@ -15,6 +15,13 @@ export class OutsidePerimeterError extends Error {
   constructor() {
     super("You're outside the workplace clock-in perimeter.");
     this.name = "OutsidePerimeterError";
+  }
+}
+
+export class NoActiveShiftError extends Error {
+  constructor() {
+    super("You don't have an active shift to clock out of.");
+    this.name = "NoActiveShiftError";
   }
 }
 
@@ -65,6 +72,26 @@ export async function clockIn(
       clockInLatitude: input.latitude,
       clockInLongitude: input.longitude,
       clockInNote: input.note,
+    },
+  });
+}
+
+export async function clockOut(userId: string, input: ClockOutInput) {
+  const activeShift = await prisma.shift.findFirst({
+    where: { userId, clockOutAt: null },
+  });
+
+  if (!activeShift) {
+    throw new NoActiveShiftError();
+  }
+
+  return prisma.shift.update({
+    where: { id: activeShift.id },
+    data: {
+      clockOutAt: new Date(),
+      clockOutLatitude: input.latitude,
+      clockOutLongitude: input.longitude,
+      clockOutNote: input.note,
     },
   });
 }
