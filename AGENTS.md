@@ -31,6 +31,7 @@ presence, shift history, and attendance analytics.
 
 ## Commands
 
+- Database: `docker compose up -d` (Postgres on `localhost:51214`, matches `DATABASE_URL` in `.env.local`)
 - Dev server: `npm run dev` (http://localhost:3000)
 - Build: `npm run build`
 - Production server: `npm run start`

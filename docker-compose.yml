@@ -1,0 +1,15 @@
+services:
+  db:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: shiftbeacon
+    ports:
+      - "51214:5432"
+    volumes:
+      - shiftbeacon-db:/var/lib/postgresql/data
+
+volumes:
+  shiftbeacon-db:

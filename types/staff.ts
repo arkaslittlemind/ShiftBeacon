@@ -1,4 +1,5 @@
 import type { Role } from "@/types/user";
+import type { ShiftResponse } from "@/types/shift";
 
 export type StaffMemberResponse = {
   id: string;
@@ -11,4 +12,10 @@ export type StaffMemberResponse = {
     clockInLatitude: number;
     clockInLongitude: number;
   } | null;
+};
+
+export type StaffShiftHistoryResponse = {
+  staff: { id: string; name: string; role: Role };
+  activeShift: ShiftResponse | null;
+  history: ShiftResponse[];
 };

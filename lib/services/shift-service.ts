@@ -1,8 +1,32 @@
 import { prisma } from "@/lib/prisma";
 import { haversineDistanceMeters } from "@/lib/geo";
-import type { ClockInInput, ClockOutInput } from "@/types/shift";
+import type { ClockInInput, ClockOutInput, ShiftResponse } from "@/types/shift";
 
 const HISTORY_LIMIT = 50;
+
+export function toShiftResponse(shift: {
+  id: string;
+  clockInAt: Date;
+  clockInLatitude: number;
+  clockInLongitude: number;
+  clockInNote: string | null;
+  clockOutAt: Date | null;
+  clockOutLatitude: number | null;
+  clockOutLongitude: number | null;
+  clockOutNote: string | null;
+}): ShiftResponse {
+  return {
+    id: shift.id,
+    clockInAt: shift.clockInAt.toISOString(),
+    clockInLatitude: shift.clockInLatitude,
+    clockInLongitude: shift.clockInLongitude,
+    clockInNote: shift.clockInNote,
+    clockOutAt: shift.clockOutAt ? shift.clockOutAt.toISOString() : null,
+    clockOutLatitude: shift.clockOutLatitude,
+    clockOutLongitude: shift.clockOutLongitude,
+    clockOutNote: shift.clockOutNote,
+  };
+}
 
 export class ActiveShiftExistsError extends Error {
   constructor() {
