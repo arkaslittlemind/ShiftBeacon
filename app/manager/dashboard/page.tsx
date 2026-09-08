@@ -2,14 +2,22 @@ import { Users } from "lucide-react";
 import { PageHeader } from "@/components/shell/page-header";
 import { EmptyState } from "@/components/shared/empty-state";
 import { StaffTable } from "@/components/manager/staff-table";
+import { AverageHoursCard } from "@/components/manager/average-hours-card";
+import { DailyClockInsChart } from "@/components/manager/daily-clock-ins-chart";
+import { StaffHoursChart } from "@/components/manager/staff-hours-chart";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { getCurrentDbUser } from "@/lib/auth";
 import { getStaffForOrganization, toStaffMemberResponse } from "@/lib/services/staff-service";
+import { getAnalyticsForOrganization } from "@/lib/services/analytics-service";
 import { currentTimeMs } from "@/lib/time";
 
 export default async function ManagerDashboardPage() {
   const user = await getCurrentDbUser();
   const organization = user!.organization;
-  const staff = await getStaffForOrganization(organization.id);
+  const [staff, analytics] = await Promise.all([
+    getStaffForOrganization(organization.id),
+    getAnalyticsForOrganization(organization.id),
+  ]);
 
   return (
     <>
@@ -18,6 +26,34 @@ export default async function ManagerDashboardPage() {
         title="Dashboard"
         description="Live staff view and attendance analytics"
       />
+      <div className="mb-6 max-w-xs">
+        <AverageHoursCard
+          averageHoursPerDay={analytics.averageHoursPerDay}
+          windowDays={analytics.windowDays}
+        />
+      </div>
+      <div className="mb-6 grid gap-4 lg:grid-cols-2">
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-xs font-bold tracking-wide text-muted-foreground uppercase">
+              Clock-ins per day
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <DailyClockInsChart dailyClockIns={analytics.dailyClockIns} />
+          </CardContent>
+        </Card>
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-xs font-bold tracking-wide text-muted-foreground uppercase">
+              Hours per staff member
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <StaffHoursChart staffHours={analytics.staffHours} />
+          </CardContent>
+        </Card>
+      </div>
       {staff.length === 0 ? (
         <EmptyState
           icon={Users}
