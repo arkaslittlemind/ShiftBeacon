@@ -14,7 +14,7 @@ export function ManagerTopbar({ user }: { user: CurrentUser }) {
         <SheetTrigger asChild>
           <Button
             variant="outline"
-            size="icon-sm"
+            size="icon-lg"
             aria-label="Open navigation menu"
             className="md:hidden"
           >

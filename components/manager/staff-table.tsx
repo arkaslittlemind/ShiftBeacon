@@ -63,7 +63,7 @@ export function StaffTable({
                 <TableCell>
                   <Link
                     href={`/manager/staff/${member.id}`}
-                    className="rounded-sm font-semibold underline-offset-2 outline-none hover:underline focus-visible:ring-3 focus-visible:ring-ring/50"
+                    className="inline-block rounded-sm py-2 font-semibold underline-offset-2 outline-none hover:underline focus-visible:ring-3 focus-visible:ring-ring/50"
                   >
                     {member.name}
                   </Link>

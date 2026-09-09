@@ -11,7 +11,7 @@ export default async function ManagerLayout({ children }: { children: React.Reac
       <ManagerSidebar />
       <div className="flex flex-1 flex-col">
         <ManagerTopbar user={user} />
-        <main className="flex-1 px-8 py-7">
+        <main className="flex-1 px-4 py-7 sm:px-6 lg:px-8">
           {status === "forbidden" ? <ForbiddenState role={user.role} /> : children}
         </main>
       </div>

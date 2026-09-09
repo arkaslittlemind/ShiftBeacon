@@ -56,6 +56,10 @@
   --card-foreground: #16262b;
   --popover: #ffffff;
   --popover-foreground: #16262b;
+  /* --primary-foreground on --primary measures 4.245:1 - just under WCAG
+     AA's 4.5:1 for normal-size text (it passes AA-large at 3:1). #2e8b57
+     is the locked Sea Green brand color, so this is a documented,
+     accepted trade-off rather than a bug to fix here. */
   --primary: #2e8b57;
   --primary-foreground: #ffffff;
   --secondary: #e3f0ea;

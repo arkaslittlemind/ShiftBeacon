@@ -34,7 +34,7 @@ export function StaffShiftHistory({
       </h2>
       {history.length === 0 ? (
         <p className="px-5 py-8 text-center text-sm text-muted-foreground">
-          No shifts yet.
+          No completed shifts yet.
         </p>
       ) : (
         <ul>
