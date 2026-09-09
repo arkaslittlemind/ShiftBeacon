@@ -36,10 +36,14 @@ presence, shift history, and attendance analytics.
 - Build: `npm run build`
 - Production server: `npm run start`
 - Lint: `npm run lint`
+- Unit tests (Vitest): `npm test`
 - E2E (Playwright, Chromium): `npm run test:e2e` - run only when explicitly
   instructed, not automatically after every step or feature
 
-Unit testing is opt-in. No unit test runner is configured yet.
+A `test` command is declared, so unit tests are a gate: any build step that
+adds logic-bearing code (parsers, formatters, validators, service functions -
+not UI components) must ship a passing test in the same diff. Test files live
+next to the source they cover (`feature.test.ts`).
 
 <!-- BEGIN:nextjs-agent-rules -->
 

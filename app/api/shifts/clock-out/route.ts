@@ -1,15 +1,9 @@
-import { z } from "zod";
 import { requireApiUser } from "@/lib/api/auth";
 import { apiError, apiSuccess } from "@/lib/api/response";
 import { parseJsonBody } from "@/lib/api/validate";
 import { NoActiveShiftError, clockOut } from "@/lib/services/shift-service";
-import type { ClockOutInput, ShiftResponse } from "@/types/shift";
-
-const clockOutSchema = z.object({
-  latitude: z.number().min(-90).max(90).optional(),
-  longitude: z.number().min(-180).max(180).optional(),
-  note: z.string().trim().min(1).optional(),
-}) satisfies z.ZodType<ClockOutInput>;
+import { clockOutSchema } from "@/lib/validation/shift";
+import type { ShiftResponse } from "@/types/shift";
 
 export async function POST(request: Request) {
   const result = await requireApiUser({ role: "CARE_WORKER" });
