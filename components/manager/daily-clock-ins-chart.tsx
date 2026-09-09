@@ -44,8 +44,8 @@ export function DailyClockInsChart({
           <Tooltip
             cursor={{ fill: "var(--color-secondary)" }}
             contentStyle={{
-              borderRadius: 6,
-              borderWidth: 2,
+              borderRadius: "var(--radius)",
+              borderWidth: "var(--border-w)",
               borderColor: "var(--color-border)",
               background: "var(--color-card)",
             }}

@@ -7,6 +7,7 @@ import { DailyClockInsChart } from "@/components/manager/daily-clock-ins-chart";
 import { StaffHoursChart } from "@/components/manager/staff-hours-chart";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { getCurrentDbUser } from "@/lib/auth";
+import { eyebrowClass } from "@/lib/utils";
 import { getStaffForOrganization, toStaffMemberResponse } from "@/lib/services/staff-service";
 import { getAnalyticsForOrganization } from "@/lib/services/analytics-service";
 import { currentTimeMs } from "@/lib/time";
@@ -35,7 +36,7 @@ export default async function ManagerDashboardPage() {
       <div className="mb-6 grid gap-4 lg:grid-cols-2">
         <Card>
           <CardHeader>
-            <CardTitle className="text-xs font-bold tracking-wide text-muted-foreground uppercase">
+            <CardTitle className={eyebrowClass}>
               Clock-ins per day
             </CardTitle>
           </CardHeader>
@@ -45,7 +46,7 @@ export default async function ManagerDashboardPage() {
         </Card>
         <Card>
           <CardHeader>
-            <CardTitle className="text-xs font-bold tracking-wide text-muted-foreground uppercase">
+            <CardTitle className={eyebrowClass}>
               Hours per staff member
             </CardTitle>
           </CardHeader>

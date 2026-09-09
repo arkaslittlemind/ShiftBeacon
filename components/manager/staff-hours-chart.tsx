@@ -35,8 +35,8 @@ export function StaffHoursChart({
             cursor={{ fill: "var(--color-secondary)" }}
             formatter={(value) => [`${Number(value).toFixed(1)}h`, "Hours"]}
             contentStyle={{
-              borderRadius: 6,
-              borderWidth: 2,
+              borderRadius: "var(--radius)",
+              borderWidth: "var(--border-w)",
               borderColor: "var(--color-border)",
               background: "var(--color-card)",
             }}

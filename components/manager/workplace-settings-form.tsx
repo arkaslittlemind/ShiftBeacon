@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { eyebrowClass } from "@/lib/utils";
 import type { OrganizationResponse } from "@/types/organization";
 
 type Status = "idle" | "saving" | "success" | "error";
@@ -52,7 +53,7 @@ export function WorkplaceSettingsForm({
   return (
     <form onSubmit={handleSubmit} className="grid gap-5">
       <div className="grid gap-1.5">
-        <label htmlFor="name" className="text-xs font-bold tracking-wide text-muted-foreground uppercase">
+        <label htmlFor="name" className={eyebrowClass}>
           Name
         </label>
         <Input
@@ -67,7 +68,7 @@ export function WorkplaceSettingsForm({
 
       <div className="grid gap-4 sm:grid-cols-3">
         <div className="grid gap-1.5">
-          <label htmlFor="latitude" className="text-xs font-bold tracking-wide text-muted-foreground uppercase">
+          <label htmlFor="latitude" className={eyebrowClass}>
             Latitude
           </label>
           <Input
@@ -84,7 +85,7 @@ export function WorkplaceSettingsForm({
           />
         </div>
         <div className="grid gap-1.5">
-          <label htmlFor="longitude" className="text-xs font-bold tracking-wide text-muted-foreground uppercase">
+          <label htmlFor="longitude" className={eyebrowClass}>
             Longitude
           </label>
           <Input
@@ -101,7 +102,7 @@ export function WorkplaceSettingsForm({
           />
         </div>
         <div className="grid gap-1.5">
-          <label htmlFor="radius" className="text-xs font-bold tracking-wide text-muted-foreground uppercase">
+          <label htmlFor="radius" className={eyebrowClass}>
             Clock-in radius (m)
           </label>
           <Input

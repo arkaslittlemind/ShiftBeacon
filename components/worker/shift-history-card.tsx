@@ -1,3 +1,4 @@
+import { Card } from "@/components/ui/card";
 import { formatHoursDecimal } from "@/lib/duration";
 import type { ShiftResponse } from "@/types/shift";
 
@@ -15,7 +16,7 @@ const timeFormatter = new Intl.DateTimeFormat("en-GB", {
 
 export function ShiftHistoryCard({ history }: { history: ShiftResponse[] }) {
   return (
-    <div className="rounded-md border-(length:--border-w) border-border bg-card shadow-md">
+    <Card className="gap-0 overflow-hidden py-0">
       <h2 className="border-b-(length:--border-w) border-border px-5 py-4 font-heading text-sm font-bold tracking-wide uppercase">
         Recent shifts
       </h2>
@@ -54,6 +55,6 @@ export function ShiftHistoryCard({ history }: { history: ShiftResponse[] }) {
           })}
         </ul>
       )}
-    </div>
+    </Card>
   );
 }

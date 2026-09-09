@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { formatElapsedClock } from "@/lib/duration";
+import { cn, eyebrowClass } from "@/lib/utils";
 import { useGeolocation } from "./use-geolocation";
 import type { ShiftResponse } from "@/types/shift";
 
@@ -72,7 +73,7 @@ export function ActiveShiftPanel({ shift }: { shift: ShiftResponse }) {
       <div className="rounded-md border-(length:--border-w) border-border bg-card p-6 shadow-md">
         <label
           htmlFor="clock-out-note"
-          className="mb-2 block text-xs font-bold tracking-wide text-muted-foreground uppercase"
+          className={cn(eyebrowClass, "mb-2 block")}
         >
           Optional note
         </label>

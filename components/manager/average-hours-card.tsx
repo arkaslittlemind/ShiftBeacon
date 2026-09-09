@@ -1,4 +1,5 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { eyebrowClass } from "@/lib/utils";
 
 export function AverageHoursCard({
   averageHoursPerDay,
@@ -10,7 +11,7 @@ export function AverageHoursCard({
   return (
     <Card>
       <CardHeader>
-        <CardTitle className="text-xs font-bold tracking-wide text-muted-foreground uppercase">
+        <CardTitle className={eyebrowClass}>
           Average hours clocked in per day
         </CardTitle>
       </CardHeader>

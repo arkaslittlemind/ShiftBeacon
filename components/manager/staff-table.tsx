@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { Card } from "@/components/ui/card";
 import {
   Table,
   TableBody,
@@ -34,7 +35,7 @@ export function StaffTable({
   now: number;
 }) {
   return (
-    <div className="rounded-md border-(length:--border-w) border-border bg-card shadow-md">
+    <Card className="gap-0 overflow-hidden py-0">
       <Table>
         <TableHeader>
           <TableRow>
@@ -85,6 +86,6 @@ export function StaffTable({
           })}
         </TableBody>
       </Table>
-    </div>
+    </Card>
   );
 }

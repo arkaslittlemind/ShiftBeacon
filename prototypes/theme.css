@@ -1,8 +1,15 @@
-/* ShiftBeacon theme - the durable output of /prototype.
+/* ShiftBeacon theme - the original /prototype output, now superseded.
    Neobrutalist healthcare-ops system, cooled down: chunky borders and hard
    offset shadows stay, but the palette is a soothing cool sea-green/slate
-   instead of stark black/white/red. Port this block into the real app's
-   globals.css @theme when the first UI feature builds. */
+   instead of stark black/white/red.
+
+   This file was ported into app/globals.css during feature 1 and is no
+   longer the live source of truth - some token names/values here (e.g.
+   --radius-pill, --badge-active-bg, --accent-ink) were renamed or dropped
+   during that port and never made it into the real app. It's kept only so
+   the standalone prototype mockups (worker-home.html, manager-dashboard.html,
+   landing.html) still render when opened directly; treat app/globals.css as
+   authoritative for anything touching real app code. */
 
 :root {
   /* surfaces */

@@ -3,7 +3,7 @@
 import { Menu } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { cn } from "@/lib/utils";
+import { cn, eyebrowClass } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import {
   Sheet,
@@ -32,7 +32,7 @@ export function WorkerTopNav({ user }: { user: CurrentUser }) {
           ShiftBeacon
         </Link>
 
-        <nav className="hidden items-center gap-7 text-xs font-bold tracking-wide text-muted-foreground uppercase md:flex">
+        <nav className={cn(eyebrowClass, "hidden items-center gap-7 md:flex")}>
           {NAV_LINKS.map((link) => (
             <Link
               key={link.href}

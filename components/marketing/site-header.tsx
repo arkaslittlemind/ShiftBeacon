@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { getCurrentUser } from "@/lib/auth";
+import { cn, eyebrowClass } from "@/lib/utils";
 
 const NAV_LINKS = [
   { href: "#features", label: "Features" },
@@ -23,7 +24,7 @@ export async function SiteHeader() {
           ShiftBeacon
         </Link>
 
-        <nav className="hidden items-center gap-8 text-xs font-bold tracking-wide text-muted-foreground uppercase md:flex">
+        <nav className={cn(eyebrowClass, "hidden items-center gap-8 md:flex")}>
           {NAV_LINKS.map((link) => (
             <a
               key={link.href}

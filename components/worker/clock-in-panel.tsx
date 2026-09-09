@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
+import { cn, eyebrowClass } from "@/lib/utils";
 import { useGeolocation } from "./use-geolocation";
 
 type SubmitStatus = "idle" | "submitting" | "error";
@@ -49,7 +50,7 @@ export function ClockInPanel() {
     <div className="rounded-md border-(length:--border-w) border-border bg-card p-6 shadow-md">
       <label
         htmlFor="clock-in-note"
-        className="mb-2 block text-xs font-bold tracking-wide text-muted-foreground uppercase"
+        className={cn(eyebrowClass, "mb-2 block")}
       >
         Optional note
       </label>

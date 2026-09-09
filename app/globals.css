@@ -5,6 +5,8 @@
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
+  /* --font-sans and --font-display are injected by next/font in
+     app/layout.tsx (Inter / Space Grotesk), not defined in this file. */
   --font-sans: var(--font-sans);
   --font-mono: ui-monospace, monospace;
   --font-heading: var(--font-display);
@@ -76,10 +78,13 @@
   --ring: #2e8b57;
   --radius: 4px;
 
-  /* extra ShiftBeacon-specific tokens beyond shadcn's default slots */
+  /* extra ShiftBeacon-specific tokens beyond shadcn's default slots.
+     --danger mirrors --destructive rather than repeating its hex value, so
+     the "error/outside perimeter" color can't drift out of sync with the
+     shadcn destructive slot it's paired with in several components. */
   --surface-alt: #dcece6;
   --faint: #8aa39d;
-  --danger: #b25a45;
+  --danger: var(--destructive);
   --danger-soft: #f5e2da;
   --danger-ink: #ffffff;
   --warning: #b98a2e;
