@@ -8,8 +8,12 @@ export function StaffHoursChart({
 }: {
   staffHours: AnalyticsResponse["staffHours"];
 }) {
+  const description = `Total hours per staff member over the last 7 days: ${staffHours
+    .map((staff) => `${staff.name} ${staff.totalHours.toFixed(1)} hours`)
+    .join(", ")}`;
+
   return (
-    <div className="h-64 w-full">
+    <div className="h-64 w-full" role="img" aria-label={description}>
       <ResponsiveContainer width="100%" height="100%">
         <BarChart data={staffHours} margin={{ top: 8, right: 8, left: -16, bottom: 0 }}>
           <CartesianGrid vertical={false} stroke="var(--color-border-soft)" />

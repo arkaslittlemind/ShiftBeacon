@@ -15,14 +15,21 @@ export async function SiteHeader() {
   return (
     <header className="sticky top-0 z-40 border-b-(length:--border-w-lg) border-border bg-background">
       <div className="mx-auto flex max-w-6xl items-center justify-between px-6 py-4 md:px-10">
-        <Link href="/" className="flex items-center gap-2 font-heading text-lg font-bold">
+        <Link
+          href="/"
+          className="flex items-center gap-2 rounded-sm font-heading text-lg font-bold outline-none focus-visible:ring-3 focus-visible:ring-ring/50"
+        >
           <span className="size-2.5 border-2 border-border bg-primary" />
           ShiftBeacon
         </Link>
 
         <nav className="hidden items-center gap-8 text-xs font-bold tracking-wide text-muted-foreground uppercase md:flex">
           {NAV_LINKS.map((link) => (
-            <a key={link.href} href={link.href} className="hover:text-foreground">
+            <a
+              key={link.href}
+              href={link.href}
+              className="rounded-sm outline-none hover:text-foreground focus-visible:ring-3 focus-visible:ring-ring/50"
+            >
               {link.label}
             </a>
           ))}
@@ -31,7 +38,10 @@ export async function SiteHeader() {
         <div className="flex items-center gap-4">
           {user ? (
             <>
-              <Link href={dashboardHref} className="hidden text-sm font-bold sm:inline-block">
+              <Link
+                href={dashboardHref}
+                className="hidden rounded-sm text-sm font-bold outline-none focus-visible:ring-3 focus-visible:ring-ring/50 sm:inline-block"
+              >
                 Dashboard
               </Link>
               <Button asChild size="sm" variant="outline">
@@ -40,7 +50,10 @@ export async function SiteHeader() {
             </>
           ) : (
             <>
-              <a href="/auth/login" className="hidden text-sm font-bold sm:inline-block">
+              <a
+                href="/auth/login"
+                className="hidden rounded-sm text-sm font-bold outline-none focus-visible:ring-3 focus-visible:ring-ring/50 sm:inline-block"
+              >
                 Log in
               </a>
               <Button asChild size="sm" variant="outline">

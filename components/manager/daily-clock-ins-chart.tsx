@@ -18,8 +18,12 @@ export function DailyClockInsChart({
     label: weekdayFormatter.format(new Date(`${day.date}T00:00:00Z`)),
   }));
 
+  const description = `Clock-ins per day: ${data
+    .map((day) => `${day.label} ${day.count}`)
+    .join(", ")}`;
+
   return (
-    <div className="h-64 w-full">
+    <div className="h-64 w-full" role="img" aria-label={description}>
       <ResponsiveContainer width="100%" height="100%">
         <BarChart data={data} margin={{ top: 8, right: 8, left: -16, bottom: 0 }}>
           <CartesianGrid vertical={false} stroke="var(--color-border-soft)" />

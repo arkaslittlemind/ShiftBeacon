@@ -55,7 +55,14 @@ export function WorkplaceSettingsForm({
         <label htmlFor="name" className="text-xs font-bold tracking-wide text-muted-foreground uppercase">
           Name
         </label>
-        <Input id="name" value={name} onChange={(e) => setName(e.target.value)} required />
+        <Input
+          id="name"
+          value={name}
+          onChange={(e) => setName(e.target.value)}
+          required
+          aria-invalid={status === "error"}
+          aria-describedby={status === "error" ? "workplace-form-error" : undefined}
+        />
       </div>
 
       <div className="grid gap-4 sm:grid-cols-3">
@@ -72,6 +79,8 @@ export function WorkplaceSettingsForm({
             value={latitude}
             onChange={(e) => setLatitude(e.target.value)}
             required
+            aria-invalid={status === "error"}
+            aria-describedby={status === "error" ? "workplace-form-error" : undefined}
           />
         </div>
         <div className="grid gap-1.5">
@@ -87,6 +96,8 @@ export function WorkplaceSettingsForm({
             value={longitude}
             onChange={(e) => setLongitude(e.target.value)}
             required
+            aria-invalid={status === "error"}
+            aria-describedby={status === "error" ? "workplace-form-error" : undefined}
           />
         </div>
         <div className="grid gap-1.5">
@@ -101,14 +112,22 @@ export function WorkplaceSettingsForm({
             value={radius}
             onChange={(e) => setRadius(e.target.value)}
             required
+            aria-invalid={status === "error"}
+            aria-describedby={status === "error" ? "workplace-form-error" : undefined}
           />
         </div>
       </div>
 
       {status === "error" && errorMessage && (
-        <p className="text-sm text-destructive">{errorMessage}</p>
+        <p id="workplace-form-error" role="alert" className="text-sm text-destructive">
+          {errorMessage}
+        </p>
       )}
-      {status === "success" && <p className="text-sm text-primary">Saved.</p>}
+      {status === "success" && (
+        <p role="status" className="text-sm text-primary">
+          Saved.
+        </p>
+      )}
 
       <div>
         <Button type="submit" disabled={status === "saving"}>

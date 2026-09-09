@@ -105,3 +105,18 @@
     @apply font-heading;
   }
 }
+
+/* Most transitions in this app already use `transition-none` by design (the
+   neobrutalist "instant offset" style); this closes the gap for the
+   remaining animated bits, mainly tw-animate-css-driven Sheet/dropdown
+   open-close transitions. */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

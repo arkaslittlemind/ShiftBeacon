@@ -62,7 +62,9 @@ export function ClockInPanel() {
       />
 
       {status === "error" && errorMessage && (
-        <p className="mb-3 text-sm text-destructive">{errorMessage}</p>
+        <p role="alert" className="mb-3 text-sm text-destructive">
+          {errorMessage}
+        </p>
       )}
 
       <Button

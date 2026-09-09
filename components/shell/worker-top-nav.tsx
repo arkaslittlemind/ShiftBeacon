@@ -24,7 +24,10 @@ export function WorkerTopNav({ user }: { user: CurrentUser }) {
   return (
     <header className="border-b-(length:--border-w-lg) border-border bg-card">
       <div className="mx-auto flex max-w-5xl items-center justify-between px-6 py-4 md:px-10">
-        <Link href="/worker/home" className="flex items-center gap-2 font-heading text-lg font-bold">
+        <Link
+          href="/worker/home"
+          className="flex items-center gap-2 rounded-sm font-heading text-lg font-bold outline-none focus-visible:ring-3 focus-visible:ring-ring/50"
+        >
           <span className="size-2.5 border-2 border-border bg-primary" />
           ShiftBeacon
         </Link>
@@ -35,7 +38,7 @@ export function WorkerTopNav({ user }: { user: CurrentUser }) {
               key={link.href}
               href={link.href}
               className={cn(
-                "hover:text-foreground",
+                "rounded-sm outline-none hover:text-foreground focus-visible:ring-3 focus-visible:ring-ring/50",
                 pathname === link.href && "text-foreground"
               )}
             >
@@ -69,7 +72,7 @@ export function WorkerTopNav({ user }: { user: CurrentUser }) {
                     <Link
                       href={link.href}
                       className={cn(
-                        "rounded-md px-3 py-2.5 text-xs font-bold tracking-wide uppercase",
+                        "rounded-md px-3 py-2.5 text-xs font-bold tracking-wide uppercase outline-none focus-visible:ring-3 focus-visible:ring-ring/50",
                         pathname === link.href
                           ? "bg-secondary text-foreground"
                           : "text-muted-foreground"

@@ -85,7 +85,9 @@ export function ActiveShiftPanel({ shift }: { shift: ShiftResponse }) {
       </div>
 
       {status === "error" && errorMessage && (
-        <p className="text-sm text-destructive">{errorMessage}</p>
+        <p role="alert" className="text-sm text-destructive">
+          {errorMessage}
+        </p>
       )}
     </div>
   );
