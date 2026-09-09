@@ -36,8 +36,10 @@ presence, shift history, and attendance analytics.
 - Build: `npm run build`
 - Production server: `npm run start`
 - Lint: `npm run lint`
+- E2E (Playwright, Chromium): `npm run test:e2e` - run only when explicitly
+  instructed, not automatically after every step or feature
 
-Testing is opt-in. No test runner is configured yet.
+Unit testing is opt-in. No unit test runner is configured yet.
 
 <!-- BEGIN:nextjs-agent-rules -->
 
