@@ -1,4 +1,5 @@
 import { requireApiUser } from "@/lib/api/auth";
+import { withRouteHandler } from "@/lib/api/handler";
 import { apiSuccess } from "@/lib/api/response";
 import { parseJsonBody } from "@/lib/api/validate";
 import { updateOrganization } from "@/lib/services/organization-service";
@@ -21,29 +22,32 @@ function toOrganizationResponse(organization: {
   };
 }
 
-export async function GET() {
+export const GET = withRouteHandler("GET /api/organizations/me", async () => {
   const result = await requireApiUser();
   if (!result.ok) {
     return result.response;
   }
 
   return apiSuccess(toOrganizationResponse(result.user.organization));
-}
+});
 
-export async function PATCH(request: Request) {
-  const result = await requireApiUser({ role: "MANAGER" });
-  if (!result.ok) {
-    return result.response;
+export const PATCH = withRouteHandler(
+  "PATCH /api/organizations/me",
+  async (request: Request) => {
+    const result = await requireApiUser({ role: "MANAGER" });
+    if (!result.ok) {
+      return result.response;
+    }
+
+    const parsed = await parseJsonBody(request, updateOrganizationSchema);
+    if (!parsed.ok) {
+      return parsed.response;
+    }
+
+    const organization = await updateOrganization(
+      result.user.organizationId,
+      parsed.data
+    );
+    return apiSuccess(toOrganizationResponse(organization));
   }
-
-  const parsed = await parseJsonBody(request, updateOrganizationSchema);
-  if (!parsed.ok) {
-    return parsed.response;
-  }
-
-  const organization = await updateOrganization(
-    result.user.organizationId,
-    parsed.data
-  );
-  return apiSuccess(toOrganizationResponse(organization));
-}
+);

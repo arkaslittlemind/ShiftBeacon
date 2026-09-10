@@ -1,8 +1,9 @@
 import { requireApiUser } from "@/lib/api/auth";
+import { withRouteHandler } from "@/lib/api/handler";
 import { apiSuccess } from "@/lib/api/response";
 import type { MeResponse } from "@/types/me";
 
-export async function GET() {
+export const GET = withRouteHandler("GET /api/me", async () => {
   const result = await requireApiUser();
   if (!result.ok) {
     return result.response;
@@ -24,4 +25,4 @@ export async function GET() {
   };
 
   return apiSuccess(response);
-}
+});

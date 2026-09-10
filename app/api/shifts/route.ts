@@ -1,9 +1,10 @@
 import { requireApiUser } from "@/lib/api/auth";
+import { withRouteHandler } from "@/lib/api/handler";
 import { apiSuccess } from "@/lib/api/response";
 import { getShiftsForUser, toShiftResponse } from "@/lib/services/shift-service";
 import type { ShiftsResponse } from "@/types/shift";
 
-export async function GET() {
+export const GET = withRouteHandler("GET /api/shifts", async () => {
   const result = await requireApiUser();
   if (!result.ok) {
     return result.response;
@@ -16,4 +17,4 @@ export async function GET() {
   };
 
   return apiSuccess(response);
-}
+});
