@@ -9,7 +9,7 @@ const NAV_LINKS = [
   { href: "/manager/workplace", label: "Workplace" },
 ];
 
-export function ManagerSidebarContent() {
+export function ManagerSidebarContent({ organizationName }: { organizationName: string }) {
   const pathname = usePathname();
 
   return (
@@ -41,7 +41,7 @@ export function ManagerSidebarContent() {
 
       <div className="mx-5 border-2 border-background/15 bg-background/10 p-3.5 text-xs text-background/65">
         <strong className="mb-0.5 block text-[13px] text-background">
-          Riverside Care Home
+          {organizationName}
         </strong>
         <Link
           href="/manager/workplace"

@@ -7,7 +7,13 @@ import { ManagerSidebarContent } from "@/components/shell/manager-sidebar-conten
 import { UserMenu } from "@/components/shell/user-menu";
 import type { CurrentUser } from "@/types/user";
 
-export function ManagerTopbar({ user }: { user: CurrentUser }) {
+export function ManagerTopbar({
+  user,
+  organizationName,
+}: {
+  user: CurrentUser;
+  organizationName: string;
+}) {
   return (
     <div className="flex items-center justify-between border-b border-border-soft px-4 py-3 md:justify-end md:px-8">
       <Sheet>
@@ -26,7 +32,7 @@ export function ManagerTopbar({ user }: { user: CurrentUser }) {
           className="w-55 gap-0 border-border bg-foreground p-0 text-background sm:max-w-55"
         >
           <SheetTitle className="sr-only">Manager navigation</SheetTitle>
-          <ManagerSidebarContent />
+          <ManagerSidebarContent organizationName={organizationName} />
         </SheetContent>
       </Sheet>
 
