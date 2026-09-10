@@ -1,5 +1,6 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Space_Grotesk, Inter } from "next/font/google";
+import { RegisterServiceWorker } from "@/components/pwa/register-service-worker";
 import "./globals.css";
 
 const spaceGrotesk = Space_Grotesk({
@@ -16,6 +17,17 @@ export const metadata: Metadata = {
   title: "ShiftBeacon",
   description:
     "Location-aware shift management for healthcare teams: geofenced clock-in/out, live staff visibility, and attendance analytics.",
+  icons: {
+    apple: "/icons/apple-touch-icon.png",
+  },
+  appleWebApp: {
+    title: "ShiftBeacon",
+    statusBarStyle: "black-translucent",
+  },
+};
+
+export const viewport: Viewport = {
+  themeColor: "#2e8b57",
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
@@ -24,7 +36,10 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       lang="en"
       className={`${spaceGrotesk.variable} ${inter.variable} h-full antialiased`}
     >
-      <body className="min-h-full flex flex-col">{children}</body>
+      <body className="min-h-full flex flex-col">
+        <RegisterServiceWorker />
+        {children}
+      </body>
     </html>
   );
 }
