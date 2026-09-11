@@ -224,13 +224,3 @@ Targets Vercel for the app and a managed PostgreSQL instance, with Prisma
 migrations running as part of the deploy (`prisma migrate deploy`) and
 separate Auth0 callback/logout URLs for development and production. HTTPS is
 required in production - browser geolocation needs a secure context.
-
-## Status
-
-Feature-complete MVP: authentication, geofenced clock-in/out, shift history,
-manager live staff view and analytics dashboard, responsive/accessibility
-polish, installable PWA shell, full test coverage, and production deployment.
-Automatic background geofence entry/exit detection was evaluated and shelved
-after a feasibility spike showed it isn't reliably achievable as a web/PWA
-feature (background location APIs are suspended once the screen locks or the
-app closes); it would need a native app with real OS-level geofencing.
