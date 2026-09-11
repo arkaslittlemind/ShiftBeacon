@@ -39,6 +39,8 @@ yarn-error.log*
 .env*
 !.env.example
 
+*.gitkeep
+
 # vercel
 .vercel
 
