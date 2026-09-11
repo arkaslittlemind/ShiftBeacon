@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import { parseEnv } from "./env";
+import { observabilityWarnings, parseEnv } from "./env";
 
 const validEnv = {
   AUTH0_DOMAIN: "example.auth0.com",
@@ -29,6 +29,51 @@ describe("parseEnv", () => {
     expect(() => parseEnv({ ...validEnv, AUTH0_SECRET: "" })).toThrowError(
       /AUTH0_SECRET/
     );
+  });
+
+  // Sentry config is deliberately optional: a missing DSN must degrade to
+  // "no monitoring", never to a server that refuses to boot.
+  it("parses without any Sentry variables", () => {
+    expect(() => parseEnv(validEnv)).not.toThrow();
+  });
+
+  it("keeps Sentry variables when they are present", () => {
+    const withSentry = {
+      ...validEnv,
+      NEXT_PUBLIC_SENTRY_DSN: "https://key@o1.ingest.de.sentry.io/2",
+      SENTRY_ORG: "an-org",
+      SENTRY_PROJECT: "a-project",
+    };
+
+    expect(parseEnv(withSentry)).toMatchObject({
+      NEXT_PUBLIC_SENTRY_DSN: "https://key@o1.ingest.de.sentry.io/2",
+      SENTRY_ORG: "an-org",
+      SENTRY_PROJECT: "a-project",
+    });
+  });
+});
+
+describe("observabilityWarnings", () => {
+  it("warns about a missing Sentry DSN in production", () => {
+    const warnings = observabilityWarnings({ NODE_ENV: "production" });
+
+    expect(warnings).toHaveLength(1);
+    expect(warnings[0]).toMatch(/NEXT_PUBLIC_SENTRY_DSN/);
+  });
+
+  it("stays silent in production once a DSN is configured", () => {
+    const warnings = observabilityWarnings({
+      NODE_ENV: "production",
+      NEXT_PUBLIC_SENTRY_DSN: "https://key@o1.ingest.de.sentry.io/2",
+    });
+
+    expect(warnings).toEqual([]);
+  });
+
+  it("stays silent outside production, where Sentry is meant to be off", () => {
+    expect(observabilityWarnings({ NODE_ENV: "development" })).toEqual([]);
+    expect(observabilityWarnings({ NODE_ENV: "test" })).toEqual([]);
+    expect(observabilityWarnings({})).toEqual([]);
   });
 });
 

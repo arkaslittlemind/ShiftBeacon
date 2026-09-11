@@ -60,3 +60,6 @@ CLAUDE.md
 /prototypes/
 
 /lib/generated/prisma
+
+# Sentry Config File
+.env.sentry-build-plugin

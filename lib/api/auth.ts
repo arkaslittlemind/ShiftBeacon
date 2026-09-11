@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { auth0 } from "@/lib/auth0";
 import { getRoleFromSession } from "@/lib/auth";
 import { apiError } from "@/lib/api/response";
+import { identifySentryUser } from "@/lib/observability/identify";
 import {
   findOrCreateCurrentUser,
   OrgNotConfiguredError,
@@ -32,6 +33,7 @@ export async function requireApiUser(options?: {
       email: session.user.email ?? "",
       role,
     });
+    identifySentryUser(user);
     return { ok: true, user };
   } catch (error) {
     if (error instanceof OrgNotConfiguredError) {

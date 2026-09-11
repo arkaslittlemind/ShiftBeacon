@@ -2,6 +2,7 @@ import { cache } from "react";
 import { redirect } from "next/navigation";
 import { auth0 } from "@/lib/auth0";
 import { findOrCreateCurrentUser, type UserWithOrganization } from "@/lib/services/user-service";
+import { identifySentryUser } from "@/lib/observability/identify";
 import type { CurrentUser, Role } from "@/types/user";
 
 export const ROLE_CLAIM = "https://shiftbeacon.app/role";
@@ -33,11 +34,14 @@ export const getCurrentDbUser = cache(async (): Promise<UserWithOrganization | n
     return null;
   }
 
-  return findOrCreateCurrentUser(session.user.sub, {
+  const user = await findOrCreateCurrentUser(session.user.sub, {
     name: session.user.name ?? "",
     email: session.user.email ?? "",
     role: getRoleFromSession(session),
   });
+
+  identifySentryUser(user);
+  return user;
 });
 
 export async function requireRole(

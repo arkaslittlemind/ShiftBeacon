@@ -1,4 +1,5 @@
 import type { NextResponse } from "next/server";
+import * as Sentry from "@sentry/nextjs";
 import { apiError } from "@/lib/api/response";
 
 type RouteHandler<Args extends unknown[]> = (
@@ -21,6 +22,9 @@ export function withRouteHandler<Args extends unknown[]>(
         `[api] unhandled error in ${routeName}:`,
         error instanceof Error ? error.message : error
       );
+      // Only reached once the request has already failed, so this cannot
+      // affect a successful clock-in. Sentry no-ops when disabled.
+      Sentry.captureException(error, { tags: { route: routeName } });
       return apiError(500, "Something went wrong");
     }
   };
