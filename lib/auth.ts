@@ -1,3 +1,4 @@
+import { cache } from "react";
 import { redirect } from "next/navigation";
 import { auth0 } from "@/lib/auth0";
 import { findOrCreateCurrentUser, type UserWithOrganization } from "@/lib/services/user-service";
@@ -11,7 +12,9 @@ export function getRoleFromSession(session: {
   return (session.user[ROLE_CLAIM] as Role | undefined) ?? "CARE_WORKER";
 }
 
-export async function getCurrentUser(): Promise<CurrentUser | null> {
+// cache() dedupes these per request, so a layout and its page calling the
+// same lookup only hit Auth0/Prisma once instead of once each.
+export const getCurrentUser = cache(async (): Promise<CurrentUser | null> => {
   const session = await auth0.getSession();
   if (!session) {
     return null;
@@ -22,9 +25,9 @@ export async function getCurrentUser(): Promise<CurrentUser | null> {
     name: session.user.name ?? "",
     email: session.user.email ?? "",
   };
-}
+});
 
-export async function getCurrentDbUser(): Promise<UserWithOrganization | null> {
+export const getCurrentDbUser = cache(async (): Promise<UserWithOrganization | null> => {
   const session = await auth0.getSession();
   if (!session) {
     return null;
@@ -35,7 +38,7 @@ export async function getCurrentDbUser(): Promise<UserWithOrganization | null> {
     email: session.user.email ?? "",
     role: getRoleFromSession(session),
   });
-}
+});
 
 export async function requireRole(
   role: Role,
