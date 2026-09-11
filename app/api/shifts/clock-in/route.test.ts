@@ -12,6 +12,15 @@ vi.mock("@/lib/services/shift-service", async () => {
   return { ...actual, clockIn: vi.fn() };
 });
 
+// after() defers work past the response; run it inline so the test can assert on it.
+vi.mock("next/server", async () => {
+  const actual = await vi.importActual<typeof import("next/server")>("next/server");
+  return { ...actual, after: (fn: () => unknown) => void fn() };
+});
+
+vi.mock("@/lib/observability/events", () => ({ captureServerEvent: vi.fn() }));
+
+import { captureServerEvent } from "@/lib/observability/events";
 import { requireApiUser } from "@/lib/api/auth";
 import {
   ActiveShiftExistsError,
@@ -24,7 +33,13 @@ import { POST } from "./route";
 const mockedRequireApiUser = vi.mocked(requireApiUser);
 const mockedClockIn = vi.mocked(clockIn);
 
-const okUser = { id: "u1", organizationId: "org1" } as unknown as UserWithOrganization;
+const okUser = {
+  id: "u1",
+  role: "CARE_WORKER",
+  organizationId: "org1",
+  name: "Casey Worker",
+  email: "casey.worker@example.com",
+} as unknown as UserWithOrganization;
 
 function buildRequest(body: unknown) {
   return new Request("http://localhost/api/shifts/clock-in", {
@@ -85,5 +100,78 @@ describe("POST /api/shifts/clock-in", () => {
     expect(response.status).toBe(200);
     expect(body.data.id).toBe("shift1");
     expect(body.data.clockOutAt).toBeNull();
+  });
+
+  it("reports a successful clock-in, flagging the note without its text", async () => {
+    mockedRequireApiUser.mockResolvedValue({ ok: true, user: okUser });
+    mockedClockIn.mockResolvedValue({
+      id: "shift1",
+      clockInAt: new Date("2024-01-08T09:00:00Z"),
+      clockInLatitude: 51.5074,
+      clockInLongitude: -0.1278,
+      clockInNote: "covering handover",
+    } as unknown as Awaited<ReturnType<typeof clockIn>>);
+
+    await POST(
+      buildRequest({
+        latitude: 51.5074,
+        longitude: -0.1278,
+        note: "covering handover",
+      })
+    );
+
+    expect(captureServerEvent).toHaveBeenCalledWith(okUser, {
+      name: "shift_clock_in_succeeded",
+      hasNote: true,
+    });
+  });
+
+  it("reports a perimeter rejection with its reason", async () => {
+    mockedRequireApiUser.mockResolvedValue({ ok: true, user: okUser });
+    mockedClockIn.mockRejectedValue(new OutsidePerimeterError());
+
+    await POST(buildRequest({ latitude: 51.9, longitude: -0.9 }));
+
+    expect(captureServerEvent).toHaveBeenCalledWith(okUser, {
+      name: "shift_clock_in_rejected",
+      reason: "outside_perimeter",
+    });
+  });
+
+  it("reports a duplicate-shift rejection with its reason", async () => {
+    mockedRequireApiUser.mockResolvedValue({ ok: true, user: okUser });
+    mockedClockIn.mockRejectedValue(new ActiveShiftExistsError());
+
+    await POST(buildRequest({ latitude: 51.5074, longitude: -0.1278 }));
+
+    expect(captureServerEvent).toHaveBeenCalledWith(okUser, {
+      name: "shift_clock_in_rejected",
+      reason: "active_shift_exists",
+    });
+  });
+
+  it("never puts a coordinate or note in the event payload", async () => {
+    mockedRequireApiUser.mockResolvedValue({ ok: true, user: okUser });
+    mockedClockIn.mockRejectedValue(new OutsidePerimeterError());
+
+    await POST(
+      buildRequest({ latitude: 51.9, longitude: -0.9, note: "running late" })
+    );
+
+    const event = vi.mocked(captureServerEvent).mock.calls.at(-1)?.[1];
+    const payload = JSON.stringify(event);
+    expect(payload).not.toContain("51.9");
+    expect(payload).not.toContain("running late");
+  });
+
+  it("reports nothing when the caller is not authorized", async () => {
+    mockedRequireApiUser.mockResolvedValue({
+      ok: false,
+      response: apiError(403, "Forbidden"),
+    });
+
+    await POST(buildRequest({ latitude: 0, longitude: 0 }));
+
+    expect(captureServerEvent).not.toHaveBeenCalled();
   });
 });

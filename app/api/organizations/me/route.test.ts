@@ -10,6 +10,15 @@ vi.mock("@/lib/services/organization-service", () => ({
   updateOrganization: vi.fn(),
 }));
 
+// after() defers work past the response; run it inline so the test can assert on it.
+vi.mock("next/server", async () => {
+  const actual = await vi.importActual<typeof import("next/server")>("next/server");
+  return { ...actual, after: (fn: () => unknown) => void fn() };
+});
+
+vi.mock("@/lib/observability/events", () => ({ captureServerEvent: vi.fn() }));
+
+import { captureServerEvent } from "@/lib/observability/events";
 import { requireApiUser } from "@/lib/api/auth";
 import { updateOrganization } from "@/lib/services/organization-service";
 import type { UserWithOrganization } from "@/lib/services/user-service";
@@ -18,19 +27,28 @@ import { PATCH } from "./route";
 const mockedRequireApiUser = vi.mocked(requireApiUser);
 const mockedUpdateOrganization = vi.mocked(updateOrganization);
 
-const managerUser = {
-  id: "manager1",
-  organizationId: "org1",
-} as unknown as UserWithOrganization;
-
-const updatedOrganization = {
+const existingOrganization = {
   id: "org1",
   name: "Riverside Care Home",
   latitude: 51.5074,
   longitude: -0.1278,
-  clockInRadiusMeters: 300,
+  clockInRadiusMeters: 200,
   createdAt: new Date(),
   updatedAt: new Date(),
+} satisfies Organization;
+
+const managerUser = {
+  id: "manager1",
+  role: "MANAGER",
+  organizationId: "org1",
+  name: "Morgan Manager",
+  email: "morgan.manager@example.com",
+  organization: existingOrganization,
+} as unknown as UserWithOrganization;
+
+const updatedOrganization = {
+  ...existingOrganization,
+  clockInRadiusMeters: 300,
 } satisfies Organization;
 
 function buildRequest(body: unknown) {
@@ -94,5 +112,40 @@ describe("PATCH /api/organizations/me", () => {
 
     expect(response.status).toBe(200);
     expect(body.data.clockInRadiusMeters).toBe(300);
+  });
+
+  it("reports which fields changed, never their values", async () => {
+    mockedRequireApiUser.mockResolvedValue({ ok: true, user: managerUser });
+    mockedUpdateOrganization.mockResolvedValue({
+      ...existingOrganization,
+      latitude: 52.2,
+      longitude: 0.12,
+      clockInRadiusMeters: 300,
+    });
+
+    await PATCH(
+      buildRequest({ latitude: 52.2, longitude: 0.12, clockInRadiusMeters: 300 })
+    );
+
+    expect(captureServerEvent).toHaveBeenCalledWith(managerUser, {
+      name: "workplace_configuration_updated",
+      changedName: false,
+      changedLocation: true,
+      changedRadius: true,
+    });
+
+    const payload = JSON.stringify(
+      vi.mocked(captureServerEvent).mock.calls.at(-1)?.[1]
+    );
+    expect(payload).not.toContain("52.2");
+    expect(payload).not.toContain("0.12");
+  });
+
+  it("reports nothing when the body was rejected", async () => {
+    mockedRequireApiUser.mockResolvedValue({ ok: true, user: managerUser });
+
+    await PATCH(buildRequest({}));
+
+    expect(captureServerEvent).not.toHaveBeenCalled();
   });
 });

@@ -14,6 +14,11 @@ const envSchema = z.object({
   NEXT_PUBLIC_SENTRY_DSN: z.string().min(1).optional(),
   SENTRY_ORG: z.string().min(1).optional(),
   SENTRY_PROJECT: z.string().min(1).optional(),
+
+  // NEXT_PUBLIC_ because feature 17b needs these in the browser; 17a reads
+  // them server-side, which works the same way.
+  NEXT_PUBLIC_POSTHOG_PROJECT_TOKEN: z.string().min(1).optional(),
+  NEXT_PUBLIC_POSTHOG_HOST: z.string().min(1).optional(),
 });
 
 export type Env = z.infer<typeof envSchema>;
@@ -34,13 +39,22 @@ export function parseEnv(source: Record<string, string | undefined>): Env {
 export function observabilityWarnings(
   source: Record<string, string | undefined>
 ): string[] {
-  if (source.NODE_ENV !== "production" || source.NEXT_PUBLIC_SENTRY_DSN) {
+  if (source.NODE_ENV !== "production") {
     return [];
   }
 
-  return [
-    "NEXT_PUBLIC_SENTRY_DSN is not set - error monitoring is disabled in production",
-  ];
+  const warnings: string[] = [];
+  if (!source.NEXT_PUBLIC_SENTRY_DSN) {
+    warnings.push(
+      "NEXT_PUBLIC_SENTRY_DSN is not set - error monitoring is disabled in production"
+    );
+  }
+  if (!source.NEXT_PUBLIC_POSTHOG_PROJECT_TOKEN) {
+    warnings.push(
+      "NEXT_PUBLIC_POSTHOG_PROJECT_TOKEN is not set - product analytics are disabled in production"
+    );
+  }
+  return warnings;
 }
 
 let cachedEnv: Env | undefined;

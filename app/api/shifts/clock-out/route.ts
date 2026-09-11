@@ -1,5 +1,7 @@
+import { after } from "next/server";
 import { requireApiUser } from "@/lib/api/auth";
 import { withRouteHandler } from "@/lib/api/handler";
+import { captureServerEvent } from "@/lib/observability/events";
 import { apiError, apiSuccess } from "@/lib/api/response";
 import { parseJsonBody } from "@/lib/api/validate";
 import { NoActiveShiftError, clockOut } from "@/lib/services/shift-service";
@@ -32,6 +34,12 @@ export const POST = withRouteHandler(
         clockOutLongitude: shift.clockOutLongitude,
         clockOutNote: shift.clockOutNote,
       };
+      after(() =>
+        captureServerEvent(result.user, {
+          name: "shift_clock_out_succeeded",
+          hasNote: Boolean(parsed.data.note),
+        })
+      );
       return apiSuccess(response);
     } catch (error) {
       if (error instanceof NoActiveShiftError) {

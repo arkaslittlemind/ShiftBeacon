@@ -51,26 +51,72 @@ describe("parseEnv", () => {
       SENTRY_PROJECT: "a-project",
     });
   });
+
+  it("parses without any PostHog variables", () => {
+    expect(() => parseEnv(validEnv)).not.toThrow();
+  });
+
+  // Optional means optional everywhere. Making observability config required in
+  // production would let a missing key take the whole app down with it.
+  it("parses without observability variables in production too", () => {
+    expect(() =>
+      parseEnv({ ...validEnv, NODE_ENV: "production" })
+    ).not.toThrow();
+  });
+
+  it("keeps PostHog variables when they are present", () => {
+    const withPostHog = {
+      ...validEnv,
+      NEXT_PUBLIC_POSTHOG_PROJECT_TOKEN: "phc_abc123",
+      NEXT_PUBLIC_POSTHOG_HOST: "https://eu.i.posthog.com",
+    };
+
+    expect(parseEnv(withPostHog)).toMatchObject({
+      NEXT_PUBLIC_POSTHOG_PROJECT_TOKEN: "phc_abc123",
+      NEXT_PUBLIC_POSTHOG_HOST: "https://eu.i.posthog.com",
+    });
+  });
 });
 
 describe("observabilityWarnings", () => {
-  it("warns about a missing Sentry DSN in production", () => {
+  const SENTRY_DSN = "https://key@o1.ingest.de.sentry.io/2";
+  const POSTHOG_TOKEN = "phc_abc123";
+
+  it("warns about both missing integrations in production", () => {
     const warnings = observabilityWarnings({ NODE_ENV: "production" });
 
-    expect(warnings).toHaveLength(1);
-    expect(warnings[0]).toMatch(/NEXT_PUBLIC_SENTRY_DSN/);
+    expect(warnings).toHaveLength(2);
+    expect(warnings.join(" ")).toMatch(/NEXT_PUBLIC_SENTRY_DSN/);
+    expect(warnings.join(" ")).toMatch(/NEXT_PUBLIC_POSTHOG_PROJECT_TOKEN/);
   });
 
-  it("stays silent in production once a DSN is configured", () => {
+  it("warns about each integration independently", () => {
+    const withSentryOnly = observabilityWarnings({
+      NODE_ENV: "production",
+      NEXT_PUBLIC_SENTRY_DSN: SENTRY_DSN,
+    });
+    expect(withSentryOnly).toHaveLength(1);
+    expect(withSentryOnly[0]).toMatch(/POSTHOG/);
+
+    const withPostHogOnly = observabilityWarnings({
+      NODE_ENV: "production",
+      NEXT_PUBLIC_POSTHOG_PROJECT_TOKEN: POSTHOG_TOKEN,
+    });
+    expect(withPostHogOnly).toHaveLength(1);
+    expect(withPostHogOnly[0]).toMatch(/SENTRY/);
+  });
+
+  it("stays silent in production once both are configured", () => {
     const warnings = observabilityWarnings({
       NODE_ENV: "production",
-      NEXT_PUBLIC_SENTRY_DSN: "https://key@o1.ingest.de.sentry.io/2",
+      NEXT_PUBLIC_SENTRY_DSN: SENTRY_DSN,
+      NEXT_PUBLIC_POSTHOG_PROJECT_TOKEN: POSTHOG_TOKEN,
     });
 
     expect(warnings).toEqual([]);
   });
 
-  it("stays silent outside production, where Sentry is meant to be off", () => {
+  it("stays silent outside production, where both are meant to be off", () => {
     expect(observabilityWarnings({ NODE_ENV: "development" })).toEqual([]);
     expect(observabilityWarnings({ NODE_ENV: "test" })).toEqual([]);
     expect(observabilityWarnings({})).toEqual([]);

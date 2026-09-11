@@ -1,5 +1,7 @@
+import { after } from "next/server";
 import { requireApiUser } from "@/lib/api/auth";
 import { withRouteHandler } from "@/lib/api/handler";
+import { captureServerEvent } from "@/lib/observability/events";
 import { apiError, apiSuccess } from "@/lib/api/response";
 import { parseJsonBody } from "@/lib/api/validate";
 import {
@@ -40,12 +42,32 @@ export const POST = withRouteHandler(
         clockOutLongitude: null,
         clockOutNote: null,
       };
+      after(() =>
+        captureServerEvent(result.user, {
+          name: "shift_clock_in_succeeded",
+          hasNote: Boolean(parsed.data.note),
+        })
+      );
       return apiSuccess(response);
     } catch (error) {
       if (error instanceof ActiveShiftExistsError) {
+        after(() =>
+          captureServerEvent(result.user, {
+            name: "shift_clock_in_rejected",
+            reason: "active_shift_exists",
+          })
+        );
         return apiError(409, error.message);
       }
       if (error instanceof OutsidePerimeterError) {
+        // The rejection rate is the whole reason this feature exists: these
+        // attempts never become Shift rows, so the database cannot see them.
+        after(() =>
+          captureServerEvent(result.user, {
+            name: "shift_clock_in_rejected",
+            reason: "outside_perimeter",
+          })
+        );
         return apiError(422, error.message);
       }
       throw error;
