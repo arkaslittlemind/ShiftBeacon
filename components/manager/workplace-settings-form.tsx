@@ -4,6 +4,7 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { eyebrowClass } from "@/lib/utils";
+import { captureClientEvent } from "@/lib/observability/client-events";
 import type { OrganizationResponse } from "@/types/organization";
 
 type Status = "idle" | "saving" | "success" | "error";
@@ -40,6 +41,7 @@ export function WorkplaceSettingsForm({
     if (!response.ok) {
       setStatus("error");
       setErrorMessage(body.error.message);
+      captureClientEvent({ name: "workplace_settings_save_failed" });
       return;
     }
 

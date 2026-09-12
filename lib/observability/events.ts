@@ -1,5 +1,6 @@
 import type { ObservabilityActor } from "./actor";
 import { getAnalyticsClient } from "./analytics";
+import { warnAnalyticsFailure } from "./warn";
 
 export type ClockInRejectionReason =
   | "outside_perimeter"
@@ -45,11 +46,6 @@ export async function captureServerEvent(
     });
     await client.flush();
   } catch (error) {
-    // Never surfaces as a failed clock-in, but a permanently dead analytics
-    // pipeline should still be visible in the logs.
-    console.warn(
-      `[analytics] failed to capture ${name}:`,
-      error instanceof Error ? error.message : error
-    );
+    warnAnalyticsFailure(`capture ${name}`, error);
   }
 }

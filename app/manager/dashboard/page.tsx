@@ -11,6 +11,7 @@ import { eyebrowClass } from "@/lib/utils";
 import { getStaffForOrganization, toStaffMemberResponse } from "@/lib/services/staff-service";
 import { getAnalyticsForOrganization } from "@/lib/services/analytics-service";
 import { currentTimeMs } from "@/lib/time";
+import { ManagerViewTracker } from "@/components/observability/manager-view-tracker";
 
 export default async function ManagerDashboardPage() {
   const user = await getCurrentDbUser();
@@ -22,6 +23,7 @@ export default async function ManagerDashboardPage() {
 
   return (
     <>
+      <ManagerViewTracker view="dashboard" />
       <PageHeader
         eyebrow="Manager"
         title="Dashboard"

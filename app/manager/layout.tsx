@@ -2,6 +2,7 @@ import { ForbiddenState } from "@/components/shared/forbidden-state";
 import { ManagerSidebar } from "@/components/shell/manager-sidebar";
 import { ManagerTopbar } from "@/components/shell/manager-topbar";
 import { getCurrentDbUser, requireRole } from "@/lib/auth";
+import { AnalyticsIdentity } from "@/components/observability/analytics-identity";
 
 export default async function ManagerLayout({ children }: { children: React.ReactNode }) {
   const { status, user } = await requireRole("MANAGER", "/manager/dashboard");
@@ -10,6 +11,11 @@ export default async function ManagerLayout({ children }: { children: React.Reac
 
   return (
     <div className="flex min-h-full">
+      <AnalyticsIdentity
+        id={dbUser!.id}
+        role={dbUser!.role}
+        organizationId={dbUser!.organizationId}
+      />
       <ManagerSidebar organizationName={organizationName} />
       <div className="flex flex-1 flex-col">
         <ManagerTopbar user={user} organizationName={organizationName} />

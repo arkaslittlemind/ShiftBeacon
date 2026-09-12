@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
+import { LogoutLink } from "@/components/shell/logout-link";
 import { getCurrentUser } from "@/lib/auth";
 import { cn, eyebrowClass } from "@/lib/utils";
 
@@ -46,7 +47,7 @@ export async function SiteHeader() {
                 Dashboard
               </Link>
               <Button asChild size="sm" variant="outline">
-                <a href="/auth/logout">Log out</a>
+                <LogoutLink>Log out</LogoutLink>
               </Button>
             </>
           ) : (

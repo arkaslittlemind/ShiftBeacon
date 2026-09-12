@@ -4,6 +4,12 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 import { WorkplaceSettingsForm } from "./workplace-settings-form";
 import type { OrganizationResponse } from "@/types/organization";
 
+const captureClientEvent = vi.fn();
+
+vi.mock("@/lib/observability/client-events", () => ({
+  captureClientEvent: (...args: unknown[]) => captureClientEvent(...args),
+}));
+
 const organization: OrganizationResponse = {
   id: "org-1",
   name: "Riverside Care Home",
@@ -14,6 +20,7 @@ const organization: OrganizationResponse = {
 
 beforeEach(() => {
   vi.restoreAllMocks();
+  captureClientEvent.mockReset();
 });
 
 describe("WorkplaceSettingsForm", () => {
@@ -80,5 +87,24 @@ describe("WorkplaceSettingsForm", () => {
       expect(screen.getByRole("alert")).toHaveTextContent("Radius must be a positive number.");
     });
     expect(screen.getByLabelText("Name")).toHaveAttribute("aria-invalid", "true");
+    expect(captureClientEvent).toHaveBeenCalledWith({
+      name: "workplace_settings_save_failed",
+    });
+  });
+
+  it("does not report a failure when the save succeeds", async () => {
+    vi.stubGlobal(
+      "fetch",
+      vi.fn().mockResolvedValue(new Response(JSON.stringify({ data: organization }), { status: 200 }))
+    );
+
+    const user = userEvent.setup();
+    render(<WorkplaceSettingsForm organization={organization} />);
+    await user.click(screen.getByRole("button", { name: "Save" }));
+
+    await waitFor(() => {
+      expect(screen.getByText("Saved.")).toBeInTheDocument();
+    });
+    expect(captureClientEvent).not.toHaveBeenCalled();
   });
 });

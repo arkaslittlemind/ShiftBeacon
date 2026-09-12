@@ -1,6 +1,7 @@
 import { ShieldAlert } from "lucide-react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
+import { LogoutLink } from "@/components/shell/logout-link";
 import type { Role } from "@/types/user";
 
 const AREA: Record<Role, { label: string; href: string }> = {
@@ -27,7 +28,7 @@ export function ForbiddenState({ role }: { role: Role }) {
           <Link href={area.href}>Back to your {area.label} area</Link>
         </Button>
         <Button asChild variant="outline">
-          <a href="/auth/logout">Log out</a>
+          <LogoutLink>Log out</LogoutLink>
         </Button>
       </div>
     </div>

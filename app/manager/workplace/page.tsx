@@ -2,6 +2,7 @@ import { PageHeader } from "@/components/shell/page-header";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { WorkplaceSettingsForm } from "@/components/manager/workplace-settings-form";
 import { getCurrentDbUser } from "@/lib/auth";
+import { ManagerViewTracker } from "@/components/observability/manager-view-tracker";
 
 export default async function WorkplacePage() {
   const user = await getCurrentDbUser();
@@ -9,6 +10,7 @@ export default async function WorkplacePage() {
 
   return (
     <>
+      <ManagerViewTracker view="workplace_settings" />
       <PageHeader
         eyebrow="Manager"
         title="Workplace"
