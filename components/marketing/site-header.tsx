@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
+import { BrandLockup } from "@/components/brand/brand-lockup";
 import { LogoutLink } from "@/components/shell/logout-link";
 import { getCurrentUser } from "@/lib/auth";
 import { cn, eyebrowClass } from "@/lib/utils";
@@ -19,10 +20,9 @@ export async function SiteHeader() {
       <div className="mx-auto flex max-w-6xl items-center justify-between px-6 py-4 md:px-10">
         <Link
           href="/"
-          className="flex items-center gap-2 rounded-sm font-heading text-lg font-bold outline-none focus-visible:ring-3 focus-visible:ring-ring/50"
+          className="rounded-sm outline-none focus-visible:ring-3 focus-visible:ring-ring/50"
         >
-          <span className="size-2.5 border-2 border-border bg-primary" />
-          ShiftBeacon
+          <BrandLockup />
         </Link>
 
         <nav className={cn(eyebrowClass, "hidden items-center gap-8 md:flex")}>

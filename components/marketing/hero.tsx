@@ -1,4 +1,5 @@
 import { Button } from "@/components/ui/button";
+import { ShiftBeaconMark } from "@/components/brand/shift-beacon-mark";
 import { Card } from "@/components/ui/card";
 
 export function Hero() {
@@ -89,7 +90,7 @@ export function Hero() {
 
           <div className="absolute right-7.5 bottom-0 flex h-[150px] w-[210px] items-center justify-center border-(length:--border-w) border-border bg-accent shadow-lg">
             <div className="flex size-22.5 items-center justify-center rounded-full border-(length:--border-w) border-dashed border-border">
-              <span className="size-3.5 border-2 border-border bg-primary" />
+              <ShiftBeaconMark className="h-9 w-auto" />
             </div>
           </div>
         </div>

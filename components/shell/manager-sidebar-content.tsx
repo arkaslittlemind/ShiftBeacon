@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { BrandLockup } from "@/components/brand/brand-lockup";
 import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
 
@@ -16,10 +17,9 @@ export function ManagerSidebarContent({ organizationName }: { organizationName: 
     <div className="flex h-full flex-col py-5">
       <Link
         href="/manager/dashboard"
-        className="mb-2.5 flex items-center gap-2 rounded-sm border-b-2 border-background/15 px-5 pb-5.5 font-heading text-lg font-bold outline-none focus-visible:ring-3 focus-visible:ring-ring/50"
+        className="mb-2.5 block rounded-sm border-b-2 border-background/15 px-5 pb-5.5 outline-none focus-visible:ring-3 focus-visible:ring-ring/50"
       >
-        <span className="size-2.5 border-2 border-background bg-primary" />
-        ShiftBeacon
+        <BrandLockup variant="on-ink" />
       </Link>
 
       <div className="flex flex-col">

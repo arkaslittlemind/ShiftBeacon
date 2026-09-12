@@ -14,6 +14,7 @@ import {
   SheetTrigger,
 } from "@/components/ui/sheet";
 import { UserMenu } from "@/components/shell/user-menu";
+import { BrandLockup } from "@/components/brand/brand-lockup";
 import type { CurrentUser } from "@/types/user";
 
 const NAV_LINKS = [{ href: "/worker/home", label: "Home" }];
@@ -26,10 +27,9 @@ export function WorkerTopNav({ user }: { user: CurrentUser }) {
       <div className="mx-auto flex max-w-5xl items-center justify-between px-6 py-4 md:px-10">
         <Link
           href="/worker/home"
-          className="flex items-center gap-2 rounded-sm font-heading text-lg font-bold outline-none focus-visible:ring-3 focus-visible:ring-ring/50"
+          className="rounded-sm outline-none focus-visible:ring-3 focus-visible:ring-ring/50"
         >
-          <span className="size-2.5 border-2 border-border bg-primary" />
-          ShiftBeacon
+          <BrandLockup />
         </Link>
 
         <nav className={cn(eyebrowClass, "hidden items-center gap-7 md:flex")}>
@@ -61,9 +61,8 @@ export function WorkerTopNav({ user }: { user: CurrentUser }) {
             </SheetTrigger>
             <SheetContent side="left">
               <SheetHeader>
-                <SheetTitle className="flex items-center gap-2">
-                  <span className="size-2.5 border-2 border-border bg-primary" />
-                  ShiftBeacon
+                <SheetTitle>
+                  <BrandLockup />
                 </SheetTitle>
               </SheetHeader>
               <nav className="flex flex-col gap-1 px-4">

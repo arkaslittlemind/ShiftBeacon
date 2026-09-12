@@ -1,3 +1,5 @@
+import { BrandLockup } from "@/components/brand/brand-lockup";
+
 const FOOTER_LINKS = [
   {
     heading: "Product",
@@ -30,10 +32,7 @@ export function SiteFooter() {
       <div className="mx-auto max-w-6xl px-6 md:px-10">
         <div className="mb-10 grid gap-8 md:grid-cols-[1.4fr_repeat(3,1fr)]">
           <div>
-            <div className="flex items-center gap-2 font-heading text-lg font-bold">
-              <span className="size-2.5 border-2 border-border bg-primary" />
-              ShiftBeacon
-            </div>
+            <BrandLockup />
             <p className="mt-3.5 max-w-[32ch] text-[13.5px] text-muted-foreground">
               Location-verified shift attendance and analytics for healthcare
               teams.

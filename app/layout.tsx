@@ -17,9 +17,6 @@ export const metadata: Metadata = {
   title: "ShiftBeacon",
   description:
     "Location-aware shift management for healthcare teams: geofenced clock-in/out, live staff visibility, and attendance analytics.",
-  icons: {
-    apple: "/icons/apple-touch-icon.png",
-  },
   appleWebApp: {
     title: "ShiftBeacon",
     statusBarStyle: "black-translucent",
