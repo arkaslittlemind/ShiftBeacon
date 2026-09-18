@@ -65,10 +65,40 @@ async function findLatestDayWithNotes(
   return latest ? toUtcDateKey(latest.clockInAt) : null;
 }
 
+// Coalesces concurrent calls for the same organization/date within this
+// process: two requests that both miss the cache before either has written it
+// (two managers on the same dashboard, one manager with two tabs, a double
+// navigation) would otherwise each spend a vendor call for what should be one
+// digest, and free-tier quota is scarce enough that this matters in practice.
+//
+// This only helps within one warm process. On a platform that spins up
+// separate instances for concurrent requests, two different instances can
+// still both miss the cache and both generate - the map has no visibility
+// across processes. Still a real improvement for the common case (a long-
+// running server, or two requests landing on the same warm instance).
+const inFlightDigests = new Map<string, Promise<HandoverDigestResult>>();
+
+export function getHandoverDigest(
+  organizationId: string,
+  date: string
+): Promise<HandoverDigestResult> {
+  const key = `${organizationId}:${date}`;
+  const existing = inFlightDigests.get(key);
+  if (existing) {
+    return existing;
+  }
+
+  const promise = loadOrGenerateDigest(organizationId, date).finally(() => {
+    inFlightDigests.delete(key);
+  });
+  inFlightDigests.set(key, promise);
+  return promise;
+}
+
 // Never throws. A vendor error, a schema violation, and a missing key all come
 // back as "unavailable", so no caller can accidentally make the dashboard
 // depend on the vendor being up.
-export async function getHandoverDigest(
+async function loadOrGenerateDigest(
   organizationId: string,
   date: string
 ): Promise<HandoverDigestResult> {

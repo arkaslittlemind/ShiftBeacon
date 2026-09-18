@@ -95,14 +95,19 @@ function digestRow(overrides: Partial<HandoverDigestRow> = {}): HandoverDigestRo
   };
 }
 
+// Shared baseline for every describe block below: a fresh mock slate, a
+// configured vendor, and an empty cache. Callers that want a well-formed
+// generation ready to go layer givenShifts + mockedGenerateJson on top.
+function resetHandoverMocks() {
+  vi.clearAllMocks();
+  vi.spyOn(console, "warn").mockImplementation(() => {});
+  mockedIsAiConfigured.mockReturnValue(true);
+  mockedDigestFindUnique.mockResolvedValue(null);
+  mockedDigestUpsert.mockResolvedValue(digestRow());
+}
+
 describe("getHandoverDigest", () => {
-  beforeEach(() => {
-    vi.clearAllMocks();
-    vi.spyOn(console, "warn").mockImplementation(() => {});
-    mockedIsAiConfigured.mockReturnValue(true);
-    mockedDigestFindUnique.mockResolvedValue(null);
-    mockedDigestUpsert.mockResolvedValue(digestRow());
-  });
+  beforeEach(resetHandoverMocks);
 
   it("returns the validated digest for a well-formed response", async () => {
     givenShifts(shiftsWithNotes);
@@ -235,11 +240,7 @@ describe("getHandoverDigest", () => {
 
 describe("getHandoverDigest caching", () => {
   beforeEach(() => {
-    vi.clearAllMocks();
-    vi.spyOn(console, "warn").mockImplementation(() => {});
-    mockedIsAiConfigured.mockReturnValue(true);
-    mockedDigestFindUnique.mockResolvedValue(null);
-    mockedDigestUpsert.mockResolvedValue(digestRow());
+    resetHandoverMocks();
     givenShifts(shiftsWithNotes);
     mockedGenerateJson.mockResolvedValue(wellFormedDigest);
   });
@@ -301,6 +302,62 @@ describe("getHandoverDigest caching", () => {
   });
 });
 
+// F-06: genuine concurrency (Promise.all, no intermediate await), unlike the
+// caching describe block above, which only ever awaits the first call to
+// finish before starting the second.
+describe("getHandoverDigest concurrency (F-06)", () => {
+  beforeEach(() => {
+    resetHandoverMocks();
+    givenShifts(shiftsWithNotes);
+    mockedGenerateJson.mockResolvedValue(wellFormedDigest);
+  });
+
+  it("coalesces two concurrent calls for the same organization and date into one vendor call", async () => {
+    const [first, second] = await Promise.all([
+      getHandoverDigest("org1", DATE),
+      getHandoverDigest("org1", DATE),
+    ]);
+
+    expect(mockedGenerateJson).toHaveBeenCalledTimes(1);
+    expect(mockedDigestUpsert).toHaveBeenCalledTimes(1);
+    expect(first).toEqual(second);
+    expect(first).toMatchObject({ status: "ok", digest: wellFormedDigest });
+  });
+
+  it("does not coalesce concurrent calls for different dates on the same organization", async () => {
+    await Promise.all([
+      getHandoverDigest("org1", "2026-09-17"),
+      getHandoverDigest("org1", "2026-09-16"),
+    ]);
+
+    expect(mockedGenerateJson).toHaveBeenCalledTimes(2);
+  });
+
+  it("does not coalesce concurrent calls for different organizations on the same date", async () => {
+    await Promise.all([
+      getHandoverDigest("org1", DATE),
+      getHandoverDigest("org2", DATE),
+    ]);
+
+    expect(mockedGenerateJson).toHaveBeenCalledTimes(2);
+  });
+
+  // The in-flight entry must clear once settled, or a later call for the same
+  // key would keep reusing a stale promise instead of reading what the cache
+  // actually holds by then.
+  it("reads the persisted cache on a later call rather than reusing a stale in-flight promise", async () => {
+    await getHandoverDigest("org1", DATE);
+    mockedDigestFindUnique.mockResolvedValue(
+      digestRow({ generatedAt: new Date("2026-09-18T09:00:00Z") })
+    );
+
+    const second = await getHandoverDigest("org1", DATE);
+
+    expect(mockedGenerateJson).toHaveBeenCalledTimes(1);
+    expect(second).toMatchObject({ generatedAt: new Date("2026-09-18T09:00:00Z") });
+  });
+});
+
 describe("getLatestHandoverDigest", () => {
   // The first shift.findMany call picks the day; the second loads that day.
   function givenCandidatesThenDay(candidates: Shift[], day: Shift[]) {
@@ -309,11 +366,7 @@ describe("getLatestHandoverDigest", () => {
   }
 
   beforeEach(() => {
-    vi.clearAllMocks();
-    vi.spyOn(console, "warn").mockImplementation(() => {});
-    mockedIsAiConfigured.mockReturnValue(true);
-    mockedDigestFindUnique.mockResolvedValue(null);
-    mockedDigestUpsert.mockResolvedValue(digestRow());
+    resetHandoverMocks();
     mockedGenerateJson.mockResolvedValue(wellFormedDigest);
   });
 
