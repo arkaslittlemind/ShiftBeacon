@@ -12,7 +12,7 @@ export function PageHeader({
       <p className="mb-1.5 font-heading text-xs font-bold tracking-wide text-accent-dark uppercase">
         {eyebrow}
       </p>
-      <h1 className="text-2xl font-bold md:text-3xl">{title}</h1>
+      <h1 className="text-2xl font-bold tracking-tight leading-tight md:text-3xl">{title}</h1>
       {description && (
         <p className="mt-1 text-sm text-muted-foreground">{description}</p>
       )}
