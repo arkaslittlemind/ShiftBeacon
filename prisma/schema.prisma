@@ -21,8 +21,26 @@ model Organization {
   createdAt           DateTime @default(now())
   updatedAt           DateTime @updatedAt
 
-  users  User[]
-  shifts Shift[]
+  users   User[]
+  shifts  Shift[]
+  digests HandoverDigest[]
+}
+
+// Persisted rather than held in memory: on free-tier quota, a cache that empties
+// on every cold start is not a cache. Storing it also gives the manager an
+// honest "generated at" instead of one that resets when the process does.
+model HandoverDigest {
+  id             String   @id @default(cuid())
+  organizationId String
+  date           String
+  summary        String
+  keyPoints      String[]
+  flags          String[]
+  generatedAt    DateTime @default(now())
+
+  organization Organization @relation(fields: [organizationId], references: [id])
+
+  @@unique([organizationId, date])
 }
 
 model User {

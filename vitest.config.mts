@@ -5,6 +5,13 @@ export default defineConfig({
   resolve: {
     alias: {
       "@": path.resolve(import.meta.dirname),
+      // Next.js handles this marker import itself and never loads the package,
+      // but under Vitest the real module throws on import. Point it at the
+      // package's own no-op build so server-only modules stay testable.
+      "server-only": path.resolve(
+        import.meta.dirname,
+        "node_modules/server-only/empty.js"
+      ),
     },
   },
   test: {

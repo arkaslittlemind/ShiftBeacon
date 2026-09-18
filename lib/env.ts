@@ -19,6 +19,10 @@ const envSchema = z.object({
   // them server-side, which works the same way.
   NEXT_PUBLIC_POSTHOG_PROJECT_TOKEN: z.string().min(1).optional(),
   NEXT_PUBLIC_POSTHOG_HOST: z.string().min(1).optional(),
+
+  // Optional for the same reason, and deliberately not NEXT_PUBLIC_: an AI key
+  // in the browser bundle is a key handed to anyone who views source.
+  GEMINI_API_KEY: z.string().min(1).optional(),
 });
 
 export type Env = z.infer<typeof envSchema>;
@@ -35,8 +39,10 @@ export function parseEnv(source: Record<string, string | undefined>): Env {
 }
 
 // Optional config can't fail the boot, so a production deploy missing its DSN
-// would otherwise look healthy while silently reporting nothing.
-export function observabilityWarnings(
+// would otherwise look healthy while silently reporting nothing. Covers every
+// optional third-party integration, not just observability, so there stays one
+// list and one call site as more of them are added.
+export function optionalIntegrationWarnings(
   source: Record<string, string | undefined>
 ): string[] {
   if (source.NODE_ENV !== "production") {
@@ -52,6 +58,11 @@ export function observabilityWarnings(
   if (!source.NEXT_PUBLIC_POSTHOG_PROJECT_TOKEN) {
     warnings.push(
       "NEXT_PUBLIC_POSTHOG_PROJECT_TOKEN is not set - product analytics are disabled in production"
+    );
+  }
+  if (!source.GEMINI_API_KEY) {
+    warnings.push(
+      "GEMINI_API_KEY is not set - the AI handover digest is disabled in production"
     );
   }
   return warnings;

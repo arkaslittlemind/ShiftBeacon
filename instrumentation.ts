@@ -1,5 +1,5 @@
 import * as Sentry from "@sentry/nextjs";
-import { getEnv, observabilityWarnings } from "@/lib/env";
+import { getEnv, optionalIntegrationWarnings } from "@/lib/env";
 
 // Runs once when the server starts (dev and prod), before it accepts any
 // requests - this is what makes a missing env var fail fast instead of only
@@ -7,8 +7,8 @@ import { getEnv, observabilityWarnings } from "@/lib/env";
 export async function register() {
   if (process.env.NEXT_RUNTIME === "nodejs") {
     getEnv();
-    for (const warning of observabilityWarnings(process.env)) {
-      console.warn(`[observability] ${warning}`);
+    for (const warning of optionalIntegrationWarnings(process.env)) {
+      console.warn(`[config] ${warning}`);
     }
     await import("./sentry.server.config");
   }

@@ -1,3 +1,4 @@
+import { Suspense } from "react";
 import { Users } from "lucide-react";
 import { PageHeader } from "@/components/shell/page-header";
 import { EmptyState } from "@/components/shared/empty-state";
@@ -12,6 +13,10 @@ import { getStaffForOrganization, toStaffMemberResponse } from "@/lib/services/s
 import { getAnalyticsForOrganization } from "@/lib/services/analytics-service";
 import { currentTimeMs } from "@/lib/time";
 import { ManagerViewTracker } from "@/components/observability/manager-view-tracker";
+import {
+  HandoverDigestCardSkeleton,
+  HandoverDigestSection,
+} from "@/components/manager/handover-digest-card";
 
 export default async function ManagerDashboardPage() {
   const user = await getCurrentDbUser();
@@ -34,6 +39,13 @@ export default async function ManagerDashboardPage() {
           averageHoursPerDay={analytics.averageHoursPerDay}
           windowDays={analytics.windowDays}
         />
+      </div>
+      {/* Suspense, so a slow or unreachable vendor delays this card and not
+          the staff table or the charts. */}
+      <div className="mb-6">
+        <Suspense fallback={<HandoverDigestCardSkeleton />}>
+          <HandoverDigestSection organizationId={organization.id} />
+        </Suspense>
       </div>
       <div className="mb-6 grid gap-4 lg:grid-cols-2">
         <Card>

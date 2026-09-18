@@ -180,6 +180,7 @@ npm run dev                   # http://localhost:3000
 | `AUTH0_DOMAIN`, `AUTH0_CLIENT_ID`, `AUTH0_CLIENT_SECRET`, `AUTH0_SECRET` | Auth0 SDK configuration |
 | `APP_BASE_URL` | Auth0 callback/logout base URL (`http://localhost:3000` locally) |
 | `DATABASE_URL` | PostgreSQL connection string |
+| `GEMINI_API_KEY` | Optional, server-side only - the AI shift handover digest. Absent means the digest card reads as unavailable and nothing else changes |
 | `E2E_WORKER_EMAIL`, `E2E_WORKER_PASSWORD`, `E2E_MANAGER_EMAIL`, `E2E_MANAGER_PASSWORD` | Playwright e2e suite only - real Auth0 test accounts (the manager account needs `app_metadata.role = "MANAGER"` in the Auth0 dashboard) |
 
 All required variables are validated at startup/build time; the app fails
@@ -195,6 +196,7 @@ fast with a clear error if one is missing.
 | `npm run lint` | ESLint |
 | `npm test` | Unit/API/component tests (Vitest) |
 | `npm run test:e2e` | End-to-end tests (Playwright, Chromium) |
+| `npm run test:evals` | AI handover digest evals against the real Gemini API (needs `GEMINI_API_KEY`) |
 | `docker compose up -d` | Start local Postgres (`localhost:51214`) |
 
 ## Testing
@@ -207,6 +209,30 @@ fast with a clear error if one is missing.
 - **End-to-end tests** (Playwright): the full worker clock-in/out journey,
   manager staff drill-down, and manager workplace configuration, against a
   real Auth0 login.
+- **AI digest evals** (`npm run test:evals`): 25 hand-written golden cases
+  scored for schema validity and key-fact recall against the real Gemini API.
+  Separate from `npm test` because they spend free-tier quota.
+
+## AI shift handover digest
+
+The manager dashboard summarizes a day's clock-in and clock-out notes into a
+handover digest. `GEMINI_API_KEY` is optional everywhere: without it the card
+reads as unavailable and nothing else about the app changes. Digests are cached
+per organization per day, and the card summarizes the most recent day that
+actually has notes, labelled with that date.
+
+Note text is scrubbed server-side immediately before the request leaves the
+app (`lib/ai/scrub-notes.ts`), in one shared place so no call site can skip it.
+Coordinates, distances, emails, `auth0UserId`, and internal ids are never sent.
+
+**The scrubber is not total, and should not be treated as if it were.** It
+redacts staff names by matching the organization's own user roster, plus email
+addresses and phone numbers. It therefore cannot reliably catch a *resident's*
+name typed into a note by a worker, and it skips roster names shorter than
+three characters, which would otherwise match ordinary prose. The free tier
+also permits training and human review, so anything sent is best treated as
+permanently disclosed. This is why the deployed demo runs on synthetic seeded
+notes rather than real ones.
 
 ## Project structure
 

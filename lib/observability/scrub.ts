@@ -1,4 +1,5 @@
 import type { Event } from "@sentry/nextjs";
+import { EMAIL_PATTERN } from "@/lib/redaction";
 
 export const REDACTED = "[redacted]";
 
@@ -43,10 +44,8 @@ function isSensitiveKey(key: string): boolean {
   );
 }
 
-const EMAIL = /[^\s@<>()[\]{},;:"']+@[^\s@<>()[\]{},;:"']+\.[a-z]{2,}/gi;
-
 function redactEmails(value: string): string {
-  return value.replace(EMAIL, REDACTED);
+  return value.replace(EMAIL_PATTERN, REDACTED);
 }
 
 function scrubValue(value: unknown): unknown {

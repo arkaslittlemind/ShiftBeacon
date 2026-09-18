@@ -39,6 +39,11 @@ presence, shift history, and attendance analytics.
 - Unit tests (Vitest): `npm test`
 - E2E (Playwright, Chromium): `npm run test:e2e` - run only when explicitly
   instructed, not automatically after every step or feature
+- Seed data: `npx prisma db seed` (idempotent; reuses the existing organization)
+- AI digest evals: `npm run test:evals` - run only when explicitly instructed.
+  Calls the real Gemini API and spends free-tier quota, so it is deliberately
+  outside `npm test`. Needs `GEMINI_API_KEY`; exits non-zero on failure and
+  prints per-case pass/fail plus an aggregate key-fact recall score.
 
 A `test` command is declared, so unit tests are a gate: any build step that
 adds logic-bearing code (parsers, formatters, validators, service functions -

@@ -1,8 +1,8 @@
 import { prisma } from "@/lib/prisma";
+import { MS_PER_DAY } from "@/lib/time";
 import type { AnalyticsResponse } from "@/types/analytics";
 
 const WINDOW_DAYS = 7;
-const MS_PER_DAY = 24 * 60 * 60 * 1000;
 
 type ShiftInput = {
   userId: string;
@@ -15,7 +15,10 @@ type StaffInput = {
   name: string;
 };
 
-function toUtcDateKey(date: Date): string {
+// Exported so the handover digest buckets a "day" exactly as the charts do.
+// Two conventions would put the digest and the chart above it a day apart at
+// the boundary.
+export function toUtcDateKey(date: Date): string {
   return date.toISOString().slice(0, 10);
 }
 

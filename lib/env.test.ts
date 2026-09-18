@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import { observabilityWarnings, parseEnv } from "./env";
+import { optionalIntegrationWarnings, parseEnv } from "./env";
 
 const validEnv = {
   AUTH0_DOMAIN: "example.auth0.com",
@@ -64,6 +64,16 @@ describe("parseEnv", () => {
     ).not.toThrow();
   });
 
+  it("parses without a Gemini key, which disables the digest rather than the app", () => {
+    expect(() => parseEnv(validEnv)).not.toThrow();
+  });
+
+  it("keeps the Gemini key when it is present", () => {
+    expect(parseEnv({ ...validEnv, GEMINI_API_KEY: "gemini-key" })).toMatchObject(
+      { GEMINI_API_KEY: "gemini-key" }
+    );
+  });
+
   it("keeps PostHog variables when they are present", () => {
     const withPostHog = {
       ...validEnv,
@@ -78,48 +88,65 @@ describe("parseEnv", () => {
   });
 });
 
-describe("observabilityWarnings", () => {
+describe("optionalIntegrationWarnings", () => {
   const SENTRY_DSN = "https://key@o1.ingest.de.sentry.io/2";
   const POSTHOG_TOKEN = "phc_abc123";
+  const GEMINI_KEY = "gemini-key";
 
-  it("warns about both missing integrations in production", () => {
-    const warnings = observabilityWarnings({ NODE_ENV: "production" });
+  it("warns about every missing integration in production", () => {
+    const warnings = optionalIntegrationWarnings({ NODE_ENV: "production" });
 
-    expect(warnings).toHaveLength(2);
+    expect(warnings).toHaveLength(3);
     expect(warnings.join(" ")).toMatch(/NEXT_PUBLIC_SENTRY_DSN/);
     expect(warnings.join(" ")).toMatch(/NEXT_PUBLIC_POSTHOG_PROJECT_TOKEN/);
+    expect(warnings.join(" ")).toMatch(/GEMINI_API_KEY/);
   });
 
   it("warns about each integration independently", () => {
-    const withSentryOnly = observabilityWarnings({
+    const configured = {
       NODE_ENV: "production",
       NEXT_PUBLIC_SENTRY_DSN: SENTRY_DSN,
-    });
-    expect(withSentryOnly).toHaveLength(1);
-    expect(withSentryOnly[0]).toMatch(/POSTHOG/);
-
-    const withPostHogOnly = observabilityWarnings({
-      NODE_ENV: "production",
       NEXT_PUBLIC_POSTHOG_PROJECT_TOKEN: POSTHOG_TOKEN,
+      GEMINI_API_KEY: GEMINI_KEY,
+    };
+
+    const withoutSentry = optionalIntegrationWarnings({
+      ...configured,
+      NEXT_PUBLIC_SENTRY_DSN: undefined,
     });
-    expect(withPostHogOnly).toHaveLength(1);
-    expect(withPostHogOnly[0]).toMatch(/SENTRY/);
+    expect(withoutSentry).toHaveLength(1);
+    expect(withoutSentry[0]).toMatch(/SENTRY/);
+
+    const withoutPostHog = optionalIntegrationWarnings({
+      ...configured,
+      NEXT_PUBLIC_POSTHOG_PROJECT_TOKEN: undefined,
+    });
+    expect(withoutPostHog).toHaveLength(1);
+    expect(withoutPostHog[0]).toMatch(/POSTHOG/);
+
+    const withoutGemini = optionalIntegrationWarnings({
+      ...configured,
+      GEMINI_API_KEY: undefined,
+    });
+    expect(withoutGemini).toHaveLength(1);
+    expect(withoutGemini[0]).toMatch(/GEMINI_API_KEY/);
   });
 
-  it("stays silent in production once both are configured", () => {
-    const warnings = observabilityWarnings({
+  it("stays silent in production once all are configured", () => {
+    const warnings = optionalIntegrationWarnings({
       NODE_ENV: "production",
       NEXT_PUBLIC_SENTRY_DSN: SENTRY_DSN,
       NEXT_PUBLIC_POSTHOG_PROJECT_TOKEN: POSTHOG_TOKEN,
+      GEMINI_API_KEY: GEMINI_KEY,
     });
 
     expect(warnings).toEqual([]);
   });
 
-  it("stays silent outside production, where both are meant to be off", () => {
-    expect(observabilityWarnings({ NODE_ENV: "development" })).toEqual([]);
-    expect(observabilityWarnings({ NODE_ENV: "test" })).toEqual([]);
-    expect(observabilityWarnings({})).toEqual([]);
+  it("stays silent outside production, where they are meant to be off", () => {
+    expect(optionalIntegrationWarnings({ NODE_ENV: "development" })).toEqual([]);
+    expect(optionalIntegrationWarnings({ NODE_ENV: "test" })).toEqual([]);
+    expect(optionalIntegrationWarnings({})).toEqual([]);
   });
 });
 
