@@ -9,6 +9,7 @@ vi.mock("@/lib/prisma", () => ({
 }));
 
 import { prisma } from "@/lib/prisma";
+import { Prisma } from "@/lib/generated/prisma/client";
 import {
   ActiveShiftExistsError,
   NoActiveShiftError,
@@ -115,6 +116,26 @@ describe("clockIn", () => {
         clockInNote: "Covering handover",
       }),
     });
+  });
+
+  it("throws ActiveShiftExistsError when a concurrent request wins the unique-constraint race", async () => {
+    mockedFindFirst.mockResolvedValue(null);
+    mockedFindOrg.mockResolvedValue(organization);
+    const inside = metersNorth(
+      organization.latitude,
+      organization.longitude,
+      organization.clockInRadiusMeters - 50
+    );
+    mockedCreate.mockRejectedValue(
+      new Prisma.PrismaClientKnownRequestError(
+        "Unique constraint failed on the fields: (`userId`)",
+        { code: "P2002", clientVersion: "test" }
+      )
+    );
+
+    await expect(
+      clockIn("u1", "org1", { latitude: inside.lat, longitude: inside.lon })
+    ).rejects.toThrow(ActiveShiftExistsError);
   });
 });
 

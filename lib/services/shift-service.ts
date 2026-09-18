@@ -1,6 +1,9 @@
 import { prisma } from "@/lib/prisma";
+import { Prisma } from "@/lib/generated/prisma/client";
 import { haversineDistanceMeters } from "@/lib/geo";
 import type { ClockInInput, ClockOutInput, ShiftResponse } from "@/types/shift";
+
+const ACTIVE_SHIFT_UNIQUE_CONSTRAINT_ERROR_CODE = "P2002";
 
 const HISTORY_LIMIT = 50;
 
@@ -88,16 +91,29 @@ export async function clockIn(
     throw new OutsidePerimeterError();
   }
 
-  return prisma.shift.create({
-    data: {
-      userId,
-      organizationId,
-      clockInAt: new Date(),
-      clockInLatitude: input.latitude,
-      clockInLongitude: input.longitude,
-      clockInNote: input.note,
-    },
-  });
+  try {
+    return await prisma.shift.create({
+      data: {
+        userId,
+        organizationId,
+        clockInAt: new Date(),
+        clockInLatitude: input.latitude,
+        clockInLongitude: input.longitude,
+        clockInNote: input.note,
+      },
+    });
+  } catch (error) {
+    // A concurrent request can pass the findFirst check above before either
+    // has written a row; the partial unique index then rejects the loser at
+    // the DB layer instead of the pre-check, so surface the same friendly error.
+    if (
+      error instanceof Prisma.PrismaClientKnownRequestError &&
+      error.code === ACTIVE_SHIFT_UNIQUE_CONSTRAINT_ERROR_CODE
+    ) {
+      throw new ActiveShiftExistsError();
+    }
+    throw error;
+  }
 }
 
 export async function clockOut(userId: string, input: ClockOutInput) {
