@@ -45,7 +45,7 @@ export function ManagerSidebarContent({ organizationName }: { organizationName: 
         </strong>
         <Link
           href="/manager/workplace"
-          className="rounded-sm underline underline-offset-2 outline-none transition-colors duration-150 ease-in-out hover:text-background focus-visible:ring-3 focus-visible:ring-ring/50"
+          className="rounded-sm underline underline-offset-2 outline-none transition-colors duration-150 ease hover:text-background focus-visible:ring-3 focus-visible:ring-ring/50"
         >
           Edit in Workplace settings
         </Link>

@@ -86,7 +86,7 @@ function Banner({
   return (
     <div
       className={cn(
-        "flex items-center gap-3 rounded-md border-(length:--border-w) border-border p-4 shadow-md",
+        "flex items-center gap-3 rounded-md border-(length:--border-w) border-border p-4 shadow-md transition-colors duration-200 ease",
         tone === "inside" && "bg-accent text-accent-foreground",
         tone === "outside" && "bg-danger text-danger-ink",
         tone === "loading" && "bg-card text-muted-foreground"

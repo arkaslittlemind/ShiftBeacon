@@ -2,6 +2,18 @@
 @import "tw-animate-css";
 @import "shadcn/tailwind.css";
 
+/* Redefines the built-in `hover:` variant so every hover: utility in the
+   app only fires on hover-capable, fine-pointer devices. Without this,
+   tapping on touch triggers :hover and it "sticks" until the next tap
+   elsewhere - ShiftBeacon's worker flow is mobile-first. */
+@custom-variant hover {
+  @media (hover: hover) and (pointer: fine) {
+    &:hover {
+      @slot;
+    }
+  }
+}
+
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
@@ -98,6 +110,15 @@
   /* border widths, consumed via arbitrary-value utilities e.g. border-(--border-w) */
   --border-w: 3px;
   --border-w-lg: 4px;
+
+  /* strong custom easing curves for deliberate motion (entrances/exits,
+     on-screen movement) - built-in CSS easings are too weak. Consumed via
+     arbitrary-value utilities e.g. ease-(--ease-out). Hover/color
+     transitions use the plain `ease` keyword instead - see coding-standards
+     animation guidance. */
+  --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
+  --ease-in-out: cubic-bezier(0.77, 0, 0.175, 1);
+  --ease-drawer: cubic-bezier(0.32, 0.72, 0, 1);
 }
 
 @layer base {
@@ -136,6 +157,12 @@
    override. */
 ::view-transition {
   pointer-events: none;
+}
+
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation-duration: 200ms;
+  animation-timing-function: var(--ease-out);
 }
 
 @media (prefers-reduced-motion: reduce) {

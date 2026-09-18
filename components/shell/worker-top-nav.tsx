@@ -38,7 +38,7 @@ export function WorkerTopNav({ user }: { user: CurrentUser }) {
               key={link.href}
               href={link.href}
               className={cn(
-                "rounded-sm outline-none transition-colors duration-150 ease-in-out hover:text-foreground focus-visible:ring-3 focus-visible:ring-ring/50",
+                "rounded-sm outline-none transition-colors duration-150 ease hover:text-foreground focus-visible:ring-3 focus-visible:ring-ring/50",
                 pathname === link.href && "text-foreground"
               )}
             >
