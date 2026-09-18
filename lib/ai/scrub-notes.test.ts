@@ -97,3 +97,58 @@ describe("scrubNote", () => {
     );
   });
 });
+
+// F-05: a roster name that is also an ordinary English word (Casey
+// "Worker", Morgan "Manager") was being redacted every time the word
+// appeared as prose, not just when it named someone.
+describe("scrubNote - common-word roster names (F-05)", () => {
+  const commonWordRoster = ["Casey Worker", "Morgan Manager"];
+
+  it("leaves a lowercase common word alone, even though it is also a surname", () => {
+    expect(
+      scrubNote(
+        "Covered by an agency worker for the shift.",
+        commonWordRoster
+      )
+    ).toBe("Covered by an agency worker for the shift.");
+  });
+
+  it("leaves a lowercase common word alone mid-sentence for another roster entry", () => {
+    expect(
+      scrubNote("The manager reviewed the rota.", commonWordRoster)
+    ).toBe("The manager reviewed the rota.");
+  });
+
+  it("still redacts a full name that pairs a distinctive token with a common-word surname", () => {
+    expect(scrubNote("Casey Worker started the late.", commonWordRoster)).toBe(
+      `${REDACTED_NAME} ${REDACTED_NAME} started the late.`
+    );
+  });
+
+  it("still redacts a capitalised common-word token on its own", () => {
+    expect(scrubNote("Worker covered the late.", commonWordRoster)).toBe(
+      `${REDACTED_NAME} covered the late.`
+    );
+  });
+
+  it("still redacts a distinctive token regardless of case, unaffected by the common-word list", () => {
+    expect(scrubNote("covering for nowak", ["Tomas Nowak"])).toBe(
+      `covering for ${REDACTED_NAME}`
+    );
+  });
+
+  // The capitalised-only rule has to hold on its own terms, not merely
+  // because real names happen to arrive title-cased. A roster entry stored
+  // in a different case must not flip which form of the word gets caught.
+  it("still matches the capitalised form even when the roster stores the name lowercase", () => {
+    expect(
+      scrubNote("Worker covered the late.", ["casey worker"])
+    ).toBe(`${REDACTED_NAME} covered the late.`);
+  });
+
+  it("still leaves the lowercase word alone when the roster stores the name lowercase", () => {
+    expect(
+      scrubNote("Covered by an agency worker for the shift.", ["casey worker"])
+    ).toBe("Covered by an agency worker for the shift.");
+  });
+});
