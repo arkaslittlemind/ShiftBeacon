@@ -1,6 +1,7 @@
 import { ForbiddenState } from "@/components/shared/forbidden-state";
 import { ManagerSidebar } from "@/components/shell/manager-sidebar";
 import { ManagerTopbar } from "@/components/shell/manager-topbar";
+import { RouteTransition } from "@/components/shell/route-transition";
 import { getCurrentDbUser, requireRole } from "@/lib/auth";
 import { AnalyticsIdentity } from "@/components/observability/analytics-identity";
 
@@ -10,7 +11,7 @@ export default async function ManagerLayout({ children }: { children: React.Reac
   const organizationName = dbUser!.organization.name;
 
   return (
-    <div className="flex min-h-full">
+    <div className="flex min-h-dvh">
       <AnalyticsIdentity
         id={dbUser!.id}
         role={dbUser!.role}
@@ -20,7 +21,9 @@ export default async function ManagerLayout({ children }: { children: React.Reac
       <div className="flex flex-1 flex-col">
         <ManagerTopbar user={user} organizationName={organizationName} />
         <main className="flex-1 px-4 py-7 sm:px-6 lg:px-8">
-          {status === "forbidden" ? <ForbiddenState role={user.role} /> : children}
+          <RouteTransition>
+            {status === "forbidden" ? <ForbiddenState role={user.role} /> : children}
+          </RouteTransition>
         </main>
       </div>
     </div>

@@ -129,3 +129,20 @@
     scroll-behavior: auto !important;
   }
 }
+
+/* Route crossfade (components/shell/route-transition.tsx). The
+   ::view-transition-* pseudo-elements live outside the normal DOM tree, so
+   the `*` reduced-motion rule above doesn't reach them - they need their own
+   override. */
+::view-transition {
+  pointer-events: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  ::view-transition-old(*),
+  ::view-transition-new(*),
+  ::view-transition-group(*) {
+    animation-duration: 0s !important;
+    animation-delay: 0s !important;
+  }
+}
