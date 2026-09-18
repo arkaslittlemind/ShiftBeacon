@@ -50,7 +50,7 @@ export function ActiveShiftPanel({ shift }: { shift: ShiftResponse }) {
   }
 
   return (
-    <div className="grid gap-4">
+    <div className="grid gap-4 opacity-100 scale-100 transition-[opacity,transform] duration-250 ease-(--ease-out) starting:scale-95 starting:opacity-0">
       <div className="rounded-md border-(length:--border-w) border-border bg-foreground p-8 text-center text-background shadow-md">
         <p className="mb-1.5 text-xs font-bold tracking-wide text-background/70 uppercase">
           Shift duration
@@ -86,7 +86,10 @@ export function ActiveShiftPanel({ shift }: { shift: ShiftResponse }) {
       </div>
 
       {status === "error" && errorMessage && (
-        <p role="alert" className="text-sm text-destructive">
+        <p
+          role="alert"
+          className="translate-y-0 text-sm text-destructive opacity-100 transition-[opacity,transform] duration-200 ease-(--ease-out) starting:-translate-y-1 starting:opacity-0"
+        >
           {errorMessage}
         </p>
       )}

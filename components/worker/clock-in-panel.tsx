@@ -47,7 +47,7 @@ export function ClockInPanel() {
   }
 
   return (
-    <div className="rounded-md border-(length:--border-w) border-border bg-card p-6 shadow-md">
+    <div className="rounded-md border-(length:--border-w) border-border bg-card p-6 shadow-md opacity-100 scale-100 transition-[opacity,transform] duration-250 ease-(--ease-out) starting:scale-95 starting:opacity-0">
       <label
         htmlFor="clock-in-note"
         className={cn(eyebrowClass, "mb-2 block")}
@@ -63,7 +63,10 @@ export function ClockInPanel() {
       />
 
       {status === "error" && errorMessage && (
-        <p role="alert" className="mb-3 text-sm text-destructive">
+        <p
+          role="alert"
+          className="mb-3 translate-y-0 text-sm text-destructive opacity-100 transition-[opacity,transform] duration-200 ease-(--ease-out) starting:-translate-y-1 starting:opacity-0"
+        >
           {errorMessage}
         </p>
       )}

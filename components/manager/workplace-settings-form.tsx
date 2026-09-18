@@ -122,12 +122,19 @@ export function WorkplaceSettingsForm({
       </div>
 
       {status === "error" && errorMessage && (
-        <p id="workplace-form-error" role="alert" className="text-sm text-destructive">
+        <p
+          id="workplace-form-error"
+          role="alert"
+          className="translate-y-0 text-sm text-destructive opacity-100 transition-[opacity,transform] duration-200 ease-(--ease-out) starting:-translate-y-1 starting:opacity-0"
+        >
           {errorMessage}
         </p>
       )}
       {status === "success" && (
-        <p role="status" className="text-sm text-primary">
+        <p
+          role="status"
+          className="translate-y-0 text-sm text-primary opacity-100 transition-[opacity,transform] duration-200 ease-(--ease-out) starting:-translate-y-1 starting:opacity-0"
+        >
           Saved.
         </p>
       )}
