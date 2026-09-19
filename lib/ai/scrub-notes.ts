@@ -51,8 +51,19 @@ export function isCommonNameWord(token: string): boolean {
 
 const POSSESSIVE = "(?:['’]s)?";
 
-function escapeRegExp(value: string): string {
+export function escapeRegExp(value: string): string {
   return value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+}
+
+// \b only knows ASCII letters in JavaScript, so it cannot see the edge of
+// "José" or "Łukasz" and a name ending or starting in such a letter would go
+// unredacted. These look at Unicode letters and digits instead. Patterns built
+// with this need the "u" flag.
+const NOT_AFTER_WORD_CHAR = "(?<![\\p{L}\\p{N}_])";
+const NOT_BEFORE_WORD_CHAR = "(?![\\p{L}\\p{N}_])";
+
+export function wholeWord(source: string): string {
+  return `${NOT_AFTER_WORD_CHAR}(?:${source})${NOT_BEFORE_WORD_CHAR}`;
 }
 
 function nameTokens(roster: string[]): string[] {
@@ -81,8 +92,8 @@ function capitalize(token: string): string {
 
 function namePattern(tokens: string[], caseInsensitive: boolean): RegExp {
   return new RegExp(
-    `\\b(?:${tokens.map(escapeRegExp).join("|")})\\b${POSSESSIVE}`,
-    caseInsensitive ? "gi" : "g"
+    `${wholeWord(tokens.map(escapeRegExp).join("|"))}${POSSESSIVE}`,
+    caseInsensitive ? "giu" : "gu"
   );
 }
 

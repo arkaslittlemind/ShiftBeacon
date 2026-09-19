@@ -5,6 +5,7 @@
 import { generateWithTools } from "@/lib/ai/client";
 import type { ConversationContent } from "@/lib/ai/client";
 import type { ToolExecutor, ToolResult } from "@/lib/ai/attendance-tools";
+import { errorTypeOnly } from "@/lib/redaction";
 
 // Each round is a vendor request against a shared free-tier quota, so the cap
 // bounds cost as well as runaway loops.
@@ -50,13 +51,6 @@ async function runCalls(calls: ToolCall[], executor: ToolExecutor) {
   return responses;
 }
 
-// Logs the error's type and nothing else. Console output becomes a Sentry
-// breadcrumb, and this path sits next to the question, the answer and tool
-// output, none of which may reach Sentry.
-function failureType(error: unknown): string {
-  return error instanceof Error ? error.name : "unknown error";
-}
-
 // Never throws: a vendor error, a bad tool call loop and a missing key all come
 // back as "unavailable", so no caller can make a page depend on the vendor.
 export async function answerQuestion(options: {
@@ -84,7 +78,9 @@ export async function answerQuestion(options: {
       contents.push({ role: "user", parts: await runCalls(turn.calls, executor) });
     }
   } catch (error) {
-    console.warn("[ask] attendance question failed:", failureType(error));
+    // Type only: this path sits next to the question, the answer and tool
+    // output, none of which may reach Sentry through a breadcrumb.
+    console.warn("[ask] attendance question failed:", errorTypeOnly(error));
     return { status: "unavailable" };
   }
 

@@ -111,6 +111,60 @@ describe("aliasQuestion", () => {
   });
 });
 
+describe("aliasQuestion - names with non-ASCII letters", () => {
+  const accented = createAliasMap([
+    { id: "u-jose", name: "José García" },
+    { id: "u-zoe", name: "Zoë Lin" },
+    { id: "u-luk", name: "Łukasz Nowak" },
+  ]);
+
+  it("aliases an accented full name", () => {
+    expect(aliasQuestion("Hours for José García?", accented)).toBe("Hours for Staff 1?");
+  });
+
+  it("aliases an accented first name and a possessive on its own", () => {
+    expect(aliasQuestion("How many hours did José work?", accented)).toBe(
+      "How many hours did Staff 1 work?"
+    );
+    expect(aliasQuestion("What were Zoë’s hours?", accented)).toBe(
+      "What were Staff 3’s hours?"
+    );
+  });
+
+  it("aliases a name that starts with a non-ASCII capital", () => {
+    expect(aliasQuestion("Did Łukasz clock in?", accented)).toBe("Did Staff 2 clock in?");
+  });
+
+  it("leaves no accented name behind", () => {
+    const aliased = aliasQuestion("José, Zoë and Łukasz all worked", accented);
+
+    expect(aliased).toBe("Staff 1, Staff 3 and Staff 2 all worked");
+  });
+
+  it("does not replace an accented name inside a longer word", () => {
+    expect(aliasQuestion("Any notes from Josée?", accented)).toBe("Any notes from Josée?");
+  });
+});
+
+describe("aliasQuestion - staff who share a full name", () => {
+  const twins = createAliasMap([
+    { id: "a", name: "Casey Worker" },
+    { id: "b", name: "Casey Worker" },
+  ]);
+
+  it("never guesses which of two identical names is meant; the scrubber redacts it instead", () => {
+    const result = aliasQuestion("Hours for Casey Worker?", twins);
+
+    expect(result).not.toMatch(/Staff/);
+    expect(result).not.toMatch(/casey|worker/i);
+  });
+
+  it("still gives each of them their own alias for tool results", () => {
+    expect(twins.aliasForId("a")).toBe("Staff 1");
+    expect(twins.aliasForId("b")).toBe("Staff 2");
+  });
+});
+
 describe("dealiasAnswer", () => {
   it("maps an alias back to the real name", () => {
     expect(dealiasAnswer("Staff 3 worked the most hours.", map)).toBe(

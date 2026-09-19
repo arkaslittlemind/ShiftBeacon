@@ -6,13 +6,20 @@
 // Aliasing is a convenience for answering well, not the privacy control: the
 // scrubber runs last as the backstop, so a name this layer declines to guess at
 // still never reaches the vendor.
+//
+// Known limits, inherited from the scrubber and stated rather than hidden: a
+// name token under three characters, a misspelled name, and a coordinate or id
+// typed into the question are not caught. The manager types the question, so
+// these are accepted; anything that reaches the vendor is treated as disclosed.
 
 import { EMAIL_PATTERN } from "@/lib/redaction";
 import {
   MIN_NAME_TOKEN_LENGTH,
   REDACTED_EMAIL,
+  escapeRegExp,
   isCommonNameWord,
   scrubNote,
+  wholeWord,
 } from "@/lib/ai/scrub-notes";
 
 const ALIAS_PREFIX = "Staff";
@@ -27,10 +34,6 @@ export type AliasMap = {
   aliasForId(id: string): string | undefined;
   entries: readonly AliasEntry[];
 };
-
-function escapeRegExp(value: string): string {
-  return value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
-}
 
 export function createAliasMap(staff: StaffRef[]): AliasMap {
   // Sorted so an alias depends on the roster, not on the order the database
@@ -51,14 +54,30 @@ export function createAliasMap(staff: StaffRef[]): AliasMap {
 
 function replaceWithAlias(text: string, source: string, alias: string): string {
   return text.replace(
-    new RegExp(`\\b${source}\\b${POSSESSIVE}`, "gi"),
+    new RegExp(`${wholeWord(source)}${POSSESSIVE}`, "giu"),
     (_match, possessive: string | undefined) => `${alias}${possessive ?? ""}`
   );
 }
 
+function normalizedName(name: string): string {
+  return name.toLowerCase().replace(/\s+/g, " ");
+}
+
+// A full name shared by two people is left alone: replacing every occurrence
+// with the first person's alias would answer about the wrong one. The scrubber
+// redacts it instead.
+function uniqueFullNames(entries: readonly AliasEntry[]): AliasEntry[] {
+  const counts = new Map<string, number>();
+  for (const entry of entries) {
+    const key = normalizedName(entry.name);
+    counts.set(key, (counts.get(key) ?? 0) + 1);
+  }
+  return entries.filter((entry) => counts.get(normalizedName(entry.name)) === 1);
+}
+
 function aliasFullNames(text: string, entries: readonly AliasEntry[]): string {
   // Longest first, so a full name is consumed before any shorter name inside it.
-  const byLength = [...entries].sort((a, b) => b.name.length - a.name.length);
+  const byLength = uniqueFullNames(entries).sort((a, b) => b.name.length - a.name.length);
   return byLength.reduce((result, entry) => {
     const flexibleSpacing = entry.name.split(/\s+/).map(escapeRegExp).join("\\s+");
     return replaceWithAlias(result, flexibleSpacing, entry.alias);
@@ -101,9 +120,11 @@ function aliasSingleNames(text: string, entries: readonly AliasEntry[]): string 
     .map(escapeRegExp)
     .join("|");
   return text.replace(
-    new RegExp(`\\b(${alternation})\\b${POSSESSIVE}`, "gi"),
-    (_match, token: string, possessive: string | undefined) =>
-      `${tokens.get(token.toLowerCase())}${possessive ?? ""}`
+    new RegExp(`${wholeWord(alternation)}${POSSESSIVE}`, "giu"),
+    (match: string, possessive: string | undefined) => {
+      const token = possessive ? match.slice(0, -possessive.length) : match;
+      return `${tokens.get(token.toLowerCase())}${possessive ?? ""}`;
+    }
   );
 }
 

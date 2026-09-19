@@ -1,6 +1,7 @@
 import { prisma } from "@/lib/prisma";
 import { generateDigest } from "@/lib/ai/handover-digest";
 import { scrubNote } from "@/lib/ai/scrub-notes";
+import { errorTypeOnly } from "@/lib/redaction";
 import { toUtcDateKey } from "@/lib/services/analytics-service";
 import { MS_PER_DAY } from "@/lib/time";
 import type { HandoverDigestResult } from "@/types/handover";
@@ -17,16 +18,6 @@ type NoteRow = {
 
 function reason(error: unknown): string {
   return error instanceof Error ? error.message : String(error);
-}
-
-// The cache write is the one place an error can echo digest text back at us,
-// because the row being written is the digest. Sentry records console output
-// as breadcrumbs and only email-scrubs them, and Sentry (Category 1) may never
-// receive note-derived text, so this path logs the error's type and nothing
-// else. Every other path logs its message, which is what makes a failure
-// diagnosable.
-function cacheWriteReason(error: unknown): string {
-  return error instanceof Error ? error.name : "unknown error";
 }
 
 function collectNotes(shifts: NoteRow[], roster: string[]): string[] {
@@ -173,7 +164,11 @@ async function loadOrGenerateDigest(
       });
       generatedAt = stored.generatedAt;
     } catch (error) {
-      console.warn("[handover] could not cache the digest:", cacheWriteReason(error));
+      // The cache write is the one place an error can echo digest text back at
+      // us, because the row being written is the digest, so log its type only.
+      // Every other path logs its message, which is what makes a failure
+      // diagnosable.
+      console.warn("[handover] could not cache the digest:", errorTypeOnly(error));
     }
 
     return { status: "ok", date, digest, generatedAt };
