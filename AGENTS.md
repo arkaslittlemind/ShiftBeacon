@@ -40,10 +40,14 @@ presence, shift history, and attendance analytics.
 - E2E (Playwright, Chromium): `npm run test:e2e` - run only when explicitly
   instructed, not automatically after every step or feature
 - Seed data: `npx prisma db seed` (idempotent; reuses the existing organization)
-- AI digest evals: `npm run test:evals` - run only when explicitly instructed.
+- AI evals: `npm run test:evals` - run only when explicitly instructed.
   Calls the real Gemini API and spends free-tier quota, so it is deliberately
   outside `npm test`. Needs `GEMINI_API_KEY`; exits non-zero on failure and
-  prints per-case pass/fail plus an aggregate key-fact recall score.
+  prints per-case pass/fail plus an aggregate score. It runs **both** suites
+  (`evals/handover.eval.ts`, about 25 requests; `evals/attendance.eval.ts`,
+  about 30 to 40), so name the file to run one:
+  `npm run test:evals -- evals/attendance.eval.ts`. `EVAL_ONLY=id1,id2` picks
+  attendance cases, `EVAL_SHOW_ANSWERS=1` prints the answer of a failed one.
 
 A `test` command is declared, so unit tests are a gate: any build step that
 adds logic-bearing code (parsers, formatters, validators, service functions -
