@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { cn, eyebrowClass } from "@/lib/utils";
+import { NOTE_MAX_LENGTH } from "@/types/shift";
 import { useGeolocation } from "./use-geolocation";
 
 type SubmitStatus = "idle" | "submitting" | "error";
@@ -58,6 +59,7 @@ export function ClockInPanel() {
         id="clock-in-note"
         value={note}
         onChange={(event) => setNote(event.target.value)}
+        maxLength={NOTE_MAX_LENGTH}
         placeholder="e.g. Covering an extra hour for handover..."
         className="mb-4"
       />

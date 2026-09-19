@@ -7,7 +7,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { formatElapsedClock } from "@/lib/duration";
 import { cn, eyebrowClass } from "@/lib/utils";
 import { useGeolocation } from "./use-geolocation";
-import type { ShiftResponse } from "@/types/shift";
+import { NOTE_MAX_LENGTH, type ShiftResponse } from "@/types/shift";
 
 type SubmitStatus = "idle" | "submitting" | "error";
 
@@ -81,6 +81,7 @@ export function ActiveShiftPanel({ shift }: { shift: ShiftResponse }) {
           id="clock-out-note"
           value={note}
           onChange={(event) => setNote(event.target.value)}
+          maxLength={NOTE_MAX_LENGTH}
           placeholder="e.g. Handover notes for the next shift..."
         />
       </div>
