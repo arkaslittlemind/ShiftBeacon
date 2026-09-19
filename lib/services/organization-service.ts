@@ -1,4 +1,5 @@
 import { prisma } from "@/lib/prisma";
+import type { User } from "@/lib/generated/prisma/client";
 
 type UpdateOrganizationData = Partial<{
   name: string;
@@ -7,6 +8,11 @@ type UpdateOrganizationData = Partial<{
   clockInRadiusMeters: number;
 }>;
 
-export async function updateOrganization(id: string, data: UpdateOrganizationData) {
-  return prisma.organization.update({ where: { id }, data });
+// Takes the authenticated user, not an id string, so a client-supplied
+// organization id can't be passed through by accident.
+export async function updateOrganization(
+  user: Pick<User, "organizationId">,
+  data: UpdateOrganizationData
+) {
+  return prisma.organization.update({ where: { id: user.organizationId }, data });
 }

@@ -91,7 +91,9 @@ describe("PATCH /api/organizations/me", () => {
 
     await PATCH(buildRequest({ clockInRadiusMeters: 300 }));
 
-    expect(mockedUpdateOrganization).toHaveBeenCalledWith("org1", { clockInRadiusMeters: 300 });
+    expect(mockedUpdateOrganization).toHaveBeenCalledWith(managerUser, {
+      clockInRadiusMeters: 300,
+    });
   });
 
   it("returns 400 without calling the service when the body is invalid", async () => {

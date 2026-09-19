@@ -3,7 +3,12 @@ import type { Organization, Shift } from "@/lib/generated/prisma/client";
 
 vi.mock("@/lib/prisma", () => ({
   prisma: {
-    shift: { findFirst: vi.fn(), create: vi.fn(), update: vi.fn() },
+    shift: {
+      findFirst: vi.fn(),
+      findUniqueOrThrow: vi.fn(),
+      create: vi.fn(),
+      updateMany: vi.fn(),
+    },
     organization: { findUniqueOrThrow: vi.fn() },
   },
 }));
@@ -20,7 +25,8 @@ import {
 
 const mockedFindFirst = vi.mocked(prisma.shift.findFirst);
 const mockedCreate = vi.mocked(prisma.shift.create);
-const mockedUpdate = vi.mocked(prisma.shift.update);
+const mockedUpdateMany = vi.mocked(prisma.shift.updateMany);
+const mockedFindUniqueOrThrow = vi.mocked(prisma.shift.findUniqueOrThrow);
 const mockedFindOrg = vi.mocked(prisma.organization.findUniqueOrThrow);
 
 const EARTH_RADIUS_METERS = 6371000;
@@ -144,23 +150,33 @@ describe("clockOut", () => {
     mockedFindFirst.mockResolvedValue(null);
 
     await expect(clockOut("u1", {})).rejects.toThrow(NoActiveShiftError);
-    expect(mockedUpdate).not.toHaveBeenCalled();
+    expect(mockedUpdateMany).not.toHaveBeenCalled();
   });
 
   it("updates the active shift when clocking out", async () => {
     mockedFindFirst.mockResolvedValue(activeShift);
-    mockedUpdate.mockResolvedValue({ ...activeShift, clockOutAt: new Date() });
+    mockedUpdateMany.mockResolvedValue({ count: 1 });
+    mockedFindUniqueOrThrow.mockResolvedValue({ ...activeShift, clockOutAt: new Date() });
 
     const result = await clockOut("u1", { latitude: 1, longitude: 2, note: "Handover done" });
 
-    expect(mockedUpdate).toHaveBeenCalledWith({
-      where: { id: activeShift.id },
+    expect(mockedUpdateMany).toHaveBeenCalledWith({
+      where: { id: activeShift.id, clockOutAt: null },
       data: expect.objectContaining({
         clockOutLatitude: 1,
         clockOutLongitude: 2,
         clockOutNote: "Handover done",
       }),
     });
+    expect(mockedFindUniqueOrThrow).toHaveBeenCalledWith({ where: { id: activeShift.id } });
     expect(result.clockOutAt).not.toBeNull();
+  });
+
+  it("throws NoActiveShiftError when a concurrent clock-out already closed the shift", async () => {
+    mockedFindFirst.mockResolvedValue(activeShift);
+    mockedUpdateMany.mockResolvedValue({ count: 0 });
+
+    await expect(clockOut("u1", { note: "Second tap" })).rejects.toThrow(NoActiveShiftError);
+    expect(mockedFindUniqueOrThrow).not.toHaveBeenCalled();
   });
 });
