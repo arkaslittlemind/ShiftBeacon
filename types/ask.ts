@@ -2,11 +2,15 @@
 // without pulling zod into its bundle (the same reason as NOTE_MAX_LENGTH).
 export const QUESTION_MAX_LENGTH = 300;
 
-// Three states on purpose: "the vendor is down" and "that question is not
-// valid" are values the UI has to render, not exceptions a caller can forget
-// to catch. The rate-limited variant arrives with feature 20c; add it rather
-// than reshaping these.
+// Questions one manager may ask per hour. Plain constant so a client component
+// can show it without importing the server module that enforces it.
+export const ASK_LIMIT_PER_HOUR = 10;
+
+// Every non-answer is a value the UI has to render, not an exception a caller
+// can forget to catch. answeredAt is when the answer was produced, which for a
+// cached answer is earlier than now.
 export type AskResult =
-  | { status: "ok"; answer: string }
+  | { status: "ok"; answer: string; answeredAt: Date }
   | { status: "invalid"; reason: string }
-  | { status: "unavailable" };
+  | { status: "unavailable" }
+  | { status: "rate_limited"; retryAfterSeconds: number };

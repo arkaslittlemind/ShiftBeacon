@@ -24,6 +24,7 @@ model Organization {
   users   User[]
   shifts  Shift[]
   digests HandoverDigest[]
+  answers AskAnswer[]
 }
 
 // Persisted rather than held in memory: on free-tier quota, a cache that empties
@@ -43,6 +44,34 @@ model HandoverDigest {
   @@unique([organizationId, date])
 }
 
+// Cache of attendance question answers, per organization. Keyed on a hash of the
+// normalized question rather than the text: nothing needs the question back, so
+// it is not stored. The answer is what the manager saw (real names), because
+// aliases follow the current roster and would drift after a hire.
+model AskAnswer {
+  organizationId String
+  questionHash   String
+  answer         String
+  answeredAt     DateTime @default(now())
+
+  organization Organization @relation(fields: [organizationId], references: [id])
+
+  @@id([organizationId, questionHash])
+}
+
+// Per-user question counter, one row per UTC hour. Composite key so the limiter
+// can increment in a single INSERT ... ON CONFLICT statement, with no
+// read-then-write gap for concurrent requests to slip through.
+model AskUsage {
+  userId      String
+  windowStart DateTime
+  count       Int      @default(0)
+
+  user User @relation(fields: [userId], references: [id])
+
+  @@id([userId, windowStart])
+}
+
 model User {
   id             String   @id @default(cuid())
   auth0UserId    String   @unique
@@ -55,6 +84,7 @@ model User {
 
   organization Organization @relation(fields: [organizationId], references: [id])
   shifts       Shift[]
+  askUsage     AskUsage[]
 
   @@index([organizationId])
 }

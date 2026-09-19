@@ -93,7 +93,15 @@ describe("askAttendanceQuestion", () => {
 
     const result = await askAttendanceQuestion(user, "Who worked the most?");
 
-    expect(result).toEqual({ status: "ok", answer: "Priya Nowak worked the most." });
+    expect(result).toMatchObject({ status: "ok", answer: "Priya Nowak worked the most." });
+  });
+
+  it("stamps an answer with the time it was produced", async () => {
+    const before = Date.now();
+
+    const result = await askAttendanceQuestion(user, "Who worked the most?");
+
+    expect(result.status === "ok" && result.answeredAt.getTime() >= before).toBe(true);
   });
 
   it("leaves an alias the model made up as it is", async () => {
@@ -101,7 +109,7 @@ describe("askAttendanceQuestion", () => {
 
     const result = await askAttendanceQuestion(user, "Who was on shift?");
 
-    expect(result).toEqual({ status: "ok", answer: "Staff 40 was on shift." });
+    expect(result).toMatchObject({ status: "ok", answer: "Staff 40 was on shift." });
   });
 
   it("passes an engine failure through as unavailable", async () => {
