@@ -112,12 +112,17 @@ export type GenerateJsonOptions = {
   responseSchema: Record<string, unknown>;
 };
 
-// Returns parsed JSON, unvalidated. Callers own the schema check, because the
-// model returning well-formed JSON of the wrong shape is a normal outcome here
-// rather than an exceptional one.
-export async function generateJson(
-  options: GenerateJsonOptions
-): Promise<unknown> {
+type ResponsePart = Record<string, unknown>;
+
+type GenerateContentPayload = {
+  candidates?: { content?: { role?: string; parts?: ResponsePart[] } }[];
+};
+
+// The one place a request leaves the app, so the key check, timeout and error
+// handling cannot drift between the JSON and tool-calling paths.
+async function postToGemini(
+  body: Record<string, unknown>
+): Promise<GenerateContentPayload> {
   const apiKey = getEnv().GEMINI_API_KEY;
   if (!apiKey) {
     throw new AiUnavailableError("GEMINI_API_KEY is not configured");
@@ -131,14 +136,7 @@ export async function generateJson(
         "content-type": "application/json",
         "x-goog-api-key": apiKey,
       },
-      body: JSON.stringify({
-        systemInstruction: { parts: [{ text: options.systemInstruction }] },
-        contents: [{ role: "user", parts: [{ text: options.prompt }] }],
-        generationConfig: {
-          responseMimeType: "application/json",
-          responseSchema: options.responseSchema,
-        },
-      }),
+      body: JSON.stringify(body),
       signal: AbortSignal.timeout(TIMEOUT_MS),
     });
   } catch (error) {
@@ -158,11 +156,26 @@ export async function generateJson(
     );
   }
 
-  const payload = (await response.json()) as {
-    candidates?: { content?: { parts?: { text?: string }[] } }[];
-  };
+  return (await response.json()) as GenerateContentPayload;
+}
+
+// Returns parsed JSON, unvalidated. Callers own the schema check, because the
+// model returning well-formed JSON of the wrong shape is a normal outcome here
+// rather than an exceptional one.
+export async function generateJson(
+  options: GenerateJsonOptions
+): Promise<unknown> {
+  const payload = await postToGemini({
+    systemInstruction: { parts: [{ text: options.systemInstruction }] },
+    contents: [{ role: "user", parts: [{ text: options.prompt }] }],
+    generationConfig: {
+      responseMimeType: "application/json",
+      responseSchema: options.responseSchema,
+    },
+  });
+
   const text = payload.candidates?.[0]?.content?.parts?.[0]?.text;
-  if (!text) {
+  if (typeof text !== "string" || !text) {
     throw new AiUnavailableError("AI provider returned no content");
   }
 
@@ -171,4 +184,82 @@ export async function generateJson(
   } catch {
     throw new AiUnavailableError("AI provider returned unparseable JSON");
   }
+}
+
+export type FunctionDeclaration = {
+  name: string;
+  description: string;
+  // Omitted for a tool that takes none: an empty object schema is rejected.
+  parameters?: Record<string, unknown>;
+};
+
+// Parts are opaque on purpose: a model turn has to be sent back exactly as it
+// arrived, including fields this app does not read, such as a thought
+// signature that newer models require on the follow-up request.
+export type ConversationContent = {
+  role: "user" | "model";
+  parts: ResponsePart[];
+};
+
+export type FunctionCall = { name: string; args: unknown };
+
+export type ToolTurn =
+  | { kind: "calls"; calls: FunctionCall[]; modelContent: ConversationContent }
+  | { kind: "text"; text: string; modelContent: ConversationContent };
+
+export type GenerateWithToolsOptions = {
+  systemInstruction: string;
+  contents: ConversationContent[];
+  functionDeclarations: FunctionDeclaration[];
+};
+
+function isFunctionCallPart(
+  part: ResponsePart
+): part is { functionCall: { name: string; args?: unknown } } {
+  const call = part.functionCall;
+  return (
+    typeof call === "object" &&
+    call !== null &&
+    typeof (call as { name?: unknown }).name === "string"
+  );
+}
+
+// One model turn of a function-calling conversation: either the calls it wants
+// run, or its final text. The caller owns the loop. Function calling cannot be
+// combined with JSON-schema output, so the final answer is plain text.
+export async function generateWithTools(
+  options: GenerateWithToolsOptions
+): Promise<ToolTurn> {
+  const payload = await postToGemini({
+    systemInstruction: { parts: [{ text: options.systemInstruction }] },
+    contents: options.contents,
+    tools: [{ functionDeclarations: options.functionDeclarations }],
+  });
+
+  const parts = payload.candidates?.[0]?.content?.parts;
+  if (!parts || parts.length === 0) {
+    throw new AiUnavailableError("AI provider returned no content");
+  }
+
+  const modelContent: ConversationContent = { role: "model", parts };
+
+  const calls = parts
+    .filter(isFunctionCallPart)
+    .map((part) => ({
+      name: part.functionCall.name,
+      args: part.functionCall.args ?? {},
+    }));
+  if (calls.length > 0) {
+    return { kind: "calls", calls, modelContent };
+  }
+
+  const text = parts
+    .map((part) => (typeof part.text === "string" ? part.text : ""))
+    .join("")
+    .trim();
+  if (!text) {
+    throw new AiUnavailableError("AI provider returned no content");
+  }
+
+  return { kind: "text", text, modelContent };
 }

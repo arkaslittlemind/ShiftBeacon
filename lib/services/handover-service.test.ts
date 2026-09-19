@@ -23,7 +23,11 @@ import type {
 } from "@/lib/generated/prisma/client";
 import { prisma } from "@/lib/prisma";
 import { generateJson, isAiConfigured } from "@/lib/ai/client";
-import { getHandoverDigest, getLatestHandoverDigest } from "./handover-service";
+import {
+  getHandoverDigest,
+  getLatestHandoverDigest,
+  getScrubbedNotesForDay,
+} from "./handover-service";
 
 const mockedShiftFindMany = vi.mocked(prisma.shift.findMany);
 const mockedUserFindMany = vi.mocked(prisma.user.findMany);
@@ -425,5 +429,52 @@ describe("getLatestHandoverDigest", () => {
     await expect(getLatestHandoverDigest("org1")).resolves.toEqual({
       status: "unavailable",
     });
+  });
+});
+
+describe("getScrubbedNotesForDay", () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+    mockedUserFindMany.mockResolvedValue([tomas]);
+  });
+
+  it("scopes both reads to the organization and the given UTC day", async () => {
+    mockedShiftFindMany.mockResolvedValue([]);
+
+    await getScrubbedNotesForDay("org1", DATE);
+
+    expect(mockedShiftFindMany).toHaveBeenCalledWith(
+      expect.objectContaining({
+        where: {
+          organizationId: "org1",
+          clockInAt: {
+            gte: new Date("2026-09-17T00:00:00.000Z"),
+            lt: new Date("2026-09-18T00:00:00.000Z"),
+          },
+        },
+      })
+    );
+    expect(mockedUserFindMany).toHaveBeenCalledWith(
+      expect.objectContaining({ where: { organizationId: "org1" } })
+    );
+  });
+
+  it("returns the clock-in and clock-out notes with roster names redacted", async () => {
+    mockedShiftFindMany.mockResolvedValue(shiftsWithNotes);
+
+    const notes = await getScrubbedNotesForDay("org1", DATE);
+
+    expect(notes).toEqual([
+      "Covering for [name] [name].",
+      "Hoist in room 4 is grinding, logged with maintenance.",
+    ]);
+  });
+
+  it("skips empty and whitespace-only notes", async () => {
+    mockedShiftFindMany.mockResolvedValue([
+      shift({ clockInNote: "   ", clockOutNote: null }),
+    ]);
+
+    await expect(getScrubbedNotesForDay("org1", DATE)).resolves.toEqual([]);
   });
 });

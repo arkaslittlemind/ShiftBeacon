@@ -42,6 +42,36 @@ function collectNotes(shifts: NoteRow[], roster: string[]): string[] {
   return notes;
 }
 
+// The one place a day's notes are read and scrubbed, shared by the digest and
+// the attendance question tools so neither can send a note the other would have
+// redacted.
+export async function getScrubbedNotesForDay(
+  organizationId: string,
+  date: string
+): Promise<string[]> {
+  const dayStart = new Date(`${date}T00:00:00.000Z`);
+  const dayEnd = new Date(dayStart.getTime() + MS_PER_DAY);
+
+  const [shifts, staff] = await Promise.all([
+    prisma.shift.findMany({
+      where: {
+        organizationId,
+        clockInAt: { gte: dayStart, lt: dayEnd },
+      },
+      select: { clockInAt: true, clockInNote: true, clockOutNote: true },
+    }),
+    prisma.user.findMany({
+      where: { organizationId },
+      select: { name: true },
+    }),
+  ]);
+
+  return collectNotes(
+    shifts,
+    staff.map((member) => member.name)
+  );
+}
+
 async function findLatestDayWithNotes(
   organizationId: string
 ): Promise<string | null> {
@@ -119,27 +149,7 @@ async function loadOrGenerateDigest(
       };
     }
 
-    const dayStart = new Date(`${date}T00:00:00.000Z`);
-    const dayEnd = new Date(dayStart.getTime() + MS_PER_DAY);
-
-    const [shifts, staff] = await Promise.all([
-      prisma.shift.findMany({
-        where: {
-          organizationId,
-          clockInAt: { gte: dayStart, lt: dayEnd },
-        },
-        select: { clockInAt: true, clockInNote: true, clockOutNote: true },
-      }),
-      prisma.user.findMany({
-        where: { organizationId },
-        select: { name: true },
-      }),
-    ]);
-
-    const notes = collectNotes(
-      shifts,
-      staff.map((member) => member.name)
-    );
+    const notes = await getScrubbedNotesForDay(organizationId, date);
     if (notes.length === 0) {
       return { status: "empty" };
     }

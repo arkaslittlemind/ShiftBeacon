@@ -31,7 +31,7 @@ const MIN_PHONE_DIGITS = 9;
 
 // Two-letter tokens like "Al" or "Jo" would match ordinary prose, so a roster
 // entry only contributes tokens long enough to plausibly identify someone.
-const MIN_NAME_TOKEN_LENGTH = 3;
+export const MIN_NAME_TOKEN_LENGTH = 3;
 
 // Care-setting role words that also turn up as staff names ("Casey Worker",
 // "Morgan Manager") or as ordinary nouns in handover prose ("the senior on
@@ -44,6 +44,10 @@ const MIN_NAME_TOKEN_LENGTH = 3;
 // feature's own seed notes (prisma/seed-data.ts) - keep it that way; add a
 // word only once a real collision shows up, not speculatively.
 const COMMON_WORDS = new Set(["worker", "manager", "agency", "care", "senior", "night"]);
+
+export function isCommonNameWord(token: string): boolean {
+  return COMMON_WORDS.has(token.toLowerCase());
+}
 
 const POSSESSIVE = "(?:['’]s)?";
 
