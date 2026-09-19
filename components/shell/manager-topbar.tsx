@@ -36,7 +36,7 @@ export function ManagerTopbar({
         </SheetContent>
       </Sheet>
 
-      <UserMenu name={user.name} email={user.email} />
+      <UserMenu name={user.name} email={user.email} profileHref="/manager/profile" />
     </div>
   );
 }

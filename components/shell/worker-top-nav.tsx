@@ -85,7 +85,7 @@ export function WorkerTopNav({ user }: { user: CurrentUser }) {
             </SheetContent>
           </Sheet>
 
-          <UserMenu name={user.name} email={user.email} />
+          <UserMenu name={user.name} email={user.email} profileHref="/worker/profile" />
         </div>
       </div>
     </header>
