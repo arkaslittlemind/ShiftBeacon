@@ -1,5 +1,9 @@
 import { describe, expect, it } from "vitest";
+import { NOTE_MAX_LENGTH } from "@/types/shift";
 import { clockInSchema, clockOutSchema } from "./shift";
+
+const atLimit = "a".repeat(NOTE_MAX_LENGTH);
+const overLimit = "a".repeat(NOTE_MAX_LENGTH + 1);
 
 describe("clockInSchema", () => {
   it("accepts valid input", () => {
@@ -40,6 +44,28 @@ describe("clockInSchema", () => {
       clockInSchema.safeParse({ latitude: 0, longitude: 0, note: "" }).success
     ).toBe(false);
   });
+
+  it("accepts a note of exactly the maximum length and rejects one character more", () => {
+    expect(
+      clockInSchema.safeParse({ latitude: 0, longitude: 0, note: atLimit }).success
+    ).toBe(true);
+    expect(
+      clockInSchema.safeParse({ latitude: 0, longitude: 0, note: overLimit }).success
+    ).toBe(false);
+  });
+
+  it("measures the note after trimming, so padding cannot push it over the limit", () => {
+    const padded = ` ${atLimit} `;
+    expect(
+      clockInSchema.safeParse({ latitude: 0, longitude: 0, note: padded }).success
+    ).toBe(true);
+  });
+
+  it("rejects a whitespace-only note as empty", () => {
+    expect(
+      clockInSchema.safeParse({ latitude: 0, longitude: 0, note: "   " }).success
+    ).toBe(false);
+  });
 });
 
 describe("clockOutSchema", () => {
@@ -63,5 +89,10 @@ describe("clockOutSchema", () => {
 
   it("rejects an empty note when provided", () => {
     expect(clockOutSchema.safeParse({ note: "" }).success).toBe(false);
+  });
+
+  it("accepts a note of exactly the maximum length and rejects one character more", () => {
+    expect(clockOutSchema.safeParse({ note: atLimit }).success).toBe(true);
+    expect(clockOutSchema.safeParse({ note: overLimit }).success).toBe(false);
   });
 });

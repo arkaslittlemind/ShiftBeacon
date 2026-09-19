@@ -8,9 +8,9 @@ import {
   ActiveShiftExistsError,
   OutsidePerimeterError,
   clockIn,
+  toShiftResponse,
 } from "@/lib/services/shift-service";
 import { clockInSchema } from "@/lib/validation/shift";
-import type { ShiftResponse } from "@/types/shift";
 
 export const POST = withRouteHandler(
   "POST /api/shifts/clock-in",
@@ -31,24 +31,13 @@ export const POST = withRouteHandler(
         result.user.organizationId,
         parsed.data
       );
-      const response: ShiftResponse = {
-        id: shift.id,
-        clockInAt: shift.clockInAt.toISOString(),
-        clockInLatitude: shift.clockInLatitude,
-        clockInLongitude: shift.clockInLongitude,
-        clockInNote: shift.clockInNote,
-        clockOutAt: null,
-        clockOutLatitude: null,
-        clockOutLongitude: null,
-        clockOutNote: null,
-      };
       after(() =>
         captureServerEvent(result.user, {
           name: "shift_clock_in_succeeded",
           hasNote: Boolean(parsed.data.note),
         })
       );
-      return apiSuccess(response);
+      return apiSuccess(toShiftResponse(shift));
     } catch (error) {
       if (error instanceof ActiveShiftExistsError) {
         after(() =>

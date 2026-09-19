@@ -4,9 +4,12 @@ import { withRouteHandler } from "@/lib/api/handler";
 import { captureServerEvent } from "@/lib/observability/events";
 import { apiError, apiSuccess } from "@/lib/api/response";
 import { parseJsonBody } from "@/lib/api/validate";
-import { NoActiveShiftError, clockOut } from "@/lib/services/shift-service";
+import {
+  NoActiveShiftError,
+  clockOut,
+  toShiftResponse,
+} from "@/lib/services/shift-service";
 import { clockOutSchema } from "@/lib/validation/shift";
-import type { ShiftResponse } from "@/types/shift";
 
 export const POST = withRouteHandler(
   "POST /api/shifts/clock-out",
@@ -23,24 +26,13 @@ export const POST = withRouteHandler(
 
     try {
       const shift = await clockOut(result.user.id, parsed.data);
-      const response: ShiftResponse = {
-        id: shift.id,
-        clockInAt: shift.clockInAt.toISOString(),
-        clockInLatitude: shift.clockInLatitude,
-        clockInLongitude: shift.clockInLongitude,
-        clockInNote: shift.clockInNote,
-        clockOutAt: shift.clockOutAt!.toISOString(),
-        clockOutLatitude: shift.clockOutLatitude,
-        clockOutLongitude: shift.clockOutLongitude,
-        clockOutNote: shift.clockOutNote,
-      };
       after(() =>
         captureServerEvent(result.user, {
           name: "shift_clock_out_succeeded",
           hasNote: Boolean(parsed.data.note),
         })
       );
-      return apiSuccess(response);
+      return apiSuccess(toShiftResponse(shift));
     } catch (error) {
       if (error instanceof NoActiveShiftError) {
         return apiError(409, error.message);
