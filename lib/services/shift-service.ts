@@ -125,8 +125,11 @@ export async function clockOut(userId: string, input: ClockOutInput) {
     throw new NoActiveShiftError();
   }
 
-  return prisma.shift.update({
-    where: { id: activeShift.id },
+  // Matching on clockOutAt: null makes this a compare-and-swap: of two
+  // concurrent clock-outs only one matches a row, and the loser must not
+  // overwrite the winner's time, coordinates or note.
+  const { count } = await prisma.shift.updateMany({
+    where: { id: activeShift.id, clockOutAt: null },
     data: {
       clockOutAt: new Date(),
       clockOutLatitude: input.latitude,
@@ -134,4 +137,10 @@ export async function clockOut(userId: string, input: ClockOutInput) {
       clockOutNote: input.note,
     },
   });
+
+  if (count === 0) {
+    throw new NoActiveShiftError();
+  }
+
+  return prisma.shift.findUniqueOrThrow({ where: { id: activeShift.id } });
 }

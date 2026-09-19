@@ -47,10 +47,7 @@ export const PATCH = withRouteHandler(
     }
 
     const before = result.user.organization;
-    const organization = await updateOrganization(
-      result.user.organizationId,
-      parsed.data
-    );
+    const organization = await updateOrganization(result.user, parsed.data);
 
     // Which fields moved, never what they moved to: the new latitude and
     // longitude are exactly what must not reach the analytics vendor.

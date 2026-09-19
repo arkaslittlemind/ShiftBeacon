@@ -30,7 +30,9 @@ export async function findOrCreateCurrentUser(
     return existing;
   }
 
-  const organization = await prisma.organization.findFirst();
+  const organization = await prisma.organization.findFirst({
+    orderBy: { createdAt: "asc" },
+  });
   if (!organization) {
     throw new OrgNotConfiguredError();
   }
