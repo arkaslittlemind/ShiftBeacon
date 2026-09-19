@@ -14,3 +14,7 @@ export type AskResult =
   | { status: "invalid"; reason: string }
   | { status: "unavailable" }
   | { status: "rate_limited"; retryAfterSeconds: number };
+
+// What the browser receives for an answer: the ok variant of AskResult with the
+// Date serialized, since JSON has no Date.
+export type AskResponse = { answer: string; answeredAt: string };

@@ -12,6 +12,8 @@ import { eyebrowClass } from "@/lib/utils";
 import { getStaffForOrganization, toStaffMemberResponse } from "@/lib/services/staff-service";
 import { getAnalyticsForOrganization } from "@/lib/services/analytics-service";
 import { currentTimeMs } from "@/lib/time";
+import { AskCard } from "@/components/manager/ask-card";
+import { buildStarterQuestions } from "@/lib/ai/starter-questions";
 import { ManagerViewTracker } from "@/components/observability/manager-view-tracker";
 import {
   HandoverDigestCardSkeleton,
@@ -46,6 +48,9 @@ export default async function ManagerDashboardPage() {
         <Suspense fallback={<HandoverDigestCardSkeleton />}>
           <HandoverDigestSection organizationId={organization.id} />
         </Suspense>
+      </div>
+      <div className="mb-6">
+        <AskCard starterQuestions={buildStarterQuestions(new Date(currentTimeMs()))} />
       </div>
       <div className="mb-6 grid gap-4 lg:grid-cols-2">
         <Card>
