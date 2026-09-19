@@ -1,6 +1,7 @@
 import { prisma } from "@/lib/prisma";
 import { generateDigest } from "@/lib/ai/handover-digest";
 import { scrubNote } from "@/lib/ai/scrub-notes";
+import { errorTypeOnly } from "@/lib/redaction";
 import { toUtcDateKey } from "@/lib/services/analytics-service";
 import { MS_PER_DAY } from "@/lib/time";
 import type { HandoverDigestResult } from "@/types/handover";
@@ -19,16 +20,6 @@ function reason(error: unknown): string {
   return error instanceof Error ? error.message : String(error);
 }
 
-// The cache write is the one place an error can echo digest text back at us,
-// because the row being written is the digest. Sentry records console output
-// as breadcrumbs and only email-scrubs them, and Sentry (Category 1) may never
-// receive note-derived text, so this path logs the error's type and nothing
-// else. Every other path logs its message, which is what makes a failure
-// diagnosable.
-function cacheWriteReason(error: unknown): string {
-  return error instanceof Error ? error.name : "unknown error";
-}
-
 function collectNotes(shifts: NoteRow[], roster: string[]): string[] {
   const notes: string[] = [];
   for (const shift of shifts) {
@@ -40,6 +31,36 @@ function collectNotes(shifts: NoteRow[], roster: string[]): string[] {
     }
   }
   return notes;
+}
+
+// The one place a day's notes are read and scrubbed, shared by the digest and
+// the attendance question tools so neither can send a note the other would have
+// redacted.
+export async function getScrubbedNotesForDay(
+  organizationId: string,
+  date: string
+): Promise<string[]> {
+  const dayStart = new Date(`${date}T00:00:00.000Z`);
+  const dayEnd = new Date(dayStart.getTime() + MS_PER_DAY);
+
+  const [shifts, staff] = await Promise.all([
+    prisma.shift.findMany({
+      where: {
+        organizationId,
+        clockInAt: { gte: dayStart, lt: dayEnd },
+      },
+      select: { clockInAt: true, clockInNote: true, clockOutNote: true },
+    }),
+    prisma.user.findMany({
+      where: { organizationId },
+      select: { name: true },
+    }),
+  ]);
+
+  return collectNotes(
+    shifts,
+    staff.map((member) => member.name)
+  );
 }
 
 async function findLatestDayWithNotes(
@@ -119,27 +140,7 @@ async function loadOrGenerateDigest(
       };
     }
 
-    const dayStart = new Date(`${date}T00:00:00.000Z`);
-    const dayEnd = new Date(dayStart.getTime() + MS_PER_DAY);
-
-    const [shifts, staff] = await Promise.all([
-      prisma.shift.findMany({
-        where: {
-          organizationId,
-          clockInAt: { gte: dayStart, lt: dayEnd },
-        },
-        select: { clockInAt: true, clockInNote: true, clockOutNote: true },
-      }),
-      prisma.user.findMany({
-        where: { organizationId },
-        select: { name: true },
-      }),
-    ]);
-
-    const notes = collectNotes(
-      shifts,
-      staff.map((member) => member.name)
-    );
+    const notes = await getScrubbedNotesForDay(organizationId, date);
     if (notes.length === 0) {
       return { status: "empty" };
     }
@@ -163,7 +164,11 @@ async function loadOrGenerateDigest(
       });
       generatedAt = stored.generatedAt;
     } catch (error) {
-      console.warn("[handover] could not cache the digest:", cacheWriteReason(error));
+      // The cache write is the one place an error can echo digest text back at
+      // us, because the row being written is the digest, so log its type only.
+      // Every other path logs its message, which is what makes a failure
+      // diagnosable.
+      console.warn("[handover] could not cache the digest:", errorTypeOnly(error));
     }
 
     return { status: "ok", date, digest, generatedAt };

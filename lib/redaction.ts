@@ -7,3 +7,11 @@
 // bare .test() on a shared /g regex would carry state between call sites.
 export const EMAIL_PATTERN =
   /[^\s@<>()[\]{},;:"']+@[^\s@<>()[\]{},;:"']+\.[a-z]{2,}/gi;
+
+// Console output becomes a Sentry breadcrumb, and breadcrumb messages are only
+// email-scrubbed, so a log line near a question, a note or a digest must carry
+// the error's type and never its message or a thrown value, either of which can
+// echo that text back.
+export function errorTypeOnly(error: unknown): string {
+  return error instanceof Error ? error.name : "unknown error";
+}

@@ -17,6 +17,14 @@ export async function getStaffForOrganization(organizationId: string) {
   });
 }
 
+// Only what a caller needs to tell staff apart: no email, role or shifts.
+export async function getRosterForOrganization(organizationId: string) {
+  return prisma.user.findMany({
+    where: { organizationId },
+    select: { id: true, name: true },
+  });
+}
+
 export async function getShiftHistoryForStaffMember(
   organizationId: string,
   staffUserId: string

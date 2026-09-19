@@ -152,3 +152,31 @@ describe("scrubNote - common-word roster names (F-05)", () => {
     ).toBe("Covered by an agency worker for the shift.");
   });
 });
+
+describe("scrubNote - names with non-ASCII letters", () => {
+  const roster = ["José García", "Zoë Lin", "Łukasz Nowak"];
+
+  it("redacts an accented first name, which a plain word boundary cannot see", () => {
+    expect(scrubNote("José covered the night.", roster)).toBe(
+      `${REDACTED_NAME} covered the night.`
+    );
+  });
+
+  it("redacts accented names in the middle of a sentence and with a possessive", () => {
+    expect(scrubNote("Handover from Zoë, then Łukasz's rota.", roster)).toBe(
+      `Handover from ${REDACTED_NAME}, then ${REDACTED_NAME} rota.`
+    );
+  });
+
+  it("redacts an accented surname", () => {
+    expect(scrubNote("Ask García about it.", roster)).toBe(`Ask ${REDACTED_NAME} about it.`);
+  });
+
+  it("matches regardless of case", () => {
+    expect(scrubNote("JOSÉ was late.", roster)).toBe(`${REDACTED_NAME} was late.`);
+  });
+
+  it("does not redact an accented name buried inside a longer word", () => {
+    expect(scrubNote("Josée was late.", roster)).toBe("Josée was late.");
+  });
+});

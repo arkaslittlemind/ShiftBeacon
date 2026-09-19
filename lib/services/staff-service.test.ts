@@ -9,9 +9,10 @@ vi.mock("@/lib/prisma", () => ({
 }));
 
 import { prisma } from "@/lib/prisma";
-import { getShiftHistoryForStaffMember } from "./staff-service";
+import { getRosterForOrganization, getShiftHistoryForStaffMember } from "./staff-service";
 
 const mockedUserFindFirst = vi.mocked(prisma.user.findFirst);
+const mockedUserFindMany = vi.mocked(prisma.user.findMany);
 const mockedShiftFindFirst = vi.mocked(prisma.shift.findFirst);
 const mockedShiftFindMany = vi.mocked(prisma.shift.findMany);
 
@@ -74,5 +75,19 @@ describe("getShiftHistoryForStaffMember", () => {
       activeShift: null,
       history: [completedShift],
     });
+  });
+});
+
+describe("getRosterForOrganization", () => {
+  it("returns only the id and name of the given organization's staff", async () => {
+    mockedUserFindMany.mockResolvedValue([{ id: "staff1", name: "Casey Worker" }] as never);
+
+    const roster = await getRosterForOrganization("org1");
+
+    expect(mockedUserFindMany).toHaveBeenCalledWith({
+      where: { organizationId: "org1" },
+      select: { id: true, name: true },
+    });
+    expect(roster).toEqual([{ id: "staff1", name: "Casey Worker" }]);
   });
 });

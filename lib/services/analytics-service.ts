@@ -22,7 +22,9 @@ export function toUtcDateKey(date: Date): string {
   return date.toISOString().slice(0, 10);
 }
 
-function windowDateKeys(now: Date): string[] {
+// Exported so the attendance question tools accept exactly the days the charts
+// show, never a wider window.
+export function windowDateKeys(now: Date): string[] {
   const keys: string[] = [];
   for (let i = WINDOW_DAYS - 1; i >= 0; i--) {
     keys.push(toUtcDateKey(new Date(now.getTime() - i * MS_PER_DAY)));
