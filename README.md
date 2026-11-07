@@ -12,7 +12,7 @@ their own team's attendance.
 ![PostgreSQL](https://img.shields.io/badge/PostgreSQL-16-4169E1?logo=postgresql&logoColor=white)
 ![Auth0](https://img.shields.io/badge/Auth0-identity-EB5424?logo=auth0&logoColor=white)
 ![Tests](https://img.shields.io/badge/tests-Vitest%20%2B%20Playwright-2E8B57)
-[![Version](https://img.shields.io/badge/version-1.6.0-1D6496)](CHANGELOG.md)
+[![Version](https://img.shields.io/badge/version-1.7.0-1D6496)](CHANGELOG.md)
 
 ## Why
 
@@ -392,13 +392,12 @@ To publish a release on GitHub:
 
 ```bash
 git checkout master && git pull
-git tag -a v1.6.0 -m "v1.6.0"
-git push origin v1.6.0
-gh release create v1.6.0 --title "v1.6.0" --notes "<paste the CHANGELOG section>"
+git tag -a vX.Y.Z -m "vX.Y.Z"
+git push origin vX.Y.Z
+gh release create vX.Y.Z --title "vX.Y.Z" --notes "<paste the CHANGELOG section>"
 ```
 
-Earlier releases were never tagged. These are the commits each one corresponds
-to, for tagging them retroactively with `git tag -a vX.Y.Z <commit>`:
+Releases up to v1.6.0 were tagged retroactively, at these commits:
 
 | Version | Commit | Date |
 |---|---|---|

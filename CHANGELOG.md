@@ -26,11 +26,20 @@ first production deployment.
 
 ## [Unreleased]
 
+## [1.7.0] - 2026-11-08
+
 ### Added
 
 - Profile pages for care workers (`/worker/profile`) and managers
   (`/manager/profile`), linked from the avatar menu, which previously showed a
   disabled "Profile (coming soon)" item.
+- This changelog, with every earlier release reconstructed from history and
+  tagged.
+
+### Changed
+
+- README: a design system section describing the planned Pourville redesign
+  (spec pack in `docs/redesign/`), and a versioning and releases section.
 
 ## [1.6.0] - 2026-09-19
 
@@ -235,7 +244,8 @@ First production release.
 - Public landing page and the role-aware application shell for care workers
   and managers, with shared loading, error, and empty states.
 
-[Unreleased]: https://github.com/arkaslittlemind/ShiftBeacon/compare/v1.6.0...HEAD
+[Unreleased]: https://github.com/arkaslittlemind/ShiftBeacon/compare/v1.7.0...HEAD
+[1.7.0]: https://github.com/arkaslittlemind/ShiftBeacon/compare/v1.6.0...v1.7.0
 [1.6.0]: https://github.com/arkaslittlemind/ShiftBeacon/compare/v1.5.1...v1.6.0
 [1.5.1]: https://github.com/arkaslittlemind/ShiftBeacon/compare/v1.5.0...v1.5.1
 [1.5.0]: https://github.com/arkaslittlemind/ShiftBeacon/compare/v1.4.0...v1.5.0
