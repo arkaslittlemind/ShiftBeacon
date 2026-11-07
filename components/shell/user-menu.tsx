@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -17,7 +18,15 @@ function getInitials(name: string) {
   return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
 }
 
-export function UserMenu({ name, email }: { name: string; email: string }) {
+export function UserMenu({
+  name,
+  email,
+  profileHref,
+}: {
+  name: string;
+  email: string;
+  profileHref: string;
+}) {
   const initials = getInitials(name || email);
 
   return (
@@ -38,7 +47,9 @@ export function UserMenu({ name, email }: { name: string; email: string }) {
           </div>
         </DropdownMenuLabel>
         <DropdownMenuSeparator />
-        <DropdownMenuItem disabled>Profile (coming soon)</DropdownMenuItem>
+        <DropdownMenuItem asChild>
+          <Link href={profileHref}>Profile</Link>
+        </DropdownMenuItem>
         <DropdownMenuItem asChild>
           <LogoutLink>Log out</LogoutLink>
         </DropdownMenuItem>
