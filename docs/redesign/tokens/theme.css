@@ -1,0 +1,102 @@
+/* ShiftBeacon theme v4 - "Pourville", Leedlime direction.
+   Warm paper, ink buttons, roman Newsreader headlines, and an impressionist
+   ocean blue. Painterly coastal imagery carries the calm; the UI stays quiet
+   around it. Earlier rounds: v3-mixed/, v2-calm-tide/, v1-neobrutalist/. These tokens port
+   into app/globals.css @theme at the first UI feature.
+   Every text token clears 4.5:1 on every surface below. */
+
+@import url("https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,300..500;1,6..72,300..500&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap");
+
+:root {
+  /* surfaces - warm paper, never cool grey */
+  --bg: #f8f6f1;            /* paper - page background */
+  --surface: #ffffff;       /* cards, inputs */
+  --surface-alt: #f2efe8;   /* bands, hover rows */
+  --surface-sunk: #efebe3;  /* wells, segmented controls */
+  --border: #e6e1d6;        /* warm hairline */
+  --border-strong: #d4cec1; /* inputs at rest */
+
+  /* text */
+  --text: #16212b;          /* ink, a breath of blue in it */
+  --muted: #47525d;
+  --faint: #5f6872;
+
+  /* ink - primary buttons, like the references' near-black */
+  --ink: #16212b;
+  --ink-hover: #26333f;
+  --ink-text: #ffffff;
+
+  /* accent - Pourville blue, for links, focus, active, data */
+  --accent: #1d6496;
+  --accent-hover: #164f78;
+  --accent-soft: #e4eef6;
+  --accent-tint: #c6dbeb;
+  --accent-ink: #ffffff;
+
+  /* states */
+  --success: #1a7166;       /* seafoam - inside perimeter, on shift */
+  --success-soft: #e3f1ec;
+  --warning: #8a5f17;       /* sand - long shift */
+  --warning-soft: #f6eedc;
+  --danger: #a84a39;        /* muted coral - outside perimeter, errors */
+  --danger-soft: #f8e8e2;
+
+  /* charts - sea, from shallow to deep */
+  --chart-1: #1d6496;
+  --chart-2: #6c9ec6;
+  --chart-3: #c3d7e7;
+  --chart-4: #4f9a8c;
+  --chart-grid: #ece8df;
+
+  /* glass - frosted panels floating on paintings */
+  --glass: rgba(255, 255, 255, 0.72);
+  --glass-edge: rgba(255, 255, 255, 0.9);
+
+  --ring: 0 0 0 3px rgba(29, 100, 150, 0.25);
+
+  /* type */
+  --font-display: "Newsreader", "Iowan Old Style", Georgia, serif;
+  --font-sans: "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, "SFMono-Regular", monospace;
+
+  --text-xs: 0.75rem;
+  --text-sm: 0.875rem;
+  --text-base: 0.9375rem;
+  --text-lg: 1.125rem;
+  --text-xl: 1.375rem;
+  --text-2xl: 1.75rem;
+  --text-display: clamp(2.75rem, 5vw, 4.25rem);
+
+  /* shape - softly squared, not pills */
+  --radius-sm: 6px;
+  --radius: 10px;
+  --radius-lg: 16px;
+  --radius-xl: 22px;
+  --radius-pill: 999px;
+
+  /* elevation - warm, diffuse */
+  --shadow-sm: 0 1px 2px rgba(40, 32, 20, 0.05);
+  --shadow: 0 1px 2px rgba(40, 32, 20, 0.04), 0 8px 24px rgba(40, 32, 20, 0.06);
+  --shadow-lg: 0 2px 6px rgba(40, 32, 20, 0.05), 0 28px 60px rgba(22, 33, 43, 0.16);
+
+  /* spacing */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 24px;
+  --space-6: 32px;
+  --space-7: 48px;
+  --space-8: 88px;
+
+  --frame: 1240px;          /* Leedlime-style framed page width */
+  /* motion - strong custom curves; UI motion stays under 300ms */
+  --ease-out: cubic-bezier(0.23, 1, 0.32, 1);      /* enter, press, feedback */
+  --ease-in-out: cubic-bezier(0.77, 0, 0.175, 1);  /* on-screen movement */
+  --ease-drawer: cubic-bezier(0.32, 0.72, 0, 1);   /* sheets, drawers */
+  --dur-press: 160ms;
+  --dur-fast: 150ms;    /* hover colour, tooltips */
+  --dur-base: 200ms;    /* dropdowns, status changes */
+  --dur-panel: 300ms;   /* sheets, page-level enter */
+  --stagger: 60ms;
+}

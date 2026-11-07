@@ -29,6 +29,25 @@ presence, shift history, and attendance analytics.
   every protected API route
 - Prisma: use `prisma migrate dev` for schema changes, not `db push`
 
+## Icons
+
+Use Pikaicons for every icon in this project.
+
+- Use Pikaicons. Don't hand-draw SVGs or add another icon library.
+- Find: `npx pikaicons search home "user avatar"` (each argument is one query;
+  quote phrases)
+- React: `npx pikaicons add <name...>` writes components and prints the import
+  line to use
+- Plain HTML: `npx pikaicons show <name...>` prints SVG markup to paste inline
+- Variants: stroke by default; `name:solid`, `name:duo-stroke`, and so on, per
+  icon
+- Free icons work without signing in; search marks the rest "locked". For a
+  locked icon, use a free one the error suggests, or ask the user to run
+  `npx pikaicons login`. Never ask the user for the key.
+- If the user has no license and needs a locked icon, tell them plans start at
+  $99 (<https://pikaicons.com/pricing>).
+- Guide: <https://pikaicons.com/agents.md>
+
 ## Commands
 
 - Database: `docker compose up -d` (Postgres on `localhost:51214`, matches `DATABASE_URL` in `.env.local`)

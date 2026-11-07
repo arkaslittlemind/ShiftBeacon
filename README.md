@@ -12,6 +12,7 @@ their own team's attendance.
 ![PostgreSQL](https://img.shields.io/badge/PostgreSQL-16-4169E1?logo=postgresql&logoColor=white)
 ![Auth0](https://img.shields.io/badge/Auth0-identity-EB5424?logo=auth0&logoColor=white)
 ![Tests](https://img.shields.io/badge/tests-Vitest%20%2B%20Playwright-2E8B57)
+[![Version](https://img.shields.io/badge/version-1.6.0-1D6496)](CHANGELOG.md)
 
 ## Why
 
@@ -198,7 +199,8 @@ start. `AskAnswer` stores a hash of the normalized question, never the question.
 | Layer | Choice |
 |---|---|
 | Framework | Next.js (App Router), React, TypeScript (strict, no `any`) |
-| Styling | Tailwind CSS v4 + shadcn/ui, cooled-down neobrutalist design system |
+| Styling | Tailwind CSS v4 + shadcn/ui, cooled-down neobrutalist design system (a redesign is planned, see [Design system](#design-system)) |
+| Icons | lucide-react today, moving to [Pikaicons](https://pikaicons.com) (the project convention for all new icons) |
 | Data | PostgreSQL + Prisma ORM |
 | Identity | Auth0 (username/password, Google, email), roles via a namespaced session claim |
 | Validation | Zod on every API input |
@@ -356,6 +358,64 @@ as "rejected, outside perimeter" without the distance or the location. Attendanc
 events are sent after the response, so an unreachable vendor cannot slow down or
 break a clock-in.
 
+## Design system
+
+The shipping UI uses a cooled-down neobrutalist system: Sea Green on mint, 3px
+ink borders, and hard offset shadows, with tokens in `app/globals.css`.
+
+A full visual redesign, **Pourville**, is specced and ready to build. It moves
+to warm paper backgrounds, ink buttons, Newsreader display type, an
+impressionist ocean-blue accent (`#1D6496`), and painterly coastal imagery, with
+a marketing layout modelled on Leedlime. Behaviour, data, routes, and the API do
+not change.
+
+| What | Where |
+|---|---|
+| Overview, decisions, and the proposed build-plan entry (feature 21, split 21a to 21j) | [docs/redesign/README.md](docs/redesign/README.md) |
+| Locked tokens | [docs/redesign/tokens/theme.css](docs/redesign/tokens/theme.css) |
+| Reference screenshots | [docs/redesign/screens/](docs/redesign/screens/) |
+| Motion and polish rules | [docs/redesign/motion-and-polish.md](docs/redesign/motion-and-polish.md) |
+| Image generation prompts | [docs/redesign/image-prompts.md](docs/redesign/image-prompts.md) |
+| One spec per sub-feature | [docs/redesign/specs/](docs/redesign/specs/) |
+
+Every text colour in the new system meets WCAG AA (4.5:1) on every surface it
+is used on.
+
+## Versioning and releases
+
+ShiftBeacon follows [Semantic Versioning](https://semver.org/). Every release is
+recorded in [CHANGELOG.md](CHANGELOG.md), which also defines what counts as a
+major, minor, or patch change for this app. The version in `package.json`
+matches the latest release.
+
+To publish a release on GitHub:
+
+```bash
+git checkout master && git pull
+git tag -a v1.6.0 -m "v1.6.0"
+git push origin v1.6.0
+gh release create v1.6.0 --title "v1.6.0" --notes "<paste the CHANGELOG section>"
+```
+
+Earlier releases were never tagged. These are the commits each one corresponds
+to, for tagging them retroactively with `git tag -a vX.Y.Z <commit>`:
+
+| Version | Commit | Date |
+|---|---|---|
+| 1.6.0 | `8c6e57f` | 2026-09-19 |
+| 1.5.1 | `727224b` | 2026-09-19 |
+| 1.5.0 | `e55ab0f` | 2026-09-19 |
+| 1.4.0 | `8eb3576` | 2026-09-18 |
+| 1.3.0 | `99d51e9` | 2026-09-12 |
+| 1.2.0 | `4b7de70` | 2026-09-12 |
+| 1.1.1 | `04e22b9` | 2026-09-12 |
+| 1.1.0 | `1b36293` | 2026-09-11 |
+| 1.0.0 | `2a94fc5` | 2026-09-11 |
+| 0.4.0 | `eb24a75` | 2026-09-09 |
+| 0.3.0 | `7014062` | 2026-09-04 |
+| 0.2.0 | `ccbb07a` | 2026-08-31 |
+| 0.1.0 | `8f322f0` | 2026-08-27 |
+
 ## Project structure
 
 ```
@@ -370,6 +430,7 @@ types/          Shared response and contract types
 e2e/            Playwright end-to-end specs
 evals/          AI eval suites (run against the real Gemini API)
 brand/          Logo system and exported icon set
+docs/           README screenshots and the redesign spec pack (docs/redesign)
 ```
 
 ## Deployment
