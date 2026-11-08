@@ -5,7 +5,7 @@ import { Avatar } from "@/components/shared/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { monoLabelClass } from "@/lib/utils";
-import lowTide from "@/public/images/marketing/low-tide.jpg";
+import hero from "@/public/images/marketing/hero.jpg";
 
 // One-time entrance for first-view content: opacity plus an 8px rise, staggered
 // 60ms. The global reduced-motion rule drops the rise and keeps the fade.
@@ -60,13 +60,13 @@ export function Hero() {
         </ul>
       </div>
 
-      <div className="relative flex flex-col gap-4 overflow-hidden px-4 pt-40 pb-6 md:block md:p-0">
+      <div className="relative flex flex-col gap-4 overflow-hidden px-4 pt-72 pb-6 md:block md:p-0">
         <Painting
-          src={lowTide}
-          alt="Claude Monet, Low Tide at Pourville: a calm blue sea below pale cliffs"
+          src={hero}
+          alt="A care worker in a blue tunic walks up a lavender-lined path to a white seaside care home at sunrise"
           sizes="(min-width: 1240px) 620px, (min-width: 768px) 50vw, 100vw"
           priority
-          className="object-[62%_50%]"
+          className="object-[88%_50%] md:object-[50%_50%]"
         />
 
         <div aria-hidden className="contents">
@@ -94,7 +94,7 @@ export function Hero() {
           </GlassFrame>
 
           <GlassFrame
-            className={`md:absolute md:right-[5%] md:bottom-[9%] md:w-110 ${ENTER} [animation-delay:300ms]`}
+            className={`md:absolute md:bottom-[7%] md:left-[5%] md:w-100 ${ENTER} [animation-delay:300ms]`}
           >
             <div className="mb-3 flex items-start justify-between gap-3">
               <p>

@@ -231,3 +231,29 @@ Generated images become ShiftBeacon's own art for the site. Do not prompt with
 the name of a living artist. Keep the original generations and the prompts with
 the design files, outside the repo, in case an image needs regenerating to
 match.
+
+## Shipped set (feature 21i)
+
+The first generation round is live. It was reviewed against a relaxed
+checklist: close-up faces and indoor care settings (including a bed or a
+stethoscope) were accepted, because the people are illustrations, not real
+individuals. The "no text, no logos, no watermark" rules still applied. The
+care home also differs between images (a white cottage in the hero, a modern
+glass-fronted building in the garden cards), which fails the "same building"
+checklist item; it was accepted for this round.
+
+| Slot | Source image | Crop |
+|---|---|---|
+| `marketing/hero.jpg` | cottage with carer on the path | full frame, 4:5 |
+| `marketing/platform-band.jpg` | dining room with open windows | 21:9 from y=60 |
+| `marketing/how-perimeter.jpg` | modern entrance, garden path | full frame, 3:2 |
+| `marketing/how-team.jpg` | staff at a window table | 3:2 from y=60 |
+| `marketing/how-arrival.jpg` | carer walking to the entrance | full frame, 3:2 |
+| `marketing/why-verified.jpg` | lobby and reception desk | full frame, 4:3 |
+| `marketing/why-live.jpg` | sunlit corridor | 4:3 from x=85 |
+| `app/dashboard-banner.jpg` | carer and resident in the garden | 3:1 from y=110 |
+| `og/share-background.jpg` | cottage with carer on the path | 1.9:1 from y=420 |
+| `marketing/footer-strip.jpg` | shoreline with the cottage | 4:1 from y=640 |
+
+Not used: the optional offline and empty-state slots (no square image), and
+eight spare generations. The originals stay outside the repo.

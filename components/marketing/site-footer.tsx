@@ -1,7 +1,7 @@
 import { BrandLockup } from "@/components/brand/brand-lockup";
 import { Painting } from "@/components/marketing/painting";
 import { cn, focusRingClass, monoLabelClass } from "@/lib/utils";
-import beachPourville from "@/public/images/marketing/beach-pourville.jpg";
+import footerStrip from "@/public/images/marketing/footer-strip.jpg";
 
 // About, Privacy, and Security have no pages yet; they stay placeholders.
 const FOOTER_LINKS = [
@@ -62,18 +62,15 @@ export function SiteFooter() {
       </div>
       <div className="flex flex-wrap justify-between gap-x-6 gap-y-1 border-t border-border-soft px-5 py-5 text-xs text-faint md:px-10">
         <span>&copy; 2026 ShiftBeacon</span>
-        <span>
-          Paintings by Claude Monet (public domain), including Low Tide at Pourville and The Cliff
-          Walk at Pourville.
-        </span>
       </div>
       <div aria-hidden className="relative h-55 overflow-hidden">
         <Painting
-          src={beachPourville}
+          src={footerStrip}
           alt=""
           sizes="(min-width: 1240px) 1240px, 100vw"
-          className="object-[center_72%]"
+          className="object-[90%_30%]"
         />
+        <div className="absolute inset-x-0 top-0 h-10 bg-linear-to-b from-background to-transparent" />
       </div>
     </footer>
   );

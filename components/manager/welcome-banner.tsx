@@ -1,5 +1,5 @@
 import Image from "next/image";
-import cliffWalk from "@/public/images/cliff-walk.jpg";
+import dashboardBanner from "@/public/images/app/dashboard-banner.jpg";
 import { SparkleAi01Icon, UserIcon } from "@/components/icons";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
@@ -41,14 +41,14 @@ export function WelcomeBanner({
       </div>
       {/* Faded in from the text side: from the top on phones, where the
           painting is a strip under the copy, and from the left beside it. */}
-      <div className="relative h-36 overflow-hidden mask-[linear-gradient(180deg,transparent_0%,#000_35%)] md:h-auto md:mask-[linear-gradient(90deg,transparent_0%,#000_24%)]">
+      <div className="relative h-36 overflow-hidden mask-[linear-gradient(180deg,transparent_0%,#000_22%)] md:h-auto md:mask-[linear-gradient(90deg,transparent_0%,#000_24%)]">
         <Image
-          src={cliffWalk}
+          src={dashboardBanner}
           alt=""
           placeholder="blur"
           fill
           sizes="(min-width: 768px) 44vw, 100vw"
-          className="object-cover object-[70%_42%]"
+          className="object-cover object-[45%_50%]"
         />
         <p
           aria-hidden

@@ -15,9 +15,13 @@ export const contentType = "image/png";
 const lockup = await readFile(
   join(process.cwd(), "brand", "lockup-horizontal-trimmed.png")
 );
+const background = await readFile(
+  join(process.cwd(), "public", "images", "og", "share-background.jpg")
+);
 
 export default function OpengraphImage() {
   const lockupSrc = `data:image/png;base64,${lockup.toString("base64")}`;
+  const backgroundSrc = `data:image/jpeg;base64,${background.toString("base64")}`;
 
   return new ImageResponse(
     (
@@ -26,16 +30,26 @@ export default function OpengraphImage() {
           width: "100%",
           height: "100%",
           display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
+          position: "relative",
           background: "#f8f6f1",
-          padding: 64,
         }}
       >
+        {/* eslint-disable-next-line @next/next/no-img-element -- Satori
+            renders this, not the browser; next/image does not exist here. */}
+        <img
+          src={backgroundSrc}
+          width={size.width}
+          height={size.height}
+          alt=""
+          style={{ position: "absolute", top: 0, left: 0 }}
+        />
         <div
           style={{
-            flex: 1,
-            height: "100%",
+            position: "absolute",
+            top: 48,
+            bottom: 48,
+            left: 48,
+            width: 660,
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
@@ -45,9 +59,8 @@ export default function OpengraphImage() {
             boxShadow: "0 28px 60px rgba(22, 33, 43, 0.16)",
           }}
         >
-          {/* eslint-disable-next-line @next/next/no-img-element -- Satori
-              renders this, not the browser; next/image does not exist here. */}
-          <img src={lockupSrc} width={831} height={200} alt="" />
+          {/* eslint-disable-next-line @next/next/no-img-element -- see above. */}
+          <img src={lockupSrc} width={560} height={135} alt="" />
         </div>
       </div>
     ),

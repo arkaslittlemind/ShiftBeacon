@@ -4,8 +4,8 @@ import { Painting } from "@/components/marketing/painting";
 import { SectionHead } from "@/components/marketing/section-head";
 import { Badge } from "@/components/ui/badge";
 import { cn, monoLabelClass } from "@/lib/utils";
-import cliffWalk from "@/public/images/marketing/cliff-walk.jpg";
-import lowTide from "@/public/images/marketing/low-tide.jpg";
+import whyLive from "@/public/images/marketing/why-live.jpg";
+import whyVerified from "@/public/images/marketing/why-verified.jpg";
 import type { StaticImageData } from "next/image";
 import type { IconComponent } from "@/types/icons";
 
@@ -83,8 +83,8 @@ export function WhyCards() {
       />
       <div className="grid gap-8 md:grid-cols-2">
         <WhyCard
-          painting={lowTide}
-          crop="object-[80%_40%]"
+          painting={whyVerified}
+          crop="object-[50%_50%]"
           icon={MapPinIcon}
           title="Verified on site, not self-reported"
           description="Every clock-in is checked against your perimeter on our server, not just on the worker's phone."
@@ -105,8 +105,8 @@ export function WhyCards() {
           </ResultRow>
         </WhyCard>
         <WhyCard
-          painting={cliffWalk}
-          crop="object-[85%_60%]"
+          painting={whyLive}
+          crop="object-[50%_50%]"
           icon={ClockIcon}
           title="Live, not end of shift"
           description="See who's in the building right now and how long they've been on, without waiting for an end-of-shift sheet."

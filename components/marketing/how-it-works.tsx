@@ -4,9 +4,9 @@ import { Avatar } from "@/components/shared/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
 import { monoLabelClass } from "@/lib/utils";
-import beachPourville from "@/public/images/marketing/beach-pourville.jpg";
-import cliffWalk from "@/public/images/marketing/cliff-walk.jpg";
-import lowTide from "@/public/images/marketing/low-tide.jpg";
+import howArrival from "@/public/images/marketing/how-arrival.jpg";
+import howPerimeter from "@/public/images/marketing/how-perimeter.jpg";
+import howTeam from "@/public/images/marketing/how-team.jpg";
 import type { StaticImageData } from "next/image";
 
 const CARD_SIZES = "(min-width: 1240px) 400px, (min-width: 768px) 33vw, 100vw";
@@ -60,8 +60,8 @@ export function HowItWorks() {
       />
       <div className="grid gap-4 md:grid-cols-3">
         <Step
-          painting={lowTide}
-          crop="object-[20%_30%]"
+          painting={howPerimeter}
+          crop="object-[50%_40%]"
           title="Set your perimeter"
           description="Set your workplace's coordinates and choose how close staff must be to clock in."
         >
@@ -75,8 +75,8 @@ export function HowItWorks() {
           </div>
         </Step>
         <Step
-          painting={cliffWalk}
-          crop="object-[30%_20%]"
+          painting={howTeam}
+          crop="object-[50%_100%]"
           title="Add your team"
           description="Staff sign in with email or Google and appear in your staff list."
         >
@@ -97,8 +97,8 @@ export function HowItWorks() {
           ))}
         </Step>
         <Step
-          painting={beachPourville}
-          crop="object-[30%_40%]"
+          painting={howArrival}
+          crop="object-[50%_60%]"
           title="Clock in on arrival"
           description="One tap at the door, and they appear on your dashboard straight away."
         >

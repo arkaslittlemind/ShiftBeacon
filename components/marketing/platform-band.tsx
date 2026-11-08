@@ -5,7 +5,7 @@ import { Painting } from "@/components/marketing/painting";
 import { SectionHead } from "@/components/marketing/section-head";
 import { Button } from "@/components/ui/button";
 import { cn, monoLabelClass } from "@/lib/utils";
-import cliffWalk from "@/public/images/marketing/cliff-walk.jpg";
+import platformBand from "@/public/images/marketing/platform-band.jpg";
 import type { IconComponent } from "@/types/icons";
 
 const TILES: { label: string; icon: IconComponent; value: string }[] = [
@@ -80,10 +80,10 @@ export function PlatformBand() {
       </div>
       <div className="relative overflow-hidden px-5 pt-16 md:px-12 md:pt-24">
         <Painting
-          src={cliffWalk}
-          alt="Claude Monet, The Cliff Walk at Pourville, behind the ShiftBeacon dashboard"
+          src={platformBand}
+          alt="Sunlit seaside dining room with open windows onto the sea, behind the ShiftBeacon dashboard"
           sizes="(min-width: 1240px) 1240px, 100vw"
-          className="object-[center_30%]"
+          className="object-[center_20%]"
         />
         <GlassFrame
           className="relative mx-auto max-w-4xl rounded-b-none border-b-0 pb-0"
