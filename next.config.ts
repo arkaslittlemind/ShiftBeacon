@@ -2,7 +2,10 @@ import { withSentryConfig } from "@sentry/nextjs/config";
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  /* config options here */
+  // AVIF first, WebP for browsers without it. Keep the photographic sources as
+  // JPG: the optimizer resizes and encodes those per device, but passes an AVIF
+  // source through at full size, so phones would download the whole file.
+  images: { formats: ["image/avif", "image/webp"] },
 };
 
 export default withSentryConfig(nextConfig, {
