@@ -52,7 +52,7 @@ export function WelcomeBanner({
         />
         <p
           aria-hidden
-          className="absolute top-4 right-4 rounded-lg border border-card/95 bg-card/82 px-3.5 py-2.5 shadow-md backdrop-blur-[6px] md:top-5 md:right-5"
+          className="absolute top-4 right-4 rounded-lg border border-card/95 bg-card/92 px-3.5 py-2.5 shadow-md md:top-5 md:right-5"
         >
           <span className="block text-xl leading-tight font-semibold tracking-tight text-foreground">
             {onShift}

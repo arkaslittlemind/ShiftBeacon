@@ -9,7 +9,7 @@ import { cn } from "@/lib/utils"
 const PRESS = "motion-safe:active:not-aria-[haspopup]:scale-[0.97]"
 
 const buttonVariants = cva(
-  "group/button inline-flex shrink-0 touch-manipulation items-center [-webkit-tap-highlight-color:transparent] justify-center gap-1.5 rounded-lg border border-transparent font-sans text-sm font-semibold whitespace-nowrap outline-none select-none [transition:transform_var(--dur-press)_var(--ease-out),background-color_var(--dur-fast)_ease,color_var(--dur-fast)_ease,border-color_var(--dur-fast)_ease,box-shadow_var(--dur-fast)_ease] focus-visible:ring-3 focus-visible:ring-ring/50 disabled:pointer-events-none disabled:opacity-50 aria-invalid:border-danger aria-invalid:ring-3 aria-invalid:ring-danger/20 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
+  "group/button inline-flex shrink-0 touch-manipulation items-center [-webkit-tap-highlight-color:transparent] justify-center gap-1.5 rounded-lg border border-transparent font-sans text-sm font-semibold whitespace-nowrap outline-none select-none [transition:scale_var(--dur-press)_var(--ease-out),background-color_var(--dur-fast)_ease,color_var(--dur-fast)_ease,border-color_var(--dur-fast)_ease,box-shadow_var(--dur-fast)_ease] focus-visible:ring-3 focus-visible:ring-ring/50 disabled:pointer-events-none disabled:opacity-50 aria-invalid:border-danger aria-invalid:ring-3 aria-invalid:ring-danger/20 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
   {
     variants: {
       variant: {

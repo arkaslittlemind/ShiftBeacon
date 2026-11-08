@@ -208,7 +208,8 @@
     scroll-behavior: auto !important;
   }
 
-  .animate-spin {
+  .animate-spin,
+  .animate-live-dot {
     animation: none;
   }
 }
@@ -233,6 +234,18 @@
     animation-duration: 0s !important;
     animation-delay: 0s !important;
   }
+}
+
+/* The one place constant motion carries meaning: the staff list is live. Opacity
+   only, on the dot only, and switched off under reduced motion above. */
+@keyframes live-dot {
+  50% {
+    opacity: 0.3;
+  }
+}
+
+@utility animate-live-dot {
+  animation: live-dot 2s var(--ease-in-out) infinite;
 }
 
 /* Dotted section backdrop for the marketing page (heading bands, closing CTA). */

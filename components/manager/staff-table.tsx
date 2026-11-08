@@ -45,7 +45,7 @@ export function StaffTable({
           <UserIcon aria-hidden className="size-4.5" />
           Staff
         </CardTitle>
-        <Badge variant="success" dot>
+        <Badge variant="success" dot pulse>
           {onShift} on shift
         </Badge>
         <span className={monoLabelClass}>Updated {formatTimeOfDay(new Date(now))}</span>

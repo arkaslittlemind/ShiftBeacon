@@ -48,7 +48,7 @@ export function UserMenu({
   return (
     <DropdownMenu>
       <DropdownMenuTrigger
-        aria-label="Open user menu"
+        aria-label={layout === "avatar" ? `${initials}, open user menu` : undefined}
         className={cn(TRIGGER_BASE, TRIGGER_LAYOUT[layout])}
       >
         <Avatar initials={initials} />
