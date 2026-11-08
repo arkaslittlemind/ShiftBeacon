@@ -1,5 +1,6 @@
 export { AlertCircleIcon } from "./alert-circle"
 export { AlertTriangleIcon } from "./alert-triangle"
+export { ArrowLeftIcon } from "./arrow-left"
 export { BuildingApartmentTwoIcon } from "./building-apartment-two"
 export { BurgerMenuThreeIcon } from "./burger-menu-three"
 export { CalendarIcon } from "./calendar-default"

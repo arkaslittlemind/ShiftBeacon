@@ -1,5 +1,4 @@
 import { PageHeader } from "@/components/shell/page-header";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { WorkplaceSettingsForm } from "@/components/manager/workplace-settings-form";
 import { requirePageUser } from "@/lib/auth";
 import { ManagerViewTracker } from "@/components/observability/manager-view-tracker";
@@ -7,24 +6,16 @@ import { ManagerViewTracker } from "@/components/observability/manager-view-trac
 export default async function WorkplacePage() {
   const user = await requirePageUser("MANAGER", "/manager/workplace");
   if (!user) return null;
-  const organization = user.organization;
 
   return (
     <>
       <ManagerViewTracker view="workplace_settings" />
       <PageHeader
-        eyebrow="Manager"
-        title="Workplace"
-        description="Your organization's location and clock-in radius"
+        eyebrow="Workplace settings"
+        title="Where your team clocks in"
+        description="Staff can only clock in within the radius you set around your workplace. The check happens on our server, so a phone can't fake its position."
       />
-      <Card>
-        <CardHeader>
-          <CardTitle>{organization.name}</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <WorkplaceSettingsForm organization={organization} />
-        </CardContent>
-      </Card>
+      <WorkplaceSettingsForm organization={user.organization} />
     </>
   );
 }

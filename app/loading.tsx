@@ -1,10 +1,11 @@
-import { eyebrowClass } from "@/lib/utils";
+import { Spinner } from "@/components/ui/spinner";
+import { monoLabelClass } from "@/lib/utils";
 
 export default function Loading() {
   return (
-    <div className="flex min-h-[50vh] flex-col items-center justify-center gap-3">
-      <div className="size-9 animate-spin border-4 border-border border-t-primary" />
-      <p className={eyebrowClass}>Loading&hellip;</p>
+    <div role="status" className="flex min-h-[50vh] flex-col items-center justify-center gap-3">
+      <Spinner className="size-7 text-ocean" />
+      <p className={monoLabelClass}>Loading</p>
     </div>
   );
 }

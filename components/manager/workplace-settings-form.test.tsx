@@ -92,6 +92,47 @@ describe("WorkplaceSettingsForm", () => {
     });
   });
 
+  it("describes the radius field with the hint", () => {
+    render(<WorkplaceSettingsForm organization={organization} />);
+
+    const radius = screen.getByLabelText("Clock-in radius (m)");
+    const hint = screen.getByText(/large buildings or car parks/i);
+    expect(radius).toHaveAttribute("aria-describedby", hint.id);
+  });
+
+  it("describes the radius field with the hint and the alert after a failed save", async () => {
+    vi.stubGlobal(
+      "fetch",
+      vi.fn().mockResolvedValue(
+        new Response(JSON.stringify({ error: { message: "Radius must be a positive number." } }), {
+          status: 422,
+        })
+      )
+    );
+
+    const user = userEvent.setup();
+    render(<WorkplaceSettingsForm organization={organization} />);
+    await user.click(screen.getByRole("button", { name: "Save" }));
+
+    const alert = await screen.findByRole("alert");
+    const hint = screen.getByText(/large buildings or car parks/i);
+    const describedBy = screen.getByLabelText("Clock-in radius (m)").getAttribute("aria-describedby");
+    expect(describedBy?.split(" ")).toEqual(expect.arrayContaining([hint.id, alert.id]));
+    expect(screen.getByLabelText("Name").getAttribute("aria-describedby")).toBe(alert.id);
+  });
+
+  it("shows the radius being typed as a live value", async () => {
+    const user = userEvent.setup();
+    render(<WorkplaceSettingsForm organization={organization} />);
+
+    expect(screen.getByText("200 m")).toBeInTheDocument();
+    const radius = screen.getByLabelText("Clock-in radius (m)");
+    await user.clear(radius);
+    await user.type(radius, "350");
+
+    expect(screen.getByText("350 m")).toBeInTheDocument();
+  });
+
   it("does not report a failure when the save succeeds", async () => {
     vi.stubGlobal(
       "fetch",

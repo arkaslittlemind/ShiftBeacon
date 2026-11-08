@@ -12,6 +12,10 @@
       "name": "alert-triangle",
       "variant": "stroke"
     },
+    "arrow-left": {
+      "name": "arrow-left",
+      "variant": "stroke"
+    },
     "building-apartment-two": {
       "name": "building-apartment-two",
       "variant": "stroke"

@@ -1,6 +1,8 @@
 import Link from "next/link";
-import { MapPinIcon, UserIcon } from "@/components/icons";
+import { UserIcon } from "@/components/icons";
+import { LocationLabel } from "@/components/manager/location-label";
 import { Avatar } from "@/components/shared/avatar";
+import { Dash } from "@/components/shared/dash";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardHeader, CardTitle } from "@/components/ui/card";
 import {
@@ -12,7 +14,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { formatHoursMinutes } from "@/lib/duration";
-import { formatDistance, perimeterCheck, type Perimeter } from "@/lib/geo";
+import type { Perimeter } from "@/lib/geo";
 import { sortStaffForTable } from "@/lib/manager/dashboard-summary";
 import { getInitials } from "@/lib/names";
 import { formatTimeOfDay } from "@/lib/time-of-day";
@@ -24,29 +26,6 @@ const ROLE_LABELS: Record<Role, string> = {
   CARE_WORKER: "Care worker",
   MANAGER: "Manager",
 };
-
-function Dash() {
-  return <span className="text-faint">-</span>;
-}
-
-function LocationCell({
-  shift,
-  workplace,
-}: {
-  shift: NonNullable<StaffMemberResponse["activeShift"]>;
-  workplace: Perimeter;
-}) {
-  const { inside, distanceMeters } = perimeterCheck(
-    { latitude: shift.clockInLatitude, longitude: shift.clockInLongitude },
-    workplace
-  );
-  return (
-    <span className={cn("inline-flex items-center gap-1.5 text-xs", inside ? "text-muted-foreground" : "text-danger")}>
-      <MapPinIcon aria-hidden className="size-3.5 shrink-0" />
-      <span>{`${inside ? "Inside" : "Outside"} · ${formatDistance(distanceMeters)}`}</span>
-    </span>
-  );
-}
 
 export function StaffTable({
   staff,
@@ -114,7 +93,15 @@ export function StaffTable({
                   {clockInAt ? formatHoursMinutes(now - clockInAt.getTime()) : <Dash />}
                 </TableCell>
                 <TableCell>
-                  {shift ? <LocationCell shift={shift} workplace={workplace} /> : <Dash />}
+                  {shift ? (
+                    <LocationLabel
+                      latitude={shift.clockInLatitude}
+                      longitude={shift.clockInLongitude}
+                      workplace={workplace}
+                    />
+                  ) : (
+                    <Dash />
+                  )}
                 </TableCell>
                 <TableCell className="pr-4">
                   {shift ? (

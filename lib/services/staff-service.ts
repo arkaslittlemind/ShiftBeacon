@@ -2,7 +2,7 @@ import { prisma } from "@/lib/prisma";
 import type { StaffMemberResponse } from "@/types/staff";
 import type { Role } from "@/types/user";
 
-const HISTORY_LIMIT = 50;
+export const STAFF_HISTORY_LIMIT = 50;
 
 export async function getStaffForOrganization(organizationId: string) {
   return prisma.user.findMany({
@@ -43,7 +43,7 @@ export async function getShiftHistoryForStaffMember(
     prisma.shift.findMany({
       where: { userId: staffUserId, clockOutAt: { not: null } },
       orderBy: { clockInAt: "desc" },
-      take: HISTORY_LIMIT,
+      take: STAFF_HISTORY_LIMIT,
     }),
   ]);
 
