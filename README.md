@@ -199,7 +199,7 @@ start. `AskAnswer` stores a hash of the normalized question, never the question.
 | Layer | Choice |
 |---|---|
 | Framework | Next.js (App Router), React, TypeScript (strict, no `any`) |
-| Styling | Tailwind CSS v4 + shadcn/ui, cooled-down neobrutalist design system (a redesign is planned, see [Design system](#design-system)) |
+| Styling | Tailwind CSS v4 + shadcn/ui, Pourville design system (rollout in progress, see [Design system](#design-system)) |
 | Icons | lucide-react today, moving to [Pikaicons](https://pikaicons.com) (the project convention for all new icons) |
 | Data | PostgreSQL + Prisma ORM |
 | Identity | Auth0 (username/password, Google, email), roles via a namespaced session claim |
@@ -360,14 +360,13 @@ break a clock-in.
 
 ## Design system
 
-The shipping UI uses a cooled-down neobrutalist system: Sea Green on mint, 3px
-ink borders, and hard offset shadows, with tokens in `app/globals.css`.
-
-A full visual redesign, **Pourville**, is specced and ready to build. It moves
-to warm paper backgrounds, ink buttons, Newsreader display type, an
-impressionist ocean-blue accent (`#1D6496`), and painterly coastal imagery, with
-a marketing layout modelled on Leedlime. Behaviour, data, routes, and the API do
-not change.
+The UI is moving to **Pourville**, a full visual redesign: warm paper
+backgrounds, ink buttons, Newsreader display type, an impressionist ocean-blue
+accent (`#1D6496`), and painterly coastal imagery, with a marketing layout
+modelled on Leedlime. Behaviour, data, routes, and the API do not change. The
+Pourville tokens, fonts, and motion rules are live in `app/globals.css` (21a);
+components move over screen by screen in 21b to 21j, so some still carry the
+earlier neobrutalist structure until their sub-feature lands.
 
 | What | Where |
 |---|---|

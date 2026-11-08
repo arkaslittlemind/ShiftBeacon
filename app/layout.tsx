@@ -1,15 +1,23 @@
 import type { Metadata, Viewport } from "next";
-import { Space_Grotesk, Inter } from "next/font/google";
+import { Newsreader, Inter, JetBrains_Mono } from "next/font/google";
 import { RegisterServiceWorker } from "@/components/pwa/register-service-worker";
 import "./globals.css";
 
-const spaceGrotesk = Space_Grotesk({
+// Newsreader is variable, so no weight list; the opsz axis lets large
+// headings use the display cut. Roman only: the design never sets italic.
+const newsreader = Newsreader({
   variable: "--font-display",
   subsets: ["latin"],
+  axes: ["opsz"],
 });
 
 const inter = Inter({
   variable: "--font-sans",
+  subsets: ["latin"],
+});
+
+const jetbrainsMono = JetBrains_Mono({
+  variable: "--font-jetbrains",
   subsets: ["latin"],
 });
 
@@ -24,14 +32,14 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
-  themeColor: "#2e8b57",
+  themeColor: "#16212b",
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html
       lang="en"
-      className={`${spaceGrotesk.variable} ${inter.variable} h-full antialiased`}
+      className={`${newsreader.variable} ${inter.variable} ${jetbrainsMono.variable} h-full antialiased`}
     >
       <body className="min-h-dvh flex flex-col">
         <RegisterServiceWorker />

@@ -28,7 +28,7 @@ export default function OpengraphImage() {
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
-          background: "#eaf3f0",
+          background: "#f8f6f1",
           padding: 64,
         }}
       >
@@ -40,10 +40,9 @@ export default function OpengraphImage() {
             alignItems: "center",
             justifyContent: "center",
             background: "#ffffff",
-            border: "8px solid #16262b",
-            // The hard offset shadow is the neobrutalist signature, and Satori
-            // supports box-shadow without blur.
-            boxShadow: "16px 16px 0 0 #2e8b57",
+            border: "1px solid #e6e1d6",
+            borderRadius: 22,
+            boxShadow: "0 28px 60px rgba(22, 33, 43, 0.16)",
           }}
         >
           {/* eslint-disable-next-line @next/next/no-img-element -- Satori

@@ -8,8 +8,8 @@ export default function manifest(): MetadataRoute.Manifest {
       "Location-aware shift management for healthcare teams: geofenced clock-in/out, live staff visibility, and attendance analytics.",
     start_url: "/",
     display: "standalone",
-    background_color: "#eaf3f0",
-    theme_color: "#2e8b57",
+    background_color: "#f8f6f1",
+    theme_color: "#16212b",
     icons: [
       {
         src: "/icons/icon-512.png",

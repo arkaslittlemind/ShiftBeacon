@@ -17,10 +17,11 @@
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  /* --font-sans and --font-display are injected by next/font in
-     app/layout.tsx (Inter / Space Grotesk), not defined in this file. */
+  /* --font-sans, --font-display, and --font-jetbrains are injected by
+     next/font in app/layout.tsx (Inter / Newsreader / JetBrains Mono), not
+     defined in this file. */
   --font-sans: var(--font-sans);
-  --font-mono: ui-monospace, monospace;
+  --font-mono: var(--font-jetbrains), ui-monospace, monospace;
   --font-heading: var(--font-display);
   --color-ring: var(--ring);
   --color-input: var(--input);
@@ -47,6 +48,19 @@
   --color-danger-ink: var(--danger-ink);
   --color-warning: var(--warning);
   --color-warning-soft: var(--warning-soft);
+  --color-success: var(--success);
+  --color-success-soft: var(--success-soft);
+  --color-ocean: var(--ocean);
+  --color-ocean-hover: var(--ocean-hover);
+  --color-ocean-soft: var(--ocean-soft);
+  --color-ocean-tint: var(--ocean-tint);
+  --color-chart-1: var(--chart-1);
+  --color-chart-2: var(--chart-2);
+  --color-chart-3: var(--chart-3);
+  --color-chart-4: var(--chart-4);
+  --color-chart-grid: var(--chart-grid);
+  --color-glass: var(--glass);
+  --color-glass-edge: var(--glass-edge);
   --shadow-sm: var(--shadow-sm);
   --shadow-md: var(--shadow-md);
   --shadow-lg: var(--shadow-lg);
@@ -62,54 +76,78 @@
 :root {
   /* ShiftBeacon design tokens - ported from prototypes/theme.css.
      Mapped onto shadcn's semantic slots so generated components pick up
-     the cooled-down neobrutalist look automatically. No dark mode. */
+     the Pourville look automatically. Source of truth:
+     docs/redesign/tokens/theme.css. No dark mode. */
 
-  --background: #eaf3f0;
-  --foreground: #16262b;
+  --background: #f8f6f1;
+  --foreground: #16212b;
   --card: #ffffff;
-  --card-foreground: #16262b;
+  --card-foreground: #16212b;
   --popover: #ffffff;
-  --popover-foreground: #16262b;
-  /* --primary-foreground on --primary measures 4.245:1 - just under WCAG
-     AA's 4.5:1 for normal-size text (it passes AA-large at 3:1). #2e8b57
-     is the locked Sea Green brand color, so this is a documented,
-     accepted trade-off rather than a bug to fix here. */
-  --primary: #2e8b57;
+  --popover-foreground: #16212b;
+  /* Primary buttons are ink, not the accent: ink on white is 16:1, and the
+     Pourville blue is reserved for links, focus, active states, Clock In,
+     and data (see --ocean). */
+  --primary: #16212b;
   --primary-foreground: #ffffff;
-  --secondary: #e3f0ea;
-  --secondary-foreground: #16262b;
-  --muted: #e3f0ea;
-  --muted-foreground: #4d625f;
-  --accent: #d8eee1;
-  --accent-foreground: #1f6440;
-  --accent-dark: #1f6440;
-  --destructive: #b25a45;
-  --border: #16262b;
-  --border-soft: #cfe2da;
-  --input: #16262b;
-  --ring: #2e8b57;
-  --radius: 4px;
+  --secondary: #efebe3;
+  --secondary-foreground: #16212b;
+  --muted: #f2efe8;
+  --muted-foreground: #47525d;
+  /* --accent keeps shadcn's meaning (a neutral hover surface) so the
+     generated primitives behave; the brand accent is --ocean. */
+  --accent: #f2efe8;
+  --accent-foreground: #16212b;
+  --accent-dark: #1d6496;
+  --destructive: #a84a39;
+  --border: #e6e1d6;
+  --border-soft: #e6e1d6;
+  --input: #d4cec1;
+  --ring: #1d6496;
+  --radius: 10px;
 
   /* extra ShiftBeacon-specific tokens beyond shadcn's default slots.
      --danger mirrors --destructive rather than repeating its hex value, so
      the "error/outside perimeter" color can't drift out of sync with the
-     shadcn destructive slot it's paired with in several components. */
-  --surface-alt: #dcece6;
-  --faint: #8aa39d;
+     shadcn destructive slot it's paired with in several components.
+     Every text colour here clears WCAG AA 4.5:1 on every surface token. */
+  --surface-alt: #f2efe8;
+  --faint: #5f6872;
   --danger: var(--destructive);
-  --danger-soft: #f5e2da;
+  --danger-soft: #f8e8e2;
   --danger-ink: #ffffff;
-  --warning: #b98a2e;
-  --warning-soft: #f5ecd6;
+  --warning: #8a5f17;
+  --warning-soft: #f6eedc;
+  --success: #1a7166;
+  --success-soft: #e3f1ec;
 
-  /* hard offset shadows - no blur - the neobrutalist signature */
-  --shadow-sm: 3px 3px 0 var(--border);
-  --shadow-md: 5px 5px 0 var(--border);
-  --shadow-lg: 8px 8px 0 var(--border);
+  /* Pourville blue - the brand accent */
+  --ocean: #1d6496;
+  --ocean-hover: #164f78;
+  --ocean-soft: #e4eef6;
+  --ocean-tint: #c6dbeb;
 
-  /* border widths, consumed via arbitrary-value utilities e.g. border-(--border-w) */
-  --border-w: 3px;
-  --border-w-lg: 4px;
+  /* charts - sea, from deep to shallow */
+  --chart-1: #1d6496;
+  --chart-2: #6c9ec6;
+  --chart-3: #c3d7e7;
+  --chart-4: #4f9a8c;
+  --chart-grid: #ece8df;
+
+  /* frosted panels that float on imagery (marketing only) */
+  --glass: rgba(255, 255, 255, 0.72);
+  --glass-edge: rgba(255, 255, 255, 0.9);
+
+  /* soft, diffuse, warm-tinted shadows; depth comes from these and 1px
+     hairlines, never from hard offsets */
+  --shadow-sm: 0 1px 2px rgba(40, 32, 20, 0.05);
+  --shadow-md: 0 1px 2px rgba(40, 32, 20, 0.04), 0 8px 24px rgba(40, 32, 20, 0.06);
+  --shadow-lg: 0 2px 6px rgba(40, 32, 20, 0.05), 0 28px 60px rgba(22, 33, 43, 0.16);
+
+  /* border widths, consumed via arbitrary-value utilities e.g. border-(--border-w).
+     Both are hairlines now; components drop the variable in 21c. */
+  --border-w: 1px;
+  --border-w-lg: 1px;
 
   /* strong custom easing curves for deliberate motion (entrances/exits,
      on-screen movement) - built-in CSS easings are too weak. Consumed via
@@ -119,6 +157,14 @@
   --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
   --ease-in-out: cubic-bezier(0.77, 0, 0.175, 1);
   --ease-drawer: cubic-bezier(0.32, 0.72, 0, 1);
+
+  /* durations from docs/redesign/motion-and-polish.md; UI motion stays under
+     300ms and exits run faster than entrances */
+  --dur-press: 160ms;
+  --dur-fast: 150ms;
+  --dur-base: 200ms;
+  --dur-panel: 300ms;
+  --stagger: 60ms;
 }
 
 @layer base {
@@ -136,25 +182,40 @@
   }
 }
 
-/* Most transitions in this app already use `transition-none` by design (the
-   neobrutalist "instant offset" style); this closes the gap for the
-   remaining animated bits, mainly tw-animate-css-driven Sheet/dropdown
-   open-close transitions. */
+/* Reduced motion drops movement but keeps opacity and colour fades: a fade
+   aids comprehension without causing motion sickness, and zero feedback is
+   worse. tw-animate-css builds its enter/exit keyframes from these variables,
+   so neutralising them leaves Sheet and dropdown animations as pure fades.
+   Narrowing transition-property does the same for the @starting-style
+   entrances that transition opacity together with translate/scale. */
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,
   *::after {
-    animation-duration: 0.01ms !important;
-    animation-iteration-count: 1 !important;
-    transition-duration: 0.01ms !important;
+    --tw-enter-translate-x: 0 !important;
+    --tw-enter-translate-y: 0 !important;
+    --tw-enter-scale: 1 !important;
+    --tw-enter-rotate: 0 !important;
+    --tw-exit-translate-x: 0 !important;
+    --tw-exit-translate-y: 0 !important;
+    --tw-exit-scale: 1 !important;
+    --tw-exit-rotate: 0 !important;
+    transition-property:
+      opacity, color, background-color, border-color, outline-color,
+      text-decoration-color, fill, stroke, box-shadow, filter !important;
     scroll-behavior: auto !important;
+  }
+
+  .animate-spin {
+    animation: none;
   }
 }
 
 /* Route crossfade (components/shell/route-transition.tsx). The
    ::view-transition-* pseudo-elements live outside the normal DOM tree, so
-   the `*` reduced-motion rule above doesn't reach them - they need their own
-   override. */
+   the `*` reduced-motion rule above doesn't reach them. Under reduced motion
+   only the group (which moves and resizes) is stopped; the old/new snapshots
+   are an opacity crossfade, so they keep fading. */
 ::view-transition {
   pointer-events: none;
 }
@@ -166,8 +227,6 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-  ::view-transition-old(*),
-  ::view-transition-new(*),
   ::view-transition-group(*) {
     animation-duration: 0s !important;
     animation-delay: 0s !important;

@@ -23,7 +23,8 @@ have their old structure (uppercase buttons, for example) until 21c.
   `app/globals.css` with the Pourville values, mapped onto the existing shadcn
   semantic names (table below), plus the new tokens Pourville adds.
 - Fonts through `next/font/google` in `app/layout.tsx`: Newsreader (display,
-  optical sizing, weights 300 to 500, roman and italic loaded for completeness),
+  variable weight, optical-size axis, roman only since the design never
+  sets italic),
   Inter (UI, unchanged), JetBrains Mono (data). Space Grotesk is dropped from
   `next/font`: the wordmark is an SVG, so the font is not needed at runtime.
 - Motion tokens (`--ease-out`, `--ease-in-out`, `--ease-drawer`, durations,
@@ -62,7 +63,8 @@ have their old structure (uppercase buttons, for example) until 21c.
 - [ ] **Step 3 - Fonts** - load Newsreader and JetBrains Mono through
   `next/font`, point `--font-display` / `--font-heading` at Newsreader and
   `--font-mono` at JetBrains Mono; Inter stays `--font-sans`. *Done when:* page
-  titles render in Newsreader, timestamps in JetBrains Mono, and the network tab
+  titles render in Newsreader, `--font-mono` resolves to JetBrains Mono (no
+  component uses `font-mono` until 21c/21e restyle the timestamps), and the network tab
   shows only self-hosted font files (no request to `fonts.googleapis.com`).
 - [ ] **Step 4 - Motion tokens + reduced motion** - add the motion tokens and
   replace the reduced-motion block so it keeps opacity and colour fades and
