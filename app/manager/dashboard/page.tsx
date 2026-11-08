@@ -7,7 +7,7 @@ import { AverageHoursCard } from "@/components/manager/average-hours-card";
 import { DailyClockInsChart } from "@/components/manager/daily-clock-ins-chart";
 import { StaffHoursChart } from "@/components/manager/staff-hours-chart";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { getCurrentDbUser } from "@/lib/auth";
+import { requirePageUser } from "@/lib/auth";
 import { eyebrowClass } from "@/lib/utils";
 import { getStaffForOrganization, toStaffMemberResponse } from "@/lib/services/staff-service";
 import { getAnalyticsForOrganization } from "@/lib/services/analytics-service";
@@ -21,8 +21,9 @@ import {
 } from "@/components/manager/handover-digest-card";
 
 export default async function ManagerDashboardPage() {
-  const user = await getCurrentDbUser();
-  const organization = user!.organization;
+  const user = await requirePageUser("MANAGER", "/manager/dashboard");
+  if (!user) return null;
+  const organization = user.organization;
   const [staff, analytics] = await Promise.all([
     getStaffForOrganization(organization.id),
     getAnalyticsForOrganization(organization.id),

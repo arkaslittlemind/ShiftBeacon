@@ -44,6 +44,34 @@ export const getCurrentDbUser = cache(async (): Promise<UserWithOrganization | n
   return user;
 });
 
+// A page renders in parallel with its layout, so the layout's requireRole
+// redirect does not stop the page from running first. Every page and layout
+// that reads the database user guards sign-in itself through this.
+export async function requireDbUser(returnTo: string): Promise<UserWithOrganization> {
+  const user = await getCurrentDbUser();
+  if (!user) {
+    redirect(`/auth/login?returnTo=${encodeURIComponent(returnTo)}`);
+  }
+  return user;
+}
+
+// The layout's role check only swaps what it renders; the page still runs in
+// parallel and its render ships in the same response. So every page checks the
+// role itself before any query. `null` means the wrong role: render nothing and
+// let the layout show ForbiddenState. The role comes from the session claim via
+// requireRole, the same source the layouts and API routes use; the database
+// role is set once at sign-up and goes stale when a role changes in Auth0.
+export async function requirePageUser(
+  role: Role,
+  returnTo: string
+): Promise<UserWithOrganization | null> {
+  const { status } = await requireRole(role, returnTo);
+  if (status !== "ok") {
+    return null;
+  }
+  return requireDbUser(returnTo);
+}
+
 export async function requireRole(
   role: Role,
   returnTo: string

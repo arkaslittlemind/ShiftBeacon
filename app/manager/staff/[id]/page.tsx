@@ -2,7 +2,7 @@ import { notFound } from "next/navigation";
 import { Badge } from "@/components/ui/badge";
 import { PageHeader } from "@/components/shell/page-header";
 import { StaffShiftHistory } from "@/components/manager/staff-shift-history";
-import { getCurrentDbUser } from "@/lib/auth";
+import { requirePageUser } from "@/lib/auth";
 import { getShiftHistoryForStaffMember } from "@/lib/services/staff-service";
 import { toShiftResponse } from "@/lib/services/shift-service";
 import { ManagerViewTracker } from "@/components/observability/manager-view-tracker";
@@ -13,8 +13,9 @@ export default async function StaffDetailPage({
   params: Promise<{ id: string }>;
 }) {
   const { id } = await params;
-  const user = await getCurrentDbUser();
-  const organization = user!.organization;
+  const user = await requirePageUser("MANAGER", `/manager/staff/${id}`);
+  if (!user) return null;
+  const organization = user.organization;
 
   const record = await getShiftHistoryForStaffMember(organization.id, id);
   if (!record) {

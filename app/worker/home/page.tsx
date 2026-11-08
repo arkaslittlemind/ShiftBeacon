@@ -3,13 +3,14 @@ import { PerimeterStatusBanner } from "@/components/worker/perimeter-status-bann
 import { ClockInPanel } from "@/components/worker/clock-in-panel";
 import { ActiveShiftPanel } from "@/components/worker/active-shift-panel";
 import { ShiftHistoryCard } from "@/components/worker/shift-history-card";
-import { getCurrentDbUser } from "@/lib/auth";
+import { requirePageUser } from "@/lib/auth";
 import { getShiftsForUser, toShiftResponse } from "@/lib/services/shift-service";
 
 export default async function WorkerHomePage() {
-  const user = await getCurrentDbUser();
-  const organization = user!.organization;
-  const { activeShift, history } = await getShiftsForUser(user!.id);
+  const user = await requirePageUser("CARE_WORKER", "/worker/home");
+  if (!user) return null;
+  const organization = user.organization;
+  const { activeShift, history } = await getShiftsForUser(user.id);
 
   return (
     <>

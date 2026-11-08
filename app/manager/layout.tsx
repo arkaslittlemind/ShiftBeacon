@@ -2,20 +2,20 @@ import { ForbiddenState } from "@/components/shared/forbidden-state";
 import { ManagerSidebar } from "@/components/shell/manager-sidebar";
 import { ManagerTopbar } from "@/components/shell/manager-topbar";
 import { RouteTransition } from "@/components/shell/route-transition";
-import { getCurrentDbUser, requireRole } from "@/lib/auth";
+import { requireDbUser, requireRole } from "@/lib/auth";
 import { AnalyticsIdentity } from "@/components/observability/analytics-identity";
 
 export default async function ManagerLayout({ children }: { children: React.ReactNode }) {
   const { status, user } = await requireRole("MANAGER", "/manager/dashboard");
-  const dbUser = await getCurrentDbUser();
-  const organizationName = dbUser!.organization.name;
+  const dbUser = await requireDbUser("/manager/dashboard");
+  const organizationName = dbUser.organization.name;
 
   return (
     <div className="flex min-h-dvh">
       <AnalyticsIdentity
-        id={dbUser!.id}
-        role={dbUser!.role}
-        organizationId={dbUser!.organizationId}
+        id={dbUser.id}
+        role={dbUser.role}
+        organizationId={dbUser.organizationId}
       />
       <ManagerSidebar organizationName={organizationName} />
       <div className="flex flex-1 flex-col">
