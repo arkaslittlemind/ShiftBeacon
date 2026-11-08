@@ -234,3 +234,9 @@
     animation-delay: 0s !important;
   }
 }
+
+/* Dotted section backdrop for the marketing page (heading bands, closing CTA). */
+@utility dot-grid {
+  background-image: radial-gradient(var(--border) 1px, transparent 1px);
+  background-size: 22px 22px;
+}

@@ -1,13 +1,15 @@
 import type { Metadata } from "next";
-import { Compare } from "@/components/marketing/compare";
+import { AiSection } from "@/components/marketing/ai-section";
 import { CtaBand } from "@/components/marketing/cta-band";
-import { Features } from "@/components/marketing/features";
+import { Faq } from "@/components/marketing/faq";
 import { Hero } from "@/components/marketing/hero";
 import { HowItWorks } from "@/components/marketing/how-it-works";
+import { PlatformBand } from "@/components/marketing/platform-band";
 import { SiteFooter } from "@/components/marketing/site-footer";
 import { SiteHeader } from "@/components/marketing/site-header";
 import { Testimonial } from "@/components/marketing/testimonial";
 import { TrustBar } from "@/components/marketing/trust-bar";
+import { WhyCards } from "@/components/marketing/why-cards";
 
 export const metadata: Metadata = {
   title:
@@ -24,18 +26,20 @@ export const metadata: Metadata = {
 
 export default function Home() {
   return (
-    <>
+    <div className="mx-auto w-full max-w-310 border-x border-border-soft bg-background">
       <SiteHeader />
       <main>
         <Hero />
         <TrustBar />
-        <Compare />
-        <Features />
         <HowItWorks />
+        <PlatformBand />
+        <WhyCards />
+        <AiSection />
         <Testimonial />
+        <Faq />
         <CtaBand />
       </main>
       <SiteFooter />
-    </>
+    </div>
   );
 }

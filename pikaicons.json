@@ -16,6 +16,10 @@
       "name": "arrow-left",
       "variant": "stroke"
     },
+    "arrow-right": {
+      "name": "arrow-right",
+      "variant": "stroke"
+    },
     "building-apartment-two": {
       "name": "building-apartment-two",
       "variant": "stroke"
@@ -58,6 +62,10 @@
     },
     "grid-dashboard-02": {
       "name": "grid-dashboard-02",
+      "variant": "stroke"
+    },
+    "heart": {
+      "name": "heart",
       "variant": "stroke"
     },
     "home-default": {
@@ -110,6 +118,10 @@
     },
     "sparkle-ai-01": {
       "name": "sparkle-ai-01",
+      "variant": "stroke"
+    },
+    "sun": {
+      "name": "sun",
       "variant": "stroke"
     },
     "user-default": {

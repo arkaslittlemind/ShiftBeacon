@@ -1,98 +1,131 @@
+import { ArrowRightIcon, CheckTickCircleIcon, MapPinIcon } from "@/components/icons";
+import { GlassFrame } from "@/components/marketing/glass-frame";
+import { Painting } from "@/components/marketing/painting";
+import { Avatar } from "@/components/shared/avatar";
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { ShiftBeaconMark } from "@/components/brand/shift-beacon-mark";
-import { Card } from "@/components/ui/card";
+import { monoLabelClass } from "@/lib/utils";
+import lowTide from "@/public/images/marketing/low-tide.jpg";
+
+// One-time entrance for first-view content: opacity plus an 8px rise, staggered
+// 60ms. The global reduced-motion rule drops the rise and keeps the fade.
+const ENTER =
+  "animate-in fade-in slide-in-from-bottom-2 duration-(--dur-panel) ease-(--ease-out) fill-mode-backwards";
+
+const ASSURANCES = ["Works on any phone", "No hardware to install"];
+
+const ON_SHIFT = [
+  { initials: "AM", name: "Amara Mensah", since: "06:58" },
+  { initials: "JL", name: "Jonah Lee", since: "07:04" },
+  { initials: "SR", name: "Sofia Ruiz", since: "08:30" },
+  { initials: "TB", name: "Tomás Barros", since: "09:01" },
+];
 
 export function Hero() {
   return (
-    <section className="overflow-hidden py-16 md:py-20">
-      <div className="mx-auto grid max-w-6xl gap-12 px-6 md:grid-cols-[1fr_0.95fr] md:items-center md:px-10">
-        <div>
-          <span className="mb-5 inline-flex items-center gap-2 rounded-md border-2 border-border bg-accent px-3.5 py-1.5 text-xs font-bold tracking-wide text-accent-foreground uppercase">
-            <span className="size-1.5 bg-accent-foreground" />
-            Built for healthcare operations
-          </span>
-          <h1 className="mb-4 text-4xl leading-[1.08] font-bold tracking-tight md:text-5xl">
-            Know exactly who&apos;s{" "}
-            <span className="text-accent-dark">on-site</span>, the moment
-            they clock in.
-          </h1>
-          <p className="mb-7 max-w-[46ch] text-base text-muted-foreground md:text-lg">
-            ShiftBeacon confirms care workers are physically at the workplace
-            before they can clock in, then gives managers live staff
-            visibility and attendance analytics automatically - no
-            spreadsheets, no guesswork.
-          </p>
-          <div className="flex flex-wrap items-center gap-3.5">
-            <Button size="lg" asChild>
-              <a href="#demo">Request a demo</a>
-            </Button>
-            <Button size="lg" variant="outline" asChild>
-              <a href="#how-it-works">See how it works</a>
-            </Button>
-          </div>
-          <p className="mt-3 text-xs text-faint">
-            No credit card needed &middot; Set up a workplace in minutes
-          </p>
-        </div>
+    <section className="grid md:min-h-200 md:grid-cols-2">
+      <div className="flex flex-col justify-center px-5 py-14 md:px-10 md:py-20">
+        <h1
+          className={`font-heading text-[clamp(3rem,5.4vw,4.6rem)] leading-[1.04] font-normal tracking-tight text-foreground ${ENTER}`}
+        >
+          Know exactly who&apos;s on shift, and where.
+        </h1>
+        <p
+          className={`mt-5 max-w-[31rem] text-lg leading-relaxed text-muted-foreground md:text-xl ${ENTER} [animation-delay:60ms]`}
+        >
+          ShiftBeacon lets care workers clock in only from inside your workplace, and shows
+          managers who&apos;s on the floor, for how long, and what the last shift handed over.
+        </p>
+        <Button
+          asChild
+          size="lg"
+          className={`mt-8 w-fit ${ENTER} [animation-delay:120ms]`}
+        >
+          <a href="#demo">
+            Request a demo
+            <ArrowRightIcon aria-hidden />
+          </a>
+        </Button>
+        <ul
+          className={`mt-6 flex flex-wrap gap-x-6 gap-y-2 text-sm text-muted-foreground ${ENTER} [animation-delay:180ms]`}
+        >
+          {ASSURANCES.map((text) => (
+            <li key={text} className="inline-flex items-center gap-2">
+              <span className="grid size-5.5 place-items-center rounded-full bg-success-soft text-success">
+                <CheckTickCircleIcon aria-hidden className="size-3.5" />
+              </span>
+              {text}
+            </li>
+          ))}
+        </ul>
+      </div>
 
-        <div className="relative hidden h-[420px] md:block" aria-hidden="true">
-          <Card className="absolute top-2.5 left-2.5 w-[230px] shadow-lg">
-            <div className="flex items-center gap-2.5 px-4">
-              <div className="flex size-7.5 shrink-0 items-center justify-center border-2 border-border bg-primary text-sm font-bold text-primary-foreground">
-                &#10003;
-              </div>
-              <strong className="text-sm">Inside perimeter</strong>
-            </div>
-            <p className="px-4 text-xs text-muted-foreground">
-              Riverside Care Home &middot; clocked in 08:02
+      <div className="relative flex flex-col gap-4 overflow-hidden px-4 pt-40 pb-6 md:block md:p-0">
+        <Painting
+          src={lowTide}
+          alt="Claude Monet, Low Tide at Pourville: a calm blue sea below pale cliffs"
+          sizes="(min-width: 1240px) 620px, (min-width: 768px) 50vw, 100vw"
+          priority
+          className="object-[62%_50%]"
+        />
+
+        <div aria-hidden className="contents">
+          <GlassFrame
+            className={`md:absolute md:top-[14%] md:left-[7%] md:w-75 ${ENTER} [animation-delay:240ms]`}
+          >
+            <p className={`${monoLabelClass} flex items-center gap-2 text-foreground`}>
+              <span className="size-1.75 rounded-full bg-success" />
+              Location check
             </p>
-          </Card>
+            <p className={`${monoLabelClass} mt-3 mb-1.5`}>Workplace</p>
+            <div className="flex h-9.5 items-center gap-2 rounded-full border border-border bg-surface-alt px-3 font-mono text-xs text-foreground">
+              <MapPinIcon className="size-3.75 text-ocean" />
+              St. Mary&apos;s Care Home
+            </div>
+            <div className="mt-3 flex items-center justify-between border-t border-border-soft pt-3 text-xs text-success">
+              <span className="inline-flex items-center gap-1.5">
+                <CheckTickCircleIcon className="size-3.5" />
+                Inside · 42 m
+              </span>
+              <span className="inline-flex h-8 items-center rounded-lg bg-ocean px-3.5 text-xs font-semibold text-primary-foreground">
+                Clock in
+              </span>
+            </div>
+          </GlassFrame>
 
-          <Card className="absolute bottom-15 left-10 w-[190px] shadow-lg">
-            <div className="px-4">
-              <div className="mb-1.5 text-[11px] font-bold tracking-wide text-muted-foreground uppercase">
-                Avg. hours / day
+          <GlassFrame
+            className={`md:absolute md:right-[5%] md:bottom-[9%] md:w-110 ${ENTER} [animation-delay:300ms]`}
+          >
+            <div className="mb-3 flex items-start justify-between gap-3">
+              <p>
+                <b className="block text-base font-medium text-foreground">On shift now</b>
+                <small className="text-xs text-faint">14 of 17 staff</small>
+              </p>
+              <Badge variant="success" dot>
+                14 on shift
+              </Badge>
+            </div>
+            <div className={`grid grid-cols-[30px_1fr_auto_auto] gap-3 pb-1.5 ${monoLabelClass}`}>
+              <span />
+              <span>Staff</span>
+              <span>In</span>
+              <span>Status</span>
+            </div>
+            {ON_SHIFT.map((person) => (
+              <div
+                key={person.initials}
+                className="grid grid-cols-[30px_1fr_auto_auto] items-center gap-3 border-t border-border-soft py-2.5 text-sm"
+              >
+                <Avatar initials={person.initials} className="size-7.5 text-[11px]" />
+                <span className="min-w-0 truncate text-foreground">
+                  {person.name}
+                  <small className="block text-xs text-faint">Care worker</small>
+                </span>
+                <span className="font-mono text-xs text-muted-foreground">{person.since}</span>
+                <Badge variant="success">On shift</Badge>
               </div>
-              <div className="font-heading text-2xl font-bold">7.6h</div>
-              <div className="mt-2.5 flex h-6.5 items-end gap-1">
-                {[40, 55, 48, 80, 62, 100].map((h, i) => (
-                  <span
-                    key={i}
-                    className={`flex-1 border border-border ${
-                      h >= 80 ? "bg-primary" : "bg-secondary"
-                    }`}
-                    style={{ height: `${h}%` }}
-                  />
-                ))}
-              </div>
-            </div>
-          </Card>
-
-          <Card className="absolute top-22.5 right-0 w-[220px] shadow-lg">
-            <div className="flex flex-col gap-1.5 px-4">
-              {[
-                { initials: "PN", name: "Priya Nair", time: "2h 21m" },
-                { initials: "TO", name: "Tunde Okafor", time: "2h 05m" },
-                { initials: "EV", name: "Elena Voss", time: "3h 36m" },
-              ].map((person) => (
-                <div key={person.initials} className="flex items-center gap-2.5">
-                  <div className="flex size-7 shrink-0 items-center justify-center border-2 border-border bg-primary text-[11px] font-bold text-primary-foreground">
-                    {person.initials}
-                  </div>
-                  <span className="text-[13px] font-semibold">{person.name}</span>
-                  <span className="ml-auto text-[11px] text-muted-foreground">
-                    {person.time}
-                  </span>
-                </div>
-              ))}
-            </div>
-          </Card>
-
-          <div className="absolute right-7.5 bottom-0 flex h-[150px] w-[210px] items-center justify-center border-(length:--border-w) border-border bg-accent shadow-lg">
-            <div className="flex size-22.5 items-center justify-center rounded-full border-(length:--border-w) border-dashed border-border">
-              <ShiftBeaconMark className="h-9 w-auto" />
-            </div>
-          </div>
+            ))}
+          </GlassFrame>
         </div>
       </div>
     </section>

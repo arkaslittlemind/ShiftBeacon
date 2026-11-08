@@ -1,21 +1,22 @@
+import { Avatar } from "@/components/shared/avatar";
+
+// Illustrative, like the trusted-by names: role only, no invented person.
 export function Testimonial() {
   return (
-    <section className="py-16 md:py-20">
-      <div className="mx-auto max-w-6xl px-6 md:px-10">
-        <div className="mx-auto max-w-[720px] text-center">
-          <blockquote className="mb-5.5 font-heading text-xl leading-[1.4] font-bold md:text-2xl">
-            &ldquo;We finally know who&apos;s actually on-site during a shift,
-            not just who was scheduled. It&apos;s removed a whole category of
-            end-of-month reconciliation.&rdquo;
-          </blockquote>
-          <p className="text-sm font-semibold text-muted-foreground">
-            Operations Lead{" "}
-            <span className="font-normal text-faint">
-              &middot; Community Care Provider
-            </span>
-          </p>
-        </div>
-      </div>
+    <section className="px-5 py-20 md:px-10 md:py-28">
+      <figure className="mx-auto max-w-3xl text-center">
+        <blockquote className="font-heading text-[1.75rem] leading-[1.3] font-light tracking-tight text-foreground md:text-[2.25rem]">
+          &ldquo;Night shift used to end with a clipboard and a guess. Now I open one screen and I
+          know exactly who&apos;s here.&rdquo;
+        </blockquote>
+        <figcaption className="mt-8 inline-flex items-center gap-3 text-left text-sm">
+          <Avatar initials="NM" className="size-10 text-sm" />
+          <span className="text-muted-foreground">
+            <b className="block font-semibold text-foreground">Nurse Manager</b>
+            Harborview Care
+          </span>
+        </figcaption>
+      </figure>
     </section>
   );
 }

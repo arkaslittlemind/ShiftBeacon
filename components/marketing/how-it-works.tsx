@@ -1,42 +1,115 @@
+import { Painting } from "@/components/marketing/painting";
 import { SectionHead } from "@/components/marketing/section-head";
+import { Avatar } from "@/components/shared/avatar";
+import { Badge } from "@/components/ui/badge";
+import { Card } from "@/components/ui/card";
+import { monoLabelClass } from "@/lib/utils";
+import beachPourville from "@/public/images/marketing/beach-pourville.jpg";
+import cliffWalk from "@/public/images/marketing/cliff-walk.jpg";
+import lowTide from "@/public/images/marketing/low-tide.jpg";
+import type { StaticImageData } from "next/image";
 
-const STEPS = [
-  {
-    title: "Configure your workplace",
-    description:
-      "Set the address and clock-in radius for each location your team works from.",
-  },
-  {
-    title: "Invite your team",
-    description:
-      "Care workers sign in with Google, email, or username/password via Auth0.",
-  },
-  {
-    title: "Track attendance automatically",
-    description:
-      "Clock-ins, clock-outs, and analytics flow into your dashboard with no extra work.",
-  },
-];
+const CARD_SIZES = "(min-width: 1240px) 400px, (min-width: 768px) 33vw, 100vw";
+
+function Step({
+  painting,
+  crop,
+  title,
+  description,
+  children,
+}: {
+  painting: StaticImageData;
+  crop: string;
+  title: string;
+  description: string;
+  children: React.ReactNode;
+}) {
+  return (
+    <Card className="gap-0 py-0 text-center">
+      <div className="relative grid h-50 place-items-center">
+        <Painting src={painting} alt="" sizes={CARD_SIZES} className={crop} />
+        <div
+          aria-hidden
+          className="absolute inset-0 bg-linear-to-b from-transparent from-40% to-card/55"
+        />
+        {/* The mini UI is an illustration of the product, not a control. */}
+        <div
+          aria-hidden
+          className="relative w-60 rounded-[10px] border border-border-soft bg-card px-4 py-3 text-left text-sm shadow-md"
+        >
+          {children}
+        </div>
+      </div>
+      <div className="px-5 pt-5 pb-6">
+        <h3 className="mb-2 font-sans text-lg font-medium text-foreground">{title}</h3>
+        <p className="mx-auto max-w-[30ch] text-sm leading-relaxed text-muted-foreground">
+          {description}
+        </p>
+      </div>
+    </Card>
+  );
+}
 
 export function HowItWorks() {
   return (
-    <section id="how-it-works" className="bg-secondary py-16 md:py-20">
-      <div className="mx-auto max-w-6xl px-6 md:px-10">
-        <SectionHead
-          title="Set up in three steps"
-          description="No hardware, no badges - just a location and a browser."
-        />
-        <div className="grid gap-7.5 md:grid-cols-3">
-          {STEPS.map((step, i) => (
-            <div key={step.title}>
-              <div className="mb-4 flex size-7.5 items-center justify-center border-2 border-border bg-primary font-heading text-[13px] font-bold text-primary-foreground">
-                {i + 1}
-              </div>
-              <h3 className="mb-2 text-base font-bold">{step.title}</h3>
-              <p className="text-sm text-muted-foreground">{step.description}</p>
+    <section id="how-it-works" className="scroll-mt-20 px-5 py-20 md:px-10 md:py-28">
+      <SectionHead
+        eyebrow="How it works"
+        title="Three steps between you and a calmer shift."
+        className="mb-14"
+      />
+      <div className="grid gap-4 md:grid-cols-3">
+        <Step
+          painting={lowTide}
+          crop="object-[20%_30%]"
+          title="Set your perimeter"
+          description="Set your workplace's coordinates and choose how close staff must be to clock in."
+        >
+          <p className={monoLabelClass}>Clock-in radius</p>
+          <p className="mt-1 font-mono">150 m</p>
+          <div className="mt-2 flex items-center gap-2">
+            <div className="h-1 flex-1 rounded-full bg-chart-3">
+              <div className="h-full w-[35%] rounded-full bg-ocean" />
+            </div>
+            <span className="font-mono text-[11px] text-faint">1 km</span>
+          </div>
+        </Step>
+        <Step
+          painting={cliffWalk}
+          crop="object-[30%_20%]"
+          title="Add your team"
+          description="Staff sign in with email or Google and appear in your staff list."
+        >
+          {[
+            { initials: "SR", name: "Sofia Ruiz" },
+            { initials: "TB", name: "Tomás Barros" },
+          ].map((person) => (
+            <div
+              key={person.initials}
+              className="flex items-center gap-2 border-border-soft py-1.5 [&+&]:border-t"
+            >
+              <Avatar initials={person.initials} className="size-6.5 text-[11px]" />
+              {person.name}
+              <Badge variant="success" className="ml-auto">
+                Joined
+              </Badge>
             </div>
           ))}
-        </div>
+        </Step>
+        <Step
+          painting={beachPourville}
+          crop="object-[30%_40%]"
+          title="Clock in on arrival"
+          description="One tap at the door, and they appear on your dashboard straight away."
+        >
+          <p className={monoLabelClass}>Clocked in</p>
+          <p className="mt-1 font-mono">06:58 · inside, 42 m</p>
+          <div className="mt-2">
+            <Badge variant="success" dot>
+              On shift
+            </Badge>
+          </div>
+        </Step>
       </div>
     </section>
   );
