@@ -1,40 +1,36 @@
-import { AlertTriangleIcon, SparkleAi01Icon } from "@/components/icons";
+import { AlertTriangleIcon, CheckTickCircleIcon, SparkleAi01Icon } from "@/components/icons";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { eyebrowClass } from "@/lib/utils";
+import { formatTimeOfDay } from "@/lib/time-of-day";
+import { cardTitleClass, monoLabelClass } from "@/lib/utils";
 import { getLatestHandoverDigest } from "@/lib/services/handover-service";
 import type { HandoverDigestResult } from "@/types/handover";
 
+// Day keys are UTC, so the formatter has to be too, or the label can name the
+// day before the one the digest actually covers.
+const dayLabelFormatter = new Intl.DateTimeFormat("en-GB", {
+  weekday: "short",
+  day: "numeric",
+  month: "short",
+  timeZone: "UTC",
+});
+
 function formatDayLabel(date: string): string {
-  // Day keys are UTC, so the formatter has to be too, or the label can name
-  // the day before the one the digest actually covers.
-  return new Date(`${date}T00:00:00.000Z`).toLocaleDateString("en-GB", {
-    weekday: "long",
-    day: "numeric",
-    month: "long",
-    timeZone: "UTC",
-  });
+  return dayLabelFormatter.format(new Date(`${date}T00:00:00.000Z`));
 }
 
-function CardShell({
-  subtitle,
-  children,
-}: {
-  subtitle?: string;
-  children: React.ReactNode;
-}) {
+function CardShell({ meta, children }: { meta?: string; children: React.ReactNode }) {
   return (
     <Card>
-      <CardHeader>
-        <CardTitle className={eyebrowClass}>
-          <span className="inline-flex items-center gap-1.5">
-            <SparkleAi01Icon className="size-3.5" aria-hidden />
-            Shift handover digest
-          </span>
-        </CardTitle>
-        {subtitle ? (
-          <p className="mt-1 text-xs text-muted-foreground">{subtitle}</p>
-        ) : null}
+      <CardHeader className="gap-2">
+        <div className="flex items-center justify-between gap-2">
+          <CardTitle className={cardTitleClass}>
+            <SparkleAi01Icon aria-hidden className="size-4.5" />
+            Handover digest
+          </CardTitle>
+          <Badge variant="ocean">AI</Badge>
+        </div>
+        {meta ? <p className={monoLabelClass}>{meta}</p> : null}
       </CardHeader>
       <CardContent>{children}</CardContent>
     </Card>
@@ -43,11 +39,11 @@ function CardShell({
 
 export function HandoverDigestCardSkeleton() {
   return (
-    <CardShell subtitle="Summarizing the latest handover notes">
-      <div className="space-y-2" aria-hidden>
-        <div className="h-3 w-full bg-secondary" />
-        <div className="h-3 w-11/12 bg-secondary" />
-        <div className="h-3 w-3/5 bg-secondary" />
+    <CardShell meta="Summarizing the latest handover notes">
+      <div className="space-y-2.5" aria-hidden>
+        <div className="h-3 w-full rounded-full bg-surface-alt" />
+        <div className="h-3 w-11/12 rounded-full bg-surface-alt" />
+        <div className="h-3 w-3/5 rounded-full bg-surface-alt" />
       </div>
       <p className="sr-only" role="status">
         Generating the shift handover digest
@@ -82,31 +78,31 @@ export function HandoverDigestCard({ result }: { result: HandoverDigestResult })
   const { digest } = result;
 
   return (
-    <CardShell subtitle={`Notes from ${formatDayLabel(result.date)}`}>
-      <p className="text-sm">{digest.summary}</p>
+    <CardShell
+      meta={`${formatDayLabel(result.date)} · generated ${formatTimeOfDay(result.generatedAt)}`}
+    >
+      <p className="text-sm leading-relaxed text-foreground">{digest.summary}</p>
 
       {digest.keyPoints.length > 0 ? (
-        <ul className="mt-4 space-y-1.5 text-sm">
+        <ul className="mt-4 space-y-2.5 text-sm">
           {/* Index keys: the list is static and never reordered, and a model
               can emit the same line twice, which a content key would collide on. */}
           {digest.keyPoints.map((point, index) => (
-            <li key={index} className="flex gap-2">
-              <span aria-hidden className="text-primary">
-                &bull;
-              </span>
-              <span>{point}</span>
+            <li key={index} className="flex gap-2.5">
+              <CheckTickCircleIcon aria-hidden className="mt-0.5 size-4 shrink-0 text-ocean" />
+              <span className="text-muted-foreground">{point}</span>
             </li>
           ))}
         </ul>
       ) : null}
 
       {digest.flags.length > 0 ? (
-        <div className="mt-4 border-t-2 border-border-soft pt-3">
-          <Badge variant="danger">
-            <AlertTriangleIcon data-icon="inline-start" aria-hidden />
+        <div className="mt-4 rounded-xl bg-warning-soft px-3.5 py-3 text-sm text-warning">
+          <p className="flex items-center gap-2 font-semibold">
+            <AlertTriangleIcon aria-hidden className="size-4 shrink-0" />
             Needs attention
-          </Badge>
-          <ul className="mt-2 space-y-1.5 text-sm">
+          </p>
+          <ul className="mt-1.5 space-y-1.5 pl-6">
             {digest.flags.map((flag, index) => (
               <li key={index}>{flag}</li>
             ))}
@@ -114,7 +110,7 @@ export function HandoverDigestCard({ result }: { result: HandoverDigestResult })
         </div>
       ) : null}
 
-      <p className="mt-4 text-xs text-muted-foreground">
+      <p className="mt-4 text-xs text-faint">
         AI generated from staff notes. Check anything you plan to act on.
       </p>
     </CardShell>

@@ -22,7 +22,7 @@ export function haversineDistanceMeters(
 }
 
 type Coords = { latitude: number; longitude: number };
-type Perimeter = Coords & { clockInRadiusMeters: number };
+export type Perimeter = Coords & { clockInRadiusMeters: number };
 
 /** For display only: the server re-runs the same rule and has the final say. */
 export function perimeterCheck(

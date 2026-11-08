@@ -1,11 +1,13 @@
 "use client";
 
 import { useRef, useState } from "react";
-import { QuestionMarkCircleIcon } from "@/components/icons";
+import { ChatIcon, SendPlaneHorizontalIcon } from "@/components/icons";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import { eyebrowClass } from "@/lib/utils";
+import { Spinner } from "@/components/ui/spinner";
+import { formatTimeOfDay } from "@/lib/time-of-day";
+import { cn, cardTitleClass, monoLabelClass } from "@/lib/utils";
 import {
   ASK_LIMIT_PER_HOUR,
   QUESTION_MAX_LENGTH,
@@ -43,10 +45,6 @@ function errorMessage(state: AskState): string | null {
     default:
       return null;
   }
-}
-
-function formatAnsweredAt(iso: string): string {
-  return new Date(iso).toLocaleTimeString("en-GB", { hour: "2-digit", minute: "2-digit" });
 }
 
 function isAskResponse(value: unknown): value is AskResponse {
@@ -139,56 +137,62 @@ export function AskCard({ starterQuestions }: { starterQuestions: string[] }) {
 
   return (
     <Card>
-      <CardHeader>
-        <CardTitle className={eyebrowClass}>
-          <span className="inline-flex items-center gap-1.5">
-            <QuestionMarkCircleIcon className="size-3.5" aria-hidden />
-            Ask about attendance
-          </span>
+      <CardHeader className="gap-1">
+        <CardTitle className={cardTitleClass}>
+          <ChatIcon aria-hidden className="size-4.5" />
+          Ask about attendance
         </CardTitle>
-        <p className="mt-1 text-xs text-muted-foreground">
+        <p className="text-xs text-muted-foreground">
           Questions cover the last 7 days of attendance. You can ask{" "}
           {ASK_LIMIT_PER_HOUR} questions an hour.
         </p>
       </CardHeader>
       <CardContent className="grid gap-4">
         <form onSubmit={handleSubmit} className="grid gap-1.5">
-          <label htmlFor="ask-question" className={eyebrowClass}>
+          <label htmlFor="ask-question" className="sr-only">
             Ask a question
           </label>
-          <div className="flex flex-col gap-2 sm:flex-row">
+          <div className="relative">
             <Input
               id="ask-question"
               value={question}
               onChange={(event) => setQuestion(event.target.value)}
               maxLength={QUESTION_MAX_LENGTH}
               disabled={locked}
+              placeholder="e.g. Who clocked the most hours?"
               aria-invalid={state.kind === "invalid"}
               aria-describedby={state.kind === "invalid" ? ERROR_ID : undefined}
+              className="h-11 pr-12"
             />
             <Button
               type="submit"
+              size="icon-sm"
               disabled={locked || question.trim() === ""}
-              className="min-h-11 sm:min-h-10"
+              aria-label={state.kind === "loading" ? "Asking..." : "Ask"}
+              className="absolute top-1.5 right-1.5"
             >
-              {state.kind === "loading" ? "Asking..." : "Ask"}
+              {state.kind === "loading" ? (
+                <Spinner className="size-3.5" />
+              ) : (
+                <SendPlaneHorizontalIcon aria-hidden />
+              )}
             </Button>
           </div>
-          <p className="text-xs text-muted-foreground">
+          <p className="text-xs text-faint">
             {QUESTION_MAX_LENGTH - question.length} characters left
           </p>
         </form>
 
-        <ul className="flex flex-wrap gap-2" aria-label="Suggested questions">
+        <ul className="flex flex-wrap gap-1.5" aria-label="Suggested questions">
           {starterQuestions.map((starter) => (
             <li key={starter}>
               <Button
                 type="button"
                 variant="outline"
-                size="sm"
+                size="xs"
                 disabled={locked}
                 onClick={() => handleStarter(starter)}
-                className="h-auto min-h-11 py-2 text-left tracking-normal whitespace-normal normal-case sm:min-h-8"
+                className="h-auto min-h-11 rounded-full py-1.5 text-left font-medium whitespace-normal text-muted-foreground hover:text-foreground sm:min-h-7"
               >
                 {starter}
               </Button>
@@ -206,19 +210,23 @@ export function AskCard({ starterQuestions }: { starterQuestions: string[] }) {
           <p
             id={ERROR_ID}
             role="alert"
-            className="translate-y-0 text-sm text-destructive opacity-100 transition-[opacity,transform] duration-200 ease-(--ease-out) starting:-translate-y-1 starting:opacity-0"
+            className="rounded-xl bg-danger-soft px-3.5 py-3 text-sm text-danger opacity-100 transition-opacity duration-(--dur-base) ease-(--ease-out) starting:opacity-0"
           >
             {error}
           </p>
         ) : null}
 
         {state.kind === "answer" ? (
-          <div className="border-t-2 border-border-soft pt-3">
-            <p className="text-sm whitespace-pre-wrap">{state.answer.answer}</p>
-            <p className="mt-2 text-xs text-muted-foreground">
-              Answered at {formatAnsweredAt(state.answer.answeredAt)}
+          <div className="rounded-xl bg-ocean-soft px-4 py-3.5 opacity-100 transition-opacity duration-(--dur-base) ease-(--ease-out) starting:opacity-0">
+            {/* Model output shaped by notes other people wrote: plain text only. */}
+            <p className="text-sm leading-relaxed whitespace-pre-wrap text-foreground">
+              {state.answer.answer}
             </p>
-            <p className="mt-1 text-xs text-muted-foreground">
+            <p className={cn("mt-2.5", monoLabelClass)}>
+              Based on shift records · last 7 days · answered at{" "}
+              {formatTimeOfDay(new Date(state.answer.answeredAt))}
+            </p>
+            <p className="mt-1.5 text-xs text-muted-foreground">
               AI generated from the last 7 days of attendance data. Check anything you plan to
               act on.
             </p>

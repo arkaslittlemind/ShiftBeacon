@@ -6,17 +6,8 @@ import { requirePageUser } from "@/lib/auth";
 import { perimeterCheck } from "@/lib/geo";
 import { firstName } from "@/lib/names";
 import { getShiftsForUser, toShiftResponse } from "@/lib/services/shift-service";
-import { formatTimeOfDay } from "@/lib/time-of-day";
+import { formatDateEyebrow, formatTimeOfDay } from "@/lib/time-of-day";
 import { summarizeWeek } from "@/lib/worker/week-summary";
-
-// UTC, like every other "day" in the app, because the server can't know the
-// worker's timezone.
-const weekdayFormatter = new Intl.DateTimeFormat("en-GB", { weekday: "long", timeZone: "UTC" });
-const dayMonthFormatter = new Intl.DateTimeFormat("en-GB", {
-  day: "numeric",
-  month: "long",
-  timeZone: "UTC",
-});
 
 function greetingTitle(name: string, onShift: boolean): string {
   if (onShift) return "You're on shift";
@@ -44,7 +35,7 @@ export default async function WorkerHomePage() {
   return (
     <>
       <PageHeader
-        eyebrow={`${weekdayFormatter.format(now)} · ${dayMonthFormatter.format(now)}`}
+        eyebrow={formatDateEyebrow(now)}
         title={greetingTitle(user.name, activeShift !== null)}
       />
       <div className="grid items-start gap-6 min-[860px]:grid-cols-[minmax(0,1fr)_minmax(0,22.5rem)]">

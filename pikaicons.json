@@ -24,6 +24,10 @@
       "name": "calendar-default",
       "variant": "stroke"
     },
+    "chat-default": {
+      "name": "chat-default",
+      "variant": "stroke"
+    },
     "check-tick-circle": {
       "name": "check-tick-circle",
       "variant": "stroke"
@@ -34,6 +38,10 @@
     },
     "chevron-right": {
       "name": "chevron-right",
+      "variant": "stroke"
+    },
+    "clock-default": {
+      "name": "clock-default",
       "variant": "stroke"
     },
     "file-default": {
@@ -82,6 +90,10 @@
     },
     "question-mark-circle": {
       "name": "question-mark-circle",
+      "variant": "stroke"
+    },
+    "send-plane-horizontal": {
+      "name": "send-plane-horizontal",
       "variant": "stroke"
     },
     "shield": {

@@ -1,6 +1,7 @@
-"use client";
-
-import { Bar, BarChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
+import { GraphBarLineIcon } from "@/components/icons";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { staffHoursBars } from "@/lib/manager/dashboard-summary";
+import { cardTitleClass, monoLabelClass } from "@/lib/utils";
 import type { AnalyticsResponse } from "@/types/analytics";
 
 export function StaffHoursChart({
@@ -8,47 +9,46 @@ export function StaffHoursChart({
 }: {
   staffHours: AnalyticsResponse["staffHours"];
 }) {
-  const description = `Total hours per staff member over the last 7 days: ${staffHours
-    .map((staff) => `${staff.name} ${staff.totalHours.toFixed(1)} hours`)
-    .join(", ")}`;
+  const bars = staffHoursBars(staffHours);
 
   return (
-    <div className="h-64 w-full" role="img" aria-label={description}>
-      <ResponsiveContainer width="100%" height="100%">
-        <BarChart data={staffHours} margin={{ top: 8, right: 8, left: -16, bottom: 0 }}>
-          <CartesianGrid vertical={false} stroke="var(--color-border-soft)" />
-          <XAxis
-            dataKey="name"
-            tickLine={false}
-            axisLine={false}
-            className="text-xs"
-            tick={{ fill: "var(--color-muted-foreground)" }}
-          />
-          <YAxis
-            allowDecimals={false}
-            tickLine={false}
-            axisLine={false}
-            className="text-xs"
-            tick={{ fill: "var(--color-muted-foreground)" }}
-          />
-          <Tooltip
-            cursor={{ fill: "var(--color-secondary)" }}
-            formatter={(value) => [`${Number(value).toFixed(1)}h`, "Hours"]}
-            contentStyle={{
-              borderRadius: "var(--radius)",
-              borderWidth: "var(--border-w)",
-              borderColor: "var(--color-border)",
-              background: "var(--color-card)",
-            }}
-          />
-          <Bar
-            dataKey="totalHours"
-            name="Hours"
-            fill="var(--color-accent-dark)"
-            radius={[3, 3, 0, 0]}
-          />
-        </BarChart>
-      </ResponsiveContainer>
-    </div>
+    <Card className="h-full">
+      <CardHeader className="flex items-center justify-between gap-2">
+        <CardTitle className={cardTitleClass}>
+          <GraphBarLineIcon aria-hidden className="size-4.5" />
+          Hours per staff
+        </CardTitle>
+        <span className={monoLabelClass}>Last 7 days</span>
+      </CardHeader>
+      <CardContent>
+        {bars.length === 0 ? (
+          <p className="text-sm text-muted-foreground">No staff yet.</p>
+        ) : (
+          <ul className="grid gap-3" aria-label="Total hours per staff member over the last 7 days">
+            {bars.map((bar) => (
+              <li
+                key={bar.userId}
+                className="grid grid-cols-[minmax(0,7rem)_minmax(0,1fr)_3.5rem] items-center gap-3 text-sm"
+              >
+                <span className="truncate text-foreground" title={bar.name}>
+                  {bar.name}
+                </span>
+                <svg
+                  aria-hidden
+                  viewBox="0 0 100 8"
+                  preserveAspectRatio="none"
+                  className="h-2 w-full overflow-hidden rounded-full bg-chart-grid"
+                >
+                  <rect width={bar.fraction * 100} height="8" className="fill-chart-1" />
+                </svg>
+                <span className="text-right font-mono text-xs text-muted-foreground tabular-nums">
+                  {bar.totalHours.toFixed(1)}h
+                </span>
+              </li>
+            ))}
+          </ul>
+        )}
+      </CardContent>
+    </Card>
   );
 }
