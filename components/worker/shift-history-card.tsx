@@ -1,60 +1,83 @@
-import { Card } from "@/components/ui/card";
-import { formatHoursDecimal } from "@/lib/duration";
+import { CalendarIcon, FileIcon } from "@/components/icons";
+import { EmptyState } from "@/components/shared/empty-state";
+import { formatHoursMinutes } from "@/lib/duration";
+import { formatTimeOfDay } from "@/lib/time-of-day";
 import type { ShiftResponse } from "@/types/shift";
 
-const dayFormatter = new Intl.DateTimeFormat("en-GB", {
+const dayNumberFormatter = new Intl.DateTimeFormat("en-GB", { day: "numeric", timeZone: "UTC" });
+const shortWeekdayFormatter = new Intl.DateTimeFormat("en-GB", { weekday: "short", timeZone: "UTC" });
+const fullDateFormatter = new Intl.DateTimeFormat("en-GB", {
   weekday: "long",
   day: "numeric",
-  month: "short",
-});
-
-const timeFormatter = new Intl.DateTimeFormat("en-GB", {
-  hour: "2-digit",
-  minute: "2-digit",
-  hour12: false,
+  month: "long",
+  timeZone: "UTC",
 });
 
 export function ShiftHistoryCard({ history }: { history: ShiftResponse[] }) {
   return (
-    <Card className="gap-0 overflow-hidden py-0">
-      <h2 className="border-b-(length:--border-w) border-border px-5 py-4 font-heading text-sm font-bold tracking-wide uppercase">
+    <section
+      aria-labelledby="recent-shifts-title"
+      className="rounded-[20px] border border-border-soft bg-card p-5 shadow-sm"
+    >
+      <h2
+        id="recent-shifts-title"
+        className="mb-2 flex items-center gap-2 font-semibold text-foreground"
+      >
+        <CalendarIcon className="size-5 text-muted-foreground" aria-hidden />
         Recent shifts
       </h2>
       {history.length === 0 ? (
-        <p className="px-5 py-8 text-center text-sm text-muted-foreground">
-          No completed shifts yet.
-        </p>
+        <EmptyState
+          icon={CalendarIcon}
+          title="No completed shifts yet"
+          description="Your shifts appear here once you clock out."
+        />
       ) : (
         <ul>
-          {history.map((shift) => {
-            const clockInAt = new Date(shift.clockInAt);
-            const clockOutAt = shift.clockOutAt ? new Date(shift.clockOutAt) : null;
-            const hours = clockOutAt
-              ? formatHoursDecimal(clockOutAt.getTime() - clockInAt.getTime())
-              : null;
-
-            return (
-              <li
-                key={shift.id}
-                className="flex items-center justify-between gap-3 border-b border-border-soft px-5 py-3.5 last:border-b-0"
-              >
-                <div>
-                  <p className="text-sm font-semibold">{dayFormatter.format(clockInAt)}</p>
-                  <p className="text-xs text-muted-foreground">
-                    {timeFormatter.format(clockInAt)}
-                    {clockOutAt ? ` – ${timeFormatter.format(clockOutAt)}` : ""}
-                  </p>
-                </div>
-                {hours && (
-                  <p className="shrink-0 font-heading text-sm font-bold text-accent-dark">
-                    {hours}
-                  </p>
-                )}
-              </li>
-            );
-          })}
+          {history.map((shift) => (
+            <HistoryRow key={shift.id} shift={shift} />
+          ))}
         </ul>
       )}
-    </Card>
+    </section>
+  );
+}
+
+function HistoryRow({ shift }: { shift: ShiftResponse }) {
+  const clockInAt = new Date(shift.clockInAt);
+  const clockOutAt = shift.clockOutAt ? new Date(shift.clockOutAt) : null;
+  const note = shift.clockOutNote || shift.clockInNote;
+
+  return (
+    <li className="grid grid-cols-[2.875rem_minmax(0,1fr)_auto] items-center gap-3 border-b border-border-soft py-3 last:border-b-0 last:pb-0">
+      <div className="rounded-md bg-surface-alt py-1 text-center">
+        <span className="sr-only">{fullDateFormatter.format(clockInAt)}</span>
+        <span aria-hidden className="block text-lg leading-tight font-semibold text-foreground">
+          {dayNumberFormatter.format(clockInAt)}
+        </span>
+        <span aria-hidden className="font-mono text-xs text-faint uppercase">
+          {shortWeekdayFormatter.format(clockInAt)}
+        </span>
+      </div>
+      <div className="min-w-0">
+        <p className="font-mono text-sm text-foreground tabular-nums">
+          {formatTimeOfDay(clockInAt)}
+          {clockOutAt && ` - ${formatTimeOfDay(clockOutAt)}`}
+        </p>
+        {note ? (
+          <p className="mt-0.5 flex items-start gap-1 text-xs text-faint">
+            <FileIcon className="mt-px size-3.5 shrink-0" aria-hidden />
+            <span className="line-clamp-2 wrap-break-word">{note}</span>
+          </p>
+        ) : (
+          <p className="mt-0.5 text-xs text-faint">No note</p>
+        )}
+      </div>
+      {clockOutAt && (
+        <p className="font-mono text-sm font-medium text-foreground tabular-nums">
+          {formatHoursMinutes(clockOutAt.getTime() - clockInAt.getTime())}
+        </p>
+      )}
+    </li>
   );
 }

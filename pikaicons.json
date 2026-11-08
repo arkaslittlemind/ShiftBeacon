@@ -12,8 +12,16 @@
       "name": "alert-triangle",
       "variant": "stroke"
     },
+    "building-apartment-two": {
+      "name": "building-apartment-two",
+      "variant": "stroke"
+    },
     "burger-menu-three": {
       "name": "burger-menu-three",
+      "variant": "stroke"
+    },
+    "calendar-default": {
+      "name": "calendar-default",
       "variant": "stroke"
     },
     "check-tick-circle": {
@@ -64,12 +72,24 @@
       "name": "multiple-cross-cancel-default",
       "variant": "stroke"
     },
+    "pause-circle": {
+      "name": "pause-circle",
+      "variant": "stroke"
+    },
+    "play-circle": {
+      "name": "play-circle",
+      "variant": "stroke"
+    },
     "question-mark-circle": {
       "name": "question-mark-circle",
       "variant": "stroke"
     },
     "shield": {
       "name": "shield",
+      "variant": "stroke"
+    },
+    "shield-check": {
+      "name": "shield-check",
       "variant": "stroke"
     },
     "sparkle-ai-01": {

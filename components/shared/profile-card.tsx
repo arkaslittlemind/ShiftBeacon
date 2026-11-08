@@ -1,7 +1,9 @@
 import Link from "next/link";
+import { Avatar } from "@/components/shared/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { getInitials } from "@/lib/names";
+import { monoLabelClass } from "@/lib/utils";
 import { ROLE_LABEL, type Role } from "@/types/user";
 
 const memberSinceFormatter = new Intl.DateTimeFormat("en-GB", {
@@ -23,11 +25,9 @@ type ProfileCardProps = {
 
 function Field({ label, children }: { label: string; children: React.ReactNode }) {
   return (
-    <div className="flex flex-col gap-1 sm:flex-row sm:items-baseline sm:gap-6">
-      <dt className="w-32 shrink-0 font-heading text-xs font-bold tracking-wide text-muted-foreground uppercase">
-        {label}
-      </dt>
-      <dd className="min-w-0 break-words font-medium">{children}</dd>
+    <div className="grid gap-1 border-b border-border-soft py-3.5 last:border-b-0 sm:grid-cols-[10rem_minmax(0,1fr)] sm:items-baseline sm:gap-6">
+      <dt className={monoLabelClass}>{label}</dt>
+      <dd className="min-w-0 text-sm wrap-break-word text-foreground">{children}</dd>
     </div>
   );
 }
@@ -42,43 +42,47 @@ export function ProfileCard({
   workplaceSettingsHref,
 }: ProfileCardProps) {
   return (
-    <div className="grid gap-4">
-      <Card>
-        <CardHeader>
-          <CardTitle>Account</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <dl className="grid gap-4">
-            <Field label="Name">{name || "Not provided"}</Field>
-            <Field label="Email">{email || "Not provided"}</Field>
-            <Field label="Role">
-              <Badge>{ROLE_LABEL[role]}</Badge>
-            </Field>
-            <Field label="Member since">{memberSinceFormatter.format(memberSince)}</Field>
-          </dl>
-          <p className="mt-5 text-xs text-muted-foreground">
-            Your name and email come from your sign-in provider, so they can&apos;t be
-            edited here.
+    <section
+      aria-labelledby="profile-name"
+      className="max-w-2xl overflow-hidden rounded-[20px] border border-border-soft bg-card shadow-sm"
+    >
+      <div className="flex items-center gap-4 border-b border-border-soft p-5 sm:p-6">
+        <Avatar initials={getInitials(name)} className="size-14 text-base" />
+        <div className="min-w-0">
+          <h2
+            id="profile-name"
+            className="font-heading text-2xl leading-tight font-normal wrap-break-word text-foreground"
+          >
+            {name || "Name not provided"}
+          </h2>
+          <p className="mt-0.5 text-sm wrap-break-word text-muted-foreground">
+            {email || "Email not provided"}
           </p>
-        </CardContent>
-      </Card>
+          <Badge variant="ocean" className="mt-2">
+            {ROLE_LABEL[role]}
+          </Badge>
+        </div>
+      </div>
 
-      <Card>
-        <CardHeader>
-          <CardTitle>Workplace</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <dl className="grid gap-4">
-            <Field label="Organization">{organizationName}</Field>
-            <Field label="Clock-in radius">{clockInRadiusMeters} m</Field>
-          </dl>
-          {workplaceSettingsHref && (
-            <Button asChild variant="outline" className="mt-5">
-              <Link href={workplaceSettingsHref}>Edit workplace settings</Link>
-            </Button>
-          )}
-        </CardContent>
-      </Card>
-    </div>
+      <dl className="px-5 sm:px-6">
+        <Field label="Member since">{memberSinceFormatter.format(memberSince)}</Field>
+        <Field label="Organization">{organizationName}</Field>
+        <Field label="Clock-in radius">
+          <span className="font-mono tabular-nums">{clockInRadiusMeters} m</span>
+        </Field>
+      </dl>
+
+      <div className="flex flex-col gap-4 border-t border-border-soft bg-surface-alt px-5 py-4 sm:flex-row sm:items-center sm:justify-between sm:px-6">
+        <p className="text-xs text-muted-foreground">
+          Your name and email come from your sign-in provider, so they can&apos;t be edited
+          here.
+        </p>
+        {workplaceSettingsHref && (
+          <Button asChild variant="outline" className="h-11 shrink-0 md:h-9">
+            <Link href={workplaceSettingsHref}>Edit workplace settings</Link>
+          </Button>
+        )}
+      </div>
+    </section>
   );
 }

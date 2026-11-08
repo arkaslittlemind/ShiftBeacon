@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { formatElapsedClock, formatHoursDecimal } from "./duration";
+import { formatElapsedClock, formatHoursDecimal, formatHoursMinutes } from "./duration";
 
 describe("formatElapsedClock", () => {
   it("formats zero as 00:00:00", () => {
@@ -51,5 +51,26 @@ describe("formatHoursDecimal", () => {
   it("rounds a repeating decimal to one place", () => {
     // 100 minutes = 1.6666...h -> rounds to 1.7h
     expect(formatHoursDecimal(100 * 60_000)).toBe("1.7h");
+  });
+});
+
+describe("formatHoursMinutes", () => {
+  const MINUTE = 60_000;
+
+  it("shows 0m for no time and clamps negatives to zero", () => {
+    expect(formatHoursMinutes(0)).toBe("0m");
+    expect(formatHoursMinutes(-5 * MINUTE)).toBe("0m");
+  });
+
+  it("shows minutes only under an hour", () => {
+    expect(formatHoursMinutes(45 * MINUTE)).toBe("45m");
+  });
+
+  it("keeps the minutes for whole hours", () => {
+    expect(formatHoursMinutes(8 * 60 * MINUTE)).toBe("8h 0m");
+  });
+
+  it("shows hours and minutes, truncating partial minutes", () => {
+    expect(formatHoursMinutes((8 * 60 + 11) * MINUTE + 59_000)).toBe("8h 11m");
   });
 });

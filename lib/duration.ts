@@ -18,3 +18,10 @@ export function formatHoursDecimal(ms: number): string {
   const hours = clampNonNegative(ms) / 3_600_000;
   return `${hours.toFixed(1)}h`;
 }
+
+export function formatHoursMinutes(ms: number): string {
+  const totalMinutes = Math.floor(clampNonNegative(ms) / 60_000);
+  const hours = Math.floor(totalMinutes / 60);
+  const minutes = totalMinutes % 60;
+  return hours > 0 ? `${hours}h ${minutes}m` : `${minutes}m`;
+}

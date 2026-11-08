@@ -11,31 +11,12 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { LogoutLink } from "@/components/shell/logout-link";
+import { Avatar } from "@/components/shared/avatar";
+import { getInitials } from "@/lib/names";
 import { cn } from "@/lib/utils";
 import { ROLE_LABEL, type Role } from "@/types/user";
 
 export type UserMenuLayout = "avatar" | "inline" | "card";
-
-function getInitials(name: string) {
-  const parts = name.trim().split(/\s+/).filter(Boolean);
-  if (parts.length === 0) return "?";
-  if (parts.length === 1) return parts[0].slice(0, 2).toUpperCase();
-  return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
-}
-
-function Avatar({ initials, className }: { initials: string; className?: string }) {
-  return (
-    <span
-      aria-hidden="true"
-      className={cn(
-        "grid size-8 shrink-0 place-items-center rounded-full border border-ocean-tint bg-ocean-soft text-xs font-semibold text-ocean",
-        className
-      )}
-    >
-      {initials}
-    </span>
-  );
-}
 
 const TRIGGER_BASE =
   "outline-none transition-colors duration-(--dur-fast) ease-[ease] focus-visible:ring-3 focus-visible:ring-ring/50";

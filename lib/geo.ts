@@ -20,3 +20,27 @@ export function haversineDistanceMeters(
 
   return EARTH_RADIUS_METERS * c;
 }
+
+type Coords = { latitude: number; longitude: number };
+type Perimeter = Coords & { clockInRadiusMeters: number };
+
+/** For display only: the server re-runs the same rule and has the final say. */
+export function perimeterCheck(
+  coords: Coords,
+  perimeter: Perimeter
+): { inside: boolean; distanceMeters: number } {
+  const distanceMeters = haversineDistanceMeters(
+    coords.latitude,
+    coords.longitude,
+    perimeter.latitude,
+    perimeter.longitude
+  );
+  return { inside: distanceMeters <= perimeter.clockInRadiusMeters, distanceMeters };
+}
+
+export function formatDistance(meters: number): string {
+  if (meters < 100) return `${Math.round(meters)} m`;
+  const roundedToTen = Math.round(meters / 10) * 10;
+  if (roundedToTen < 1000) return `${roundedToTen} m`;
+  return `${(meters / 1000).toFixed(1)} km`;
+}
