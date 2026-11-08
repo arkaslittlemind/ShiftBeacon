@@ -4,24 +4,27 @@ import { Slot } from "radix-ui"
 
 import { cn } from "@/lib/utils"
 
+// Press feedback for every variant except link: scale only, never a
+// positional shift, and no scale at all under reduced motion.
+const PRESS = "motion-safe:active:not-aria-[haspopup]:scale-[0.97]"
+
 const buttonVariants = cva(
-  "group/button inline-flex shrink-0 items-center justify-center gap-1.5 rounded-md border-(length:--border-w) border-border font-heading text-xs font-bold tracking-wide uppercase whitespace-nowrap shadow-sm outline-none select-none transition-transform duration-100 ease-(--ease-out) active:not-aria-[haspopup]:translate-x-[3px] active:not-aria-[haspopup]:translate-y-[3px] active:not-aria-[haspopup]:shadow-none focus-visible:ring-3 focus-visible:ring-ring/50 disabled:pointer-events-none disabled:opacity-50 aria-invalid:border-destructive aria-invalid:ring-3 aria-invalid:ring-destructive/20 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
+  "group/button inline-flex shrink-0 touch-manipulation items-center [-webkit-tap-highlight-color:transparent] justify-center gap-1.5 rounded-lg border border-transparent font-sans text-sm font-semibold whitespace-nowrap outline-none select-none [transition:transform_var(--dur-press)_var(--ease-out),background-color_var(--dur-fast)_ease,color_var(--dur-fast)_ease,border-color_var(--dur-fast)_ease,box-shadow_var(--dur-fast)_ease] focus-visible:ring-3 focus-visible:ring-ring/50 disabled:pointer-events-none disabled:opacity-50 aria-invalid:border-danger aria-invalid:ring-3 aria-invalid:ring-danger/20 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
   {
     variants: {
       variant: {
-        default: "bg-primary text-primary-foreground hover:bg-accent-dark",
-        outline: "bg-card text-foreground hover:bg-secondary",
-        secondary: "bg-secondary text-secondary-foreground hover:bg-border-soft",
-        ghost:
-          "border-transparent shadow-none active:translate-x-0 active:translate-y-0 hover:bg-secondary hover:text-foreground",
-        destructive: "bg-destructive text-danger-ink hover:opacity-90",
-        link: "border-transparent shadow-none normal-case tracking-normal text-primary underline-offset-4 hover:underline active:translate-x-0 active:translate-y-0",
+        default: `${PRESS} bg-primary text-primary-foreground shadow-sm hover:bg-primary-hover`,
+        ocean: `${PRESS} bg-ocean text-primary-foreground shadow-sm hover:bg-ocean-hover`,
+        outline: `${PRESS} border-border bg-card text-foreground hover:bg-surface-alt`,
+        ghost: `${PRESS} text-muted-foreground hover:bg-surface-alt hover:text-foreground`,
+        destructive: `${PRESS} bg-destructive text-danger-ink shadow-sm hover:bg-destructive/90`,
+        link: "text-ocean underline-offset-4 hover:underline",
       },
       size: {
         default: "h-9 px-4 has-data-[icon=inline-end]:pr-3 has-data-[icon=inline-start]:pl-3",
-        xs: "h-7 gap-1 px-2.5 text-[0.65rem]",
-        sm: "h-8 gap-1 px-3 text-[0.7rem]",
-        lg: "h-11 gap-2 px-6 text-sm",
+        xs: "h-7 gap-1 px-2.5 text-xs",
+        sm: "h-8 gap-1 px-3 text-[0.8125rem]",
+        lg: "h-13 gap-2 rounded-xl px-6 text-[1.0625rem] font-medium",
         icon: "size-9",
         "icon-xs": "size-7",
         "icon-sm": "size-8",

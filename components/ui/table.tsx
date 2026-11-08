@@ -23,7 +23,7 @@ function TableHeader({ className, ...props }: React.ComponentProps<"thead">) {
   return (
     <thead
       data-slot="table-header"
-      className={cn("[&_tr]:border-b-2 [&_tr]:border-border", className)}
+      className={cn("[&_tr]:border-b [&_tr]:border-border-soft", className)}
       {...props}
     />
   )
@@ -44,7 +44,7 @@ function TableFooter({ className, ...props }: React.ComponentProps<"tfoot">) {
     <tfoot
       data-slot="table-footer"
       className={cn(
-        "border-t-(length:--border-w) border-border bg-secondary font-medium [&>tr]:last:border-b-0",
+        "border-t border-border-soft bg-surface-alt font-medium [&>tr]:last:border-b-0",
         className
       )}
       {...props}
@@ -57,7 +57,7 @@ function TableRow({ className, ...props }: React.ComponentProps<"tr">) {
     <tr
       data-slot="table-row"
       className={cn(
-        "border-b border-border-soft transition-colors duration-150 ease hover:bg-secondary/60 has-aria-expanded:bg-secondary/60 data-[state=selected]:bg-secondary",
+        "border-b border-border-soft transition-colors duration-(--dur-fast) ease-[ease] hover:bg-surface-alt has-aria-expanded:bg-surface-alt data-[state=selected]:bg-surface-alt",
         className
       )}
       {...props}
@@ -70,7 +70,7 @@ function TableHead({ className, ...props }: React.ComponentProps<"th">) {
     <th
       data-slot="table-head"
       className={cn(
-        "h-10 px-3 text-left align-middle text-xs font-bold tracking-wide uppercase whitespace-nowrap text-muted-foreground [&:has([role=checkbox])]:pr-0",
+        "h-10 px-3 text-left align-middle font-mono text-[11px] font-medium tracking-[0.08em] uppercase whitespace-nowrap text-faint [&:has([role=checkbox])]:pr-0",
         className
       )}
       {...props}
@@ -83,7 +83,7 @@ function TableCell({ className, ...props }: React.ComponentProps<"td">) {
     <td
       data-slot="table-cell"
       className={cn(
-        "p-3 align-middle whitespace-nowrap [&:has([role=checkbox])]:pr-0",
+        "px-3 py-3.5 align-middle whitespace-nowrap [&:has([role=checkbox])]:pr-0",
         className
       )}
       {...props}

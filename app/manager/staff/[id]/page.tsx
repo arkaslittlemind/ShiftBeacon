@@ -33,7 +33,7 @@ export default async function StaffDetailPage({
         description="Shift history and current status"
       />
       <div className="mb-5 flex items-center gap-2">
-        <Badge variant={activeShift ? "default" : "secondary"}>
+        <Badge variant={activeShift ? "success" : "neutral"}>
           {activeShift ? "Clocked in" : "Clocked out"}
         </Badge>
       </div>

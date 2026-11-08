@@ -102,7 +102,7 @@ export function HandoverDigestCard({ result }: { result: HandoverDigestResult })
 
       {digest.flags.length > 0 ? (
         <div className="mt-4 border-t-2 border-border-soft pt-3">
-          <Badge variant="destructive">
+          <Badge variant="danger">
             <AlertTriangleIcon data-icon="inline-start" aria-hidden />
             Needs attention
           </Badge>

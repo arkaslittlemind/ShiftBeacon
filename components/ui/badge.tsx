@@ -5,31 +5,32 @@ import { Slot } from "radix-ui"
 import { cn } from "@/lib/utils"
 
 const badgeVariants = cva(
-  "group/badge inline-flex h-5 w-fit shrink-0 items-center justify-center gap-1 overflow-hidden rounded-sm border-2 border-border px-2 py-0.5 text-[0.65rem] font-bold tracking-wide uppercase whitespace-nowrap transition-colors duration-150 ease focus-visible:ring-[3px] focus-visible:ring-ring/50 has-data-[icon=inline-end]:pr-1.5 has-data-[icon=inline-start]:pl-1.5 aria-invalid:border-destructive aria-invalid:ring-destructive/20 [&>svg]:pointer-events-none [&>svg]:size-3!",
+  "group/badge inline-flex h-6 w-fit shrink-0 items-center justify-center gap-1.5 overflow-hidden rounded-full px-2.5 text-xs font-semibold whitespace-nowrap focus-visible:ring-3 focus-visible:ring-ring/50 has-data-[icon=inline-end]:pr-2 has-data-[icon=inline-start]:pl-2 [&>svg]:pointer-events-none [&>svg]:size-3!",
   {
     variants: {
       variant: {
-        default: "bg-primary text-primary-foreground [a]:hover:bg-accent-dark",
-        secondary: "bg-card text-muted-foreground [a]:hover:bg-secondary",
-        destructive: "bg-destructive text-danger-ink [a]:hover:opacity-90",
-        outline: "bg-transparent text-foreground [a]:hover:bg-secondary",
-        ghost: "border-transparent bg-secondary text-secondary-foreground",
-        link: "border-transparent normal-case tracking-normal text-primary underline-offset-4 hover:underline",
+        neutral: "bg-secondary text-muted-foreground",
+        ocean: "bg-ocean-soft text-ocean",
+        success: "bg-success-soft text-success",
+        warning: "bg-warning-soft text-warning",
+        danger: "bg-danger-soft text-danger",
       },
     },
     defaultVariants: {
-      variant: "default",
+      variant: "neutral",
     },
   }
 )
 
 function Badge({
   className,
-  variant = "default",
+  variant = "neutral",
+  dot = false,
   asChild = false,
+  children,
   ...props
 }: React.ComponentProps<"span"> &
-  VariantProps<typeof badgeVariants> & { asChild?: boolean }) {
+  VariantProps<typeof badgeVariants> & { asChild?: boolean; dot?: boolean }) {
   const Comp = asChild ? Slot.Root : "span"
 
   return (
@@ -38,7 +39,10 @@ function Badge({
       data-variant={variant}
       className={cn(badgeVariants({ variant }), className)}
       {...props}
-    />
+    >
+      {dot && !asChild ? <span aria-hidden="true" className="size-1.5 shrink-0 rounded-full bg-current" /> : null}
+      {children}
+    </Comp>
   )
 }
 

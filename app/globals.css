@@ -37,6 +37,7 @@
   --color-secondary: var(--secondary);
   --color-primary-foreground: var(--primary-foreground);
   --color-primary: var(--primary);
+  --color-primary-hover: var(--primary-hover);
   --color-popover-foreground: var(--popover-foreground);
   --color-popover: var(--popover);
   --color-card-foreground: var(--card-foreground);
@@ -89,6 +90,7 @@
      Pourville blue is reserved for links, focus, active states, Clock In,
      and data (see --ocean). */
   --primary: #16212b;
+  --primary-hover: #26333f;
   --primary-foreground: #ffffff;
   --secondary: #efebe3;
   --secondary-foreground: #16212b;

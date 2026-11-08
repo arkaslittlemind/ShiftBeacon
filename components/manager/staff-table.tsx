@@ -70,7 +70,7 @@ export function StaffTable({
                   </Link>
                 </TableCell>
                 <TableCell>
-                  <Badge variant={member.status === "CLOCKED_IN" ? "default" : "secondary"}>
+                  <Badge variant={member.status === "CLOCKED_IN" ? "success" : "neutral"}>
                     {member.status === "CLOCKED_IN" ? "Clocked in" : "Clocked out"}
                   </Badge>
                 </TableCell>
