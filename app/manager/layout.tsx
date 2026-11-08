@@ -17,8 +17,8 @@ export default async function ManagerLayout({ children }: { children: React.Reac
         role={dbUser.role}
         organizationId={dbUser.organizationId}
       />
-      <ManagerSidebar organizationName={organizationName} />
-      <div className="flex flex-1 flex-col">
+      <ManagerSidebar organizationName={organizationName} user={user} />
+      <div className="flex min-w-0 flex-1 flex-col">
         <ManagerTopbar user={user} organizationName={organizationName} />
         <main className="flex-1 px-4 py-7 sm:px-6 lg:px-8">
           <RouteTransition>

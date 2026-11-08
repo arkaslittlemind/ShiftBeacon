@@ -20,6 +20,10 @@
       "name": "check-tick-circle",
       "variant": "stroke"
     },
+    "chevron-down": {
+      "name": "chevron-down",
+      "variant": "stroke"
+    },
     "chevron-right": {
       "name": "chevron-right",
       "variant": "stroke"
@@ -30,6 +34,14 @@
     },
     "graph-bar-line": {
       "name": "graph-bar-line",
+      "variant": "stroke"
+    },
+    "grid-dashboard-02": {
+      "name": "grid-dashboard-02",
+      "variant": "stroke"
+    },
+    "home-default": {
+      "name": "home-default",
       "variant": "stroke"
     },
     "lightning-thunder-electric-on": {

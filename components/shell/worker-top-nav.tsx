@@ -1,9 +1,9 @@
 "use client";
 
-import { BurgerMenuThreeIcon } from "@/components/icons";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { cn, eyebrowClass } from "@/lib/utils";
+import { BurgerMenuThreeIcon, HomeIcon } from "@/components/icons";
+import { cn, focusRingClass } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import {
   Sheet,
@@ -15,39 +15,54 @@ import {
 } from "@/components/ui/sheet";
 import { UserMenu } from "@/components/shell/user-menu";
 import { BrandLockup } from "@/components/brand/brand-lockup";
+import type { IconComponent } from "@/types/icons";
 import type { CurrentUser } from "@/types/user";
 
-const NAV_LINKS = [{ href: "/worker/home", label: "Home" }];
+const NAV_LINKS: { href: string; label: string; icon: IconComponent }[] = [
+  { href: "/worker/home", label: "Home", icon: HomeIcon },
+];
+
+function navLinkClass(active: boolean) {
+  return cn(
+    "flex items-center gap-2 rounded-lg px-3 text-sm font-medium",
+    focusRingClass,
+    // Only hover fades; the active pill switches instantly on navigation.
+    active
+      ? "bg-ocean-soft text-ocean"
+      : "text-muted-foreground transition-colors duration-(--dur-fast) ease-[ease] hover:bg-surface-alt hover:text-foreground"
+  );
+}
 
 export function WorkerTopNav({ user }: { user: CurrentUser }) {
   const pathname = usePathname();
 
   return (
-    <header className="border-b-(length:--border-w-lg) border-border bg-card">
-      <div className="mx-auto flex max-w-5xl items-center justify-between px-6 py-4 md:px-10">
-        <Link
-          href="/worker/home"
-          className="rounded-sm outline-none focus-visible:ring-3 focus-visible:ring-ring/50"
-        >
-          <BrandLockup />
-        </Link>
+    <header className="border-b border-border-soft bg-card">
+      <div className="mx-auto flex max-w-5xl items-center justify-between gap-4 px-4 py-3 sm:px-6 md:px-10">
+        <div className="flex items-center gap-6">
+          <Link href="/worker/home" className={cn("rounded-lg", focusRingClass)}>
+            <BrandLockup />
+          </Link>
 
-        <nav className={cn(eyebrowClass, "hidden items-center gap-7 md:flex")}>
-          {NAV_LINKS.map((link) => (
-            <Link
-              key={link.href}
-              href={link.href}
-              className={cn(
-                "rounded-sm outline-none transition-colors duration-150 ease hover:text-foreground focus-visible:ring-3 focus-visible:ring-ring/50",
-                pathname === link.href && "text-foreground"
-              )}
-            >
-              {link.label}
-            </Link>
-          ))}
-        </nav>
+          <nav aria-label="Worker" className="hidden items-center gap-1 md:flex">
+            {NAV_LINKS.map(({ href, label, icon: Icon }) => {
+              const active = pathname === href;
+              return (
+                <Link
+                  key={href}
+                  href={href}
+                  aria-current={active ? "page" : undefined}
+                  className={cn(navLinkClass(active), "h-9")}
+                >
+                  <Icon aria-hidden className="size-4 shrink-0" />
+                  {label}
+                </Link>
+              );
+            })}
+          </nav>
+        </div>
 
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-2">
           <Sheet>
             <SheetTrigger asChild>
               <Button
@@ -65,27 +80,32 @@ export function WorkerTopNav({ user }: { user: CurrentUser }) {
                   <BrandLockup />
                 </SheetTitle>
               </SheetHeader>
-              <nav className="flex flex-col gap-1 px-4">
-                {NAV_LINKS.map((link) => (
-                  <SheetClose key={link.href} asChild>
-                    <Link
-                      href={link.href}
-                      className={cn(
-                        "rounded-md px-3 py-2.5 text-xs font-bold tracking-wide uppercase outline-none focus-visible:ring-3 focus-visible:ring-ring/50",
-                        pathname === link.href
-                          ? "bg-secondary text-foreground"
-                          : "text-muted-foreground"
-                      )}
-                    >
-                      {link.label}
-                    </Link>
-                  </SheetClose>
-                ))}
+              <nav aria-label="Worker" className="flex flex-col gap-1 px-4">
+                {NAV_LINKS.map(({ href, label, icon: Icon }) => {
+                  const active = pathname === href;
+                  return (
+                    <SheetClose key={href} asChild>
+                      <Link
+                        href={href}
+                        aria-current={active ? "page" : undefined}
+                        className={cn(navLinkClass(active), "min-h-11")}
+                      >
+                        <Icon aria-hidden className="size-4 shrink-0" />
+                        {label}
+                      </Link>
+                    </SheetClose>
+                  );
+                })}
               </nav>
             </SheetContent>
           </Sheet>
 
-          <UserMenu name={user.name} email={user.email} profileHref="/worker/profile" />
+          <div className="hidden md:block">
+            <UserMenu name={user.name} email={user.email} profileHref="/worker/profile" layout="inline" />
+          </div>
+          <div className="md:hidden">
+            <UserMenu name={user.name} email={user.email} profileHref="/worker/profile" />
+          </div>
         </div>
       </div>
     </header>

@@ -2,12 +2,7 @@ import Link from "next/link";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import type { Role } from "@/types/user";
-
-const ROLE_LABEL: Record<Role, string> = {
-  CARE_WORKER: "Care worker",
-  MANAGER: "Manager",
-};
+import { ROLE_LABEL, type Role } from "@/types/user";
 
 const memberSinceFormatter = new Intl.DateTimeFormat("en-GB", {
   day: "numeric",

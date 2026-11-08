@@ -1,54 +1,79 @@
 "use client";
 
 import Link from "next/link";
-import { BrandLockup } from "@/components/brand/brand-lockup";
 import { usePathname } from "next/navigation";
-import { cn } from "@/lib/utils";
+import { GridDashboard02Icon, MapIcon } from "@/components/icons";
+import { BrandLockup } from "@/components/brand/brand-lockup";
+import { UserMenu } from "@/components/shell/user-menu";
+import { cn, focusRingClass, monoLabelClass } from "@/lib/utils";
+import type { IconComponent } from "@/types/icons";
+import type { CurrentUser } from "@/types/user";
 
-const NAV_LINKS = [
-  { href: "/manager/dashboard", label: "Dashboard" },
-  { href: "/manager/workplace", label: "Workplace" },
+const NAV_LINKS: { href: string; label: string; icon: IconComponent }[] = [
+  { href: "/manager/dashboard", label: "Dashboard", icon: GridDashboard02Icon },
+  { href: "/manager/workplace", label: "Workplace", icon: MapIcon },
 ];
 
-export function ManagerSidebarContent({ organizationName }: { organizationName: string }) {
+export function ManagerSidebarContent({
+  organizationName,
+  user,
+  onNavigate,
+}: {
+  organizationName: string;
+  user: CurrentUser;
+  onNavigate?: () => void;
+}) {
   const pathname = usePathname();
 
   return (
-    <div className="flex h-full flex-col py-5">
+    <div className="flex h-full w-full flex-col gap-6 px-3 py-5">
       <Link
         href="/manager/dashboard"
-        className="mb-2.5 block rounded-sm border-b-2 border-background/15 px-5 pb-5.5 outline-none focus-visible:ring-3 focus-visible:ring-ring/50"
+        onClick={onNavigate}
+        className={cn("flex flex-col gap-1 rounded-lg px-2 py-1", focusRingClass)}
       >
-        <BrandLockup variant="on-ink" />
+        <BrandLockup />
+        <span className={cn("truncate pl-9", monoLabelClass)}>
+          {organizationName}
+        </span>
       </Link>
 
-      <div className="flex flex-col">
-        {NAV_LINKS.map((link) => (
-          <Link
-            key={link.href}
-            href={link.href}
-            className={cn(
-              "border-l-4 border-transparent px-5 py-3 text-xs font-bold tracking-wide text-background/65 uppercase outline-none focus-visible:ring-3 focus-visible:ring-ring/50",
-              pathname === link.href && "border-primary bg-background/10 text-background"
-            )}
-          >
-            {link.label}
-          </Link>
-        ))}
-      </div>
+      <nav aria-label="Manager" className="flex flex-col gap-1">
+        <p className={cn("px-2 pb-1", monoLabelClass)}>
+          Manage
+        </p>
+        {NAV_LINKS.map(({ href, label, icon: Icon }) => {
+          const active = pathname === href;
+          return (
+            <Link
+              key={href}
+              href={href}
+              onClick={onNavigate}
+              aria-current={active ? "page" : undefined}
+              className={cn(
+                "flex min-h-11 items-center gap-2.5 rounded-lg border px-2.5 text-sm md:min-h-9.5",
+                focusRingClass,
+                active
+                  ? "border-border-soft bg-card font-semibold text-foreground shadow-sm"
+                  : "border-transparent text-muted-foreground transition-colors duration-(--dur-fast) ease-[ease] hover:bg-surface-alt hover:text-foreground"
+              )}
+            >
+              <Icon aria-hidden className={cn("size-4.5 shrink-0", active && "text-ocean")} />
+              {label}
+            </Link>
+          );
+        })}
+      </nav>
 
-      <div className="flex-1" />
-
-      <div className="mx-5 border-2 border-background/15 bg-background/10 p-3.5 text-xs text-background/65">
-        <strong className="mb-0.5 block text-[13px] text-background">
-          {organizationName}
-        </strong>
-        <Link
-          href="/manager/workplace"
-          className="rounded-sm underline underline-offset-2 outline-none transition-colors duration-150 ease hover:text-background focus-visible:ring-3 focus-visible:ring-ring/50"
-        >
-          Edit in Workplace settings
-        </Link>
+      <div className="mt-auto">
+        <UserMenu
+          name={user.name}
+          email={user.email}
+          role={user.role}
+          profileHref="/manager/profile"
+          layout="card"
+          onNavigate={onNavigate}
+        />
       </div>
     </div>
   );
