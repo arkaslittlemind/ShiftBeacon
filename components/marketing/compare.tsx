@@ -1,4 +1,4 @@
-import { Check, X } from "lucide-react";
+import { CheckTickCircleIcon, MultipleCrossCancelIcon } from "@/components/icons";
 import { Card } from "@/components/ui/card";
 import { SectionHead } from "@/components/marketing/section-head";
 
@@ -33,7 +33,7 @@ export function Compare() {
               {WITHOUT.map((item) => (
                 <li key={item} className="flex items-start gap-2.5 text-sm text-muted-foreground">
                   <span className="mt-0.5 flex size-5 shrink-0 items-center justify-center border-2 border-border bg-danger-soft text-destructive">
-                    <X className="size-3" />
+                    <MultipleCrossCancelIcon className="size-3" aria-hidden />
                   </span>
                   {item}
                 </li>
@@ -48,7 +48,7 @@ export function Compare() {
               {WITH.map((item) => (
                 <li key={item} className="flex items-start gap-2.5 text-sm">
                   <span className="mt-0.5 flex size-5 shrink-0 items-center justify-center border-2 border-border bg-primary text-primary-foreground">
-                    <Check className="size-3" />
+                    <CheckTickCircleIcon className="size-3" aria-hidden />
                   </span>
                   {item}
                 </li>

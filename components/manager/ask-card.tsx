@@ -1,7 +1,7 @@
 "use client";
 
 import { useRef, useState } from "react";
-import { MessageCircleQuestion } from "lucide-react";
+import { QuestionMarkCircleIcon } from "@/components/icons";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -142,7 +142,7 @@ export function AskCard({ starterQuestions }: { starterQuestions: string[] }) {
       <CardHeader>
         <CardTitle className={eyebrowClass}>
           <span className="inline-flex items-center gap-1.5">
-            <MessageCircleQuestion className="size-3.5" aria-hidden />
+            <QuestionMarkCircleIcon className="size-3.5" aria-hidden />
             Ask about attendance
           </span>
         </CardTitle>

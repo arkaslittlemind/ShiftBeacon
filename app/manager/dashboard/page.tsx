@@ -1,5 +1,5 @@
 import { Suspense } from "react";
-import { Users } from "lucide-react";
+import { UserIcon } from "@/components/icons";
 import { PageHeader } from "@/components/shell/page-header";
 import { EmptyState } from "@/components/shared/empty-state";
 import { StaffTable } from "@/components/manager/staff-table";
@@ -77,7 +77,7 @@ export default async function ManagerDashboardPage() {
       </div>
       {staff.length === 0 ? (
         <EmptyState
-          icon={Users}
+          icon={UserIcon}
           title="No staff yet"
           description="Staff will appear here once they sign in to your organization."
         />

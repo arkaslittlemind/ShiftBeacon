@@ -1,13 +1,13 @@
 "use client";
 
-import { AlertTriangle } from "lucide-react";
+import { AlertTriangleIcon } from "@/components/icons";
 import { Button } from "@/components/ui/button";
 
 export default function Error({ reset }: { error: Error & { digest?: string }; reset: () => void }) {
   return (
     <div className="flex min-h-[50vh] flex-col items-center justify-center gap-4 px-6 text-center">
       <div className="flex size-12 items-center justify-center border-2 border-border bg-danger-soft text-destructive">
-        <AlertTriangle className="size-6" />
+        <AlertTriangleIcon className="size-6" aria-hidden />
       </div>
       <div>
         <h1 className="mb-1.5 text-xl font-bold">Something went wrong</h1>

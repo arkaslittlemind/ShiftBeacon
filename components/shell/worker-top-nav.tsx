@@ -1,6 +1,6 @@
 "use client";
 
-import { Menu } from "lucide-react";
+import { BurgerMenuThreeIcon } from "@/components/icons";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { cn, eyebrowClass } from "@/lib/utils";
@@ -56,7 +56,7 @@ export function WorkerTopNav({ user }: { user: CurrentUser }) {
                 aria-label="Open navigation menu"
                 className="md:hidden"
               >
-                <Menu />
+                <BurgerMenuThreeIcon aria-hidden />
               </Button>
             </SheetTrigger>
             <SheetContent side="left">

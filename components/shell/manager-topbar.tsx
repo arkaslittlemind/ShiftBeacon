@@ -1,6 +1,6 @@
 "use client";
 
-import { Menu } from "lucide-react";
+import { BurgerMenuThreeIcon } from "@/components/icons";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 import { ManagerSidebarContent } from "@/components/shell/manager-sidebar-content";
@@ -24,7 +24,7 @@ export function ManagerTopbar({
             aria-label="Open navigation menu"
             className="md:hidden"
           >
-            <Menu />
+            <BurgerMenuThreeIcon aria-hidden />
           </Button>
         </SheetTrigger>
         <SheetContent

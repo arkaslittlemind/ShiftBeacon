@@ -1,0 +1,72 @@
+{
+  "framework": "react-tsx",
+  "dir": "components/icons",
+  "importAlias": "@/components/icons",
+  "variant": "stroke",
+  "icons": {
+    "alert-circle": {
+      "name": "alert-circle",
+      "variant": "stroke"
+    },
+    "alert-triangle": {
+      "name": "alert-triangle",
+      "variant": "stroke"
+    },
+    "burger-menu-three": {
+      "name": "burger-menu-three",
+      "variant": "stroke"
+    },
+    "check-tick-circle": {
+      "name": "check-tick-circle",
+      "variant": "stroke"
+    },
+    "chevron-right": {
+      "name": "chevron-right",
+      "variant": "stroke"
+    },
+    "file-default": {
+      "name": "file-default",
+      "variant": "stroke"
+    },
+    "graph-bar-line": {
+      "name": "graph-bar-line",
+      "variant": "stroke"
+    },
+    "lightning-thunder-electric-on": {
+      "name": "lightning-thunder-electric-on",
+      "variant": "stroke"
+    },
+    "lock-close": {
+      "name": "lock-close",
+      "variant": "stroke"
+    },
+    "map": {
+      "name": "map",
+      "variant": "stroke"
+    },
+    "map-pin": {
+      "name": "map-pin",
+      "variant": "stroke"
+    },
+    "multiple-cross-cancel-default": {
+      "name": "multiple-cross-cancel-default",
+      "variant": "stroke"
+    },
+    "question-mark-circle": {
+      "name": "question-mark-circle",
+      "variant": "stroke"
+    },
+    "shield": {
+      "name": "shield",
+      "variant": "stroke"
+    },
+    "sparkle-ai-01": {
+      "name": "sparkle-ai-01",
+      "variant": "stroke"
+    },
+    "user-default": {
+      "name": "user-default",
+      "variant": "stroke"
+    }
+  }
+}

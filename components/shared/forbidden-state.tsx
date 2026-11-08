@@ -1,4 +1,4 @@
-import { ShieldAlert } from "lucide-react";
+import { ShieldIcon } from "@/components/icons";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { LogoutLink } from "@/components/shell/logout-link";
@@ -15,7 +15,7 @@ export function ForbiddenState({ role }: { role: Role }) {
   return (
     <div className="flex min-h-[50vh] flex-col items-center justify-center gap-4 px-6 text-center">
       <div className="flex size-12 items-center justify-center border-2 border-border bg-danger-soft text-destructive">
-        <ShieldAlert className="size-6" />
+        <ShieldIcon className="size-6" aria-hidden />
       </div>
       <div>
         <h1 className="mb-1.5 text-xl font-bold">You don&apos;t have access to this area</h1>

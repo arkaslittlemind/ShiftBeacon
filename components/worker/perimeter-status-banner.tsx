@@ -1,11 +1,13 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { AlertTriangle, CheckCircle2, Loader2, MapPinOff } from "lucide-react";
+import { AlertTriangleIcon, CheckTickCircleIcon, MapPinIcon } from "@/components/icons";
+import { Spinner } from "@/components/ui/spinner";
 import { cn } from "@/lib/utils";
 import { haversineDistanceMeters } from "@/lib/geo";
 import { useGeolocation } from "./use-geolocation";
 import type { OrganizationResponse } from "@/types/organization";
+import type { IconComponent } from "@/types/icons";
 
 type OrgFetchState =
   | { status: "loading" }
@@ -39,19 +41,19 @@ export function PerimeterStatusBanner() {
 
   if (geolocation.status === "unsupported" || geolocation.status === "denied" || geolocation.status === "error") {
     return (
-      <Banner tone="outside" icon={MapPinOff} title="Location unavailable" message={geolocation.error ?? "We can't check your location."} />
+      <Banner tone="outside" icon={MapPinIcon} title="Location unavailable" message={geolocation.error ?? "We can't check your location."} />
     );
   }
 
   if (org.status === "error") {
     return (
-      <Banner tone="outside" icon={AlertTriangle} title="Couldn't load your workplace" message="Refresh the page to try again." />
+      <Banner tone="outside" icon={AlertTriangleIcon} title="Couldn't load your workplace" message="Refresh the page to try again." />
     );
   }
 
   if (geolocation.status === "idle" || geolocation.status === "prompting" || org.status === "loading") {
     return (
-      <Banner tone="loading" icon={Loader2} title="Checking your location" message="This tells us whether you're inside the clock-in perimeter." spin />
+      <Banner tone="loading" title="Checking your location" message="This tells us whether you're inside the clock-in perimeter." />
     );
   }
 
@@ -64,25 +66,19 @@ export function PerimeterStatusBanner() {
   const isInside = distanceMeters <= org.organization.clockInRadiusMeters;
 
   return isInside ? (
-    <Banner tone="inside" icon={CheckCircle2} title="You're inside the perimeter" message="Clock-in is available right now." />
+    <Banner tone="inside" icon={CheckTickCircleIcon} title="You're inside the perimeter" message="Clock-in is available right now." />
   ) : (
-    <Banner tone="outside" icon={AlertTriangle} title="You're outside the perimeter" message={`Get within ${org.organization.clockInRadiusMeters}m of ${org.organization.name} to clock in.`} />
+    <Banner tone="outside" icon={AlertTriangleIcon} title="You're outside the perimeter" message={`Get within ${org.organization.clockInRadiusMeters}m of ${org.organization.name} to clock in.`} />
   );
 }
 
-function Banner({
-  tone,
-  icon: Icon,
-  title,
-  message,
-  spin = false,
-}: {
-  tone: "inside" | "outside" | "loading";
-  icon: typeof CheckCircle2;
-  title: string;
-  message: string;
-  spin?: boolean;
-}) {
+type BannerProps = { title: string; message: string } & (
+  | { tone: "loading" }
+  | { tone: "inside" | "outside"; icon: IconComponent }
+);
+
+function Banner(props: BannerProps) {
+  const { tone, title, message } = props;
   return (
     <div
       className={cn(
@@ -93,7 +89,7 @@ function Banner({
       )}
       role="status"
     >
-      <Icon className={cn("size-6 shrink-0", spin && "animate-spin")} />
+      {props.tone === "loading" ? <Spinner /> : <props.icon className="size-6 shrink-0" aria-hidden />}
       <div>
         <p className="font-heading text-sm font-bold">{title}</p>
         <p className="text-sm opacity-90">{message}</p>

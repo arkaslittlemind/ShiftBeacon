@@ -200,7 +200,7 @@ start. `AskAnswer` stores a hash of the normalized question, never the question.
 |---|---|
 | Framework | Next.js (App Router), React, TypeScript (strict, no `any`) |
 | Styling | Tailwind CSS v4 + shadcn/ui, Pourville design system (rollout in progress, see [Design system](#design-system)) |
-| Icons | lucide-react today, moving to [Pikaicons](https://pikaicons.com) (the project convention for all new icons) |
+| Icons | [Pikaicons](https://pikaicons.com), generated into `components/icons` by its CLI (`pikaicons.json` lists them) |
 | Data | PostgreSQL + Prisma ORM |
 | Identity | Auth0 (username/password, Google, email), roles via a namespaced session claim |
 | Validation | Zod on every API input |

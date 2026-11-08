@@ -1,13 +1,13 @@
 "use client";
 
-import { WifiOff } from "lucide-react";
+import { AlertCircleIcon } from "@/components/icons";
 import { Button } from "@/components/ui/button";
 
 export default function OfflinePage() {
   return (
     <div className="flex min-h-full flex-col items-center justify-center gap-4 px-6 text-center">
       <div className="flex size-12 items-center justify-center border-2 border-border bg-secondary text-foreground">
-        <WifiOff className="size-6" />
+        <AlertCircleIcon className="size-6" aria-hidden />
       </div>
       <div>
         <h1 className="mb-1.5 text-xl font-bold">You&apos;re offline</h1>

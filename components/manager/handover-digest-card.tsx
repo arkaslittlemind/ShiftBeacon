@@ -1,4 +1,4 @@
-import { AlertTriangle, Sparkles } from "lucide-react";
+import { AlertTriangleIcon, SparkleAi01Icon } from "@/components/icons";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { eyebrowClass } from "@/lib/utils";
@@ -28,7 +28,7 @@ function CardShell({
       <CardHeader>
         <CardTitle className={eyebrowClass}>
           <span className="inline-flex items-center gap-1.5">
-            <Sparkles className="size-3.5" aria-hidden />
+            <SparkleAi01Icon className="size-3.5" aria-hidden />
             Shift handover digest
           </span>
         </CardTitle>
@@ -103,7 +103,7 @@ export function HandoverDigestCard({ result }: { result: HandoverDigestResult })
       {digest.flags.length > 0 ? (
         <div className="mt-4 border-t-2 border-border-soft pt-3">
           <Badge variant="destructive">
-            <AlertTriangle data-icon="inline-start" aria-hidden />
+            <AlertTriangleIcon data-icon="inline-start" aria-hidden />
             Needs attention
           </Badge>
           <ul className="mt-2 space-y-1.5 text-sm">
