@@ -74,6 +74,13 @@ describe("parseEnv", () => {
     );
   });
 
+  it("parses without a MapTiler key and keeps it when present", () => {
+    expect(() => parseEnv(validEnv)).not.toThrow();
+    expect(
+      parseEnv({ ...validEnv, NEXT_PUBLIC_MAPTILER_KEY: "mt-key" })
+    ).toMatchObject({ NEXT_PUBLIC_MAPTILER_KEY: "mt-key" });
+  });
+
   it("keeps PostHog variables when they are present", () => {
     const withPostHog = {
       ...validEnv,
@@ -92,11 +99,13 @@ describe("optionalIntegrationWarnings", () => {
   const SENTRY_DSN = "https://key@o1.ingest.de.sentry.io/2";
   const POSTHOG_TOKEN = "phc_abc123";
   const GEMINI_KEY = "gemini-key";
+  const MAPTILER_KEY = "mt-key";
 
   it("warns about every missing integration in production", () => {
     const warnings = optionalIntegrationWarnings({ NODE_ENV: "production" });
 
-    expect(warnings).toHaveLength(3);
+    expect(warnings).toHaveLength(4);
+    expect(warnings.join(" ")).toMatch(/NEXT_PUBLIC_MAPTILER_KEY/);
     expect(warnings.join(" ")).toMatch(/NEXT_PUBLIC_SENTRY_DSN/);
     expect(warnings.join(" ")).toMatch(/NEXT_PUBLIC_POSTHOG_PROJECT_TOKEN/);
     expect(warnings.join(" ")).toMatch(/GEMINI_API_KEY/);
@@ -108,6 +117,7 @@ describe("optionalIntegrationWarnings", () => {
       NEXT_PUBLIC_SENTRY_DSN: SENTRY_DSN,
       NEXT_PUBLIC_POSTHOG_PROJECT_TOKEN: POSTHOG_TOKEN,
       GEMINI_API_KEY: GEMINI_KEY,
+      NEXT_PUBLIC_MAPTILER_KEY: MAPTILER_KEY,
     };
 
     const withoutSentry = optionalIntegrationWarnings({
@@ -130,6 +140,13 @@ describe("optionalIntegrationWarnings", () => {
     });
     expect(withoutGemini).toHaveLength(1);
     expect(withoutGemini[0]).toMatch(/GEMINI_API_KEY/);
+
+    const withoutMapTiler = optionalIntegrationWarnings({
+      ...configured,
+      NEXT_PUBLIC_MAPTILER_KEY: undefined,
+    });
+    expect(withoutMapTiler).toHaveLength(1);
+    expect(withoutMapTiler[0]).toMatch(/NEXT_PUBLIC_MAPTILER_KEY/);
   });
 
   it("stays silent in production once all are configured", () => {
@@ -138,6 +155,7 @@ describe("optionalIntegrationWarnings", () => {
       NEXT_PUBLIC_SENTRY_DSN: SENTRY_DSN,
       NEXT_PUBLIC_POSTHOG_PROJECT_TOKEN: POSTHOG_TOKEN,
       GEMINI_API_KEY: GEMINI_KEY,
+      NEXT_PUBLIC_MAPTILER_KEY: MAPTILER_KEY,
     });
 
     expect(warnings).toEqual([]);

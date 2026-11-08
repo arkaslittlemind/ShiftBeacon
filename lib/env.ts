@@ -23,6 +23,10 @@ const envSchema = z.object({
   // Optional for the same reason, and deliberately not NEXT_PUBLIC_: an AI key
   // in the browser bundle is a key handed to anyone who views source.
   GEMINI_API_KEY: z.string().min(1).optional(),
+
+  // Public by design: a browser map key is visible in the bundle, so it is
+  // protected by a domain allowlist in the MapTiler dashboard, not by secrecy.
+  NEXT_PUBLIC_MAPTILER_KEY: z.string().min(1).optional(),
 });
 
 export type Env = z.infer<typeof envSchema>;
@@ -63,6 +67,11 @@ export function optionalIntegrationWarnings(
   if (!source.GEMINI_API_KEY) {
     warnings.push(
       "GEMINI_API_KEY is not set - the AI handover digest is disabled in production"
+    );
+  }
+  if (!source.NEXT_PUBLIC_MAPTILER_KEY) {
+    warnings.push(
+      "NEXT_PUBLIC_MAPTILER_KEY is not set - the workplace map preview is disabled in production"
     );
   }
   return warnings;

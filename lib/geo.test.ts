@@ -1,5 +1,11 @@
 import { describe, expect, it } from "vitest";
-import { formatDistance, haversineDistanceMeters, perimeterCheck } from "./geo";
+import {
+  circlePolygon,
+  formatDistance,
+  haversineDistanceMeters,
+  parseDraftLocation,
+  perimeterCheck,
+} from "./geo";
 
 const EARTH_RADIUS_METERS = 6371000;
 
@@ -110,5 +116,71 @@ describe("formatDistance", () => {
     expect(formatDistance(1000)).toBe("1.0 km");
     expect(formatDistance(1249)).toBe("1.2 km");
     expect(formatDistance(12_340)).toBe("12.3 km");
+  });
+});
+
+describe("circlePolygon", () => {
+  const centers = [
+    { latitude: 51.5074, longitude: -0.1278 },
+    { latitude: 0, longitude: 0 },
+    { latitude: -33.9, longitude: 151.2 },
+  ];
+
+  it.each(centers)("keeps every vertex on the radius around %o", (center) => {
+    const ring = circlePolygon(center, 800, 64).coordinates[0];
+    for (const [lon, lat] of ring) {
+      const d = haversineDistanceMeters(center.latitude, center.longitude, lat, lon);
+      expect(Math.abs(d - 800)).toBeLessThan(0.5);
+    }
+  });
+
+  it("returns a closed ring with steps + 1 points", () => {
+    const ring = circlePolygon(centers[0], 200, 32).coordinates[0];
+    expect(ring).toHaveLength(33);
+    expect(ring[0]).toEqual(ring[ring.length - 1]);
+  });
+
+  it("never produces NaN at the poles or the antimeridian", () => {
+    const spots = [
+      { latitude: 90, longitude: 0 },
+      { latitude: -90, longitude: 0 },
+      { latitude: 89.9999, longitude: 10 },
+      { latitude: 0, longitude: 180 },
+      { latitude: 0, longitude: -180 },
+    ];
+    for (const spot of spots) {
+      const ring = circlePolygon(spot, 5000, 16).coordinates[0];
+      expect(ring.flat().every(Number.isFinite)).toBe(true);
+    }
+  });
+
+  it("keeps longitudes continuous across the antimeridian", () => {
+    const ring = circlePolygon({ latitude: 0, longitude: 180 }, 5000, 16).coordinates[0];
+    const lons = ring.map(([lon]) => lon);
+    expect(Math.max(...lons) - Math.min(...lons)).toBeLessThan(1);
+  });
+});
+
+describe("parseDraftLocation", () => {
+  it("returns a location for valid strings", () => {
+    expect(parseDraftLocation("51.5", "-0.12", "200")).toEqual({
+      latitude: 51.5,
+      longitude: -0.12,
+      clockInRadiusMeters: 200,
+    });
+  });
+
+  it.each([
+    ["", "-0.12", "200"],
+    ["51.5", "  ", "200"],
+    ["abc", "-0.12", "200"],
+    ["91", "0", "200"],
+    ["0", "-181", "200"],
+    ["51.5", "-0.12", "0"],
+    ["51.5", "-0.12", "-5"],
+    ["51.5", "-0.12", "1e999"],
+    ["1e999", "0", "200"],
+  ])("returns null for %j, %j, %j", (lat, lon, radius) => {
+    expect(parseDraftLocation(lat, lon, radius)).toBeNull();
   });
 });

@@ -244,6 +244,7 @@ The placeholder in `.env.example` uses port 5432, which is not the compose port.
 | `GEMINI_API_KEY` | Optional, server-side only (never `NEXT_PUBLIC_`) - the AI handover digest and the ask card. Absent means both read as unavailable and nothing else changes |
 | `NEXT_PUBLIC_SENTRY_DSN`, `SENTRY_ORG`, `SENTRY_PROJECT`, `SENTRY_AUTH_TOKEN` | Optional - Sentry error monitoring. Only active in production builds; the auth token is build-time only, for source map upload |
 | `NEXT_PUBLIC_POSTHOG_PROJECT_TOKEN`, `NEXT_PUBLIC_POSTHOG_HOST` | Optional - PostHog analytics. Only active in production; the host must match the region of your PostHog project |
+| `NEXT_PUBLIC_MAPTILER_KEY` | Optional - MapTiler key for the workplace map preview. Public by design (it ships in the browser bundle), so restrict it to your domains in the MapTiler dashboard. Absent means the map shows a text fallback and the form is unaffected |
 | `E2E_WORKER_EMAIL`, `E2E_WORKER_PASSWORD`, `E2E_MANAGER_EMAIL`, `E2E_MANAGER_PASSWORD` | Playwright e2e suite only - real Auth0 test accounts (the manager account needs `app_metadata.role = "MANAGER"` in the Auth0 dashboard) |
 
 The Auth0, `APP_BASE_URL` and `DATABASE_URL` variables are required and
@@ -357,6 +358,24 @@ off, and only explicitly named events are sent. A rejected clock-in is tracked
 as "rejected, outside perimeter" without the distance or the location. Attendance
 events are sent after the response, so an unreachable vendor cannot slow down or
 break a clock-in.
+
+## Workplace map preview
+
+The workplace settings page draws the configured pin and clock-in radius on a
+MapLibre map with MapTiler tiles. It is a preview only: the numeric fields stay
+the source of truth and the server-side geofence is untouched. Without
+`NEXT_PUBLIC_MAPTILER_KEY`, with an invalid draft, with WebGL unavailable, or
+if the tiles fail to load, a text card shows the coordinates instead and the
+form works the same.
+
+MapTiler is a third vendor and fits neither category above. It receives tile,
+style, glyph and sprite requests, which reveal the viewed area (the workplace's
+approximate location) and the manager's IP address. It never receives worker
+coordinates, shift data, notes, names, emails or ids: only the
+manager-configured workplace point is ever drawn. Nothing about the map is sent
+to Sentry or PostHog, and a map error is handled in the component rather than
+reported. The free plan is described by MapTiler as for testing, prototyping,
+personal or non-commercial use, so a commercial deployment needs a paid plan.
 
 ## Design system
 

@@ -1,3 +1,5 @@
+import { updateOrganizationSchema } from "@/lib/validation/organization";
+
 const EARTH_RADIUS_METERS = 6371000;
 
 function toRadians(degrees: number): number {
@@ -43,4 +45,72 @@ export function formatDistance(meters: number): string {
   const roundedToTen = Math.round(meters / 10) * 10;
   if (roundedToTen < 1000) return `${roundedToTen} m`;
   return `${(meters / 1000).toFixed(1)} km`;
+}
+
+function toDegrees(radians: number): number {
+  return (radians * 180) / Math.PI;
+}
+
+export type GeoJsonPolygon = {
+  type: "Polygon";
+  coordinates: [number, number][][];
+};
+
+/**
+ * A polygon approximating the geofence circle. It is a polygon rather than a
+ * native map circle because map circle layers are sized in pixels, not meters.
+ * Longitudes are left continuous (they may pass 180) so a circle over the
+ * antimeridian does not tear into a world-wide sliver.
+ */
+export function circlePolygon(
+  center: Coords,
+  radiusMeters: number,
+  steps = 64
+): GeoJsonPolygon {
+  const lat1 = toRadians(center.latitude);
+  const angular = radiusMeters / EARTH_RADIUS_METERS;
+  const ring: [number, number][] = [];
+
+  for (let i = 0; i < steps; i++) {
+    const bearing = (2 * Math.PI * i) / steps;
+    const sinLat2 =
+      Math.sin(lat1) * Math.cos(angular) +
+      Math.cos(lat1) * Math.sin(angular) * Math.cos(bearing);
+    const lat2 = Math.asin(Math.min(1, Math.max(-1, sinLat2)));
+    const dLon = Math.atan2(
+      Math.sin(bearing) * Math.sin(angular) * Math.cos(lat1),
+      Math.cos(angular) - Math.sin(lat1) * sinLat2
+    );
+    ring.push([center.longitude + toDegrees(dLon), toDegrees(lat2)]);
+  }
+
+  ring.push(ring[0]);
+  return { type: "Polygon", coordinates: [ring] };
+}
+
+/** Turns the form's raw strings into a usable location, or null mid-edit. */
+export function parseDraftLocation(
+  latitude: string,
+  longitude: string,
+  radius: string
+): Perimeter | null {
+  if ([latitude, longitude, radius].some((value) => value.trim() === "")) {
+    return null;
+  }
+
+  const candidate = {
+    latitude: Number(latitude),
+    longitude: Number(longitude),
+    clockInRadiusMeters: Number(radius),
+  };
+  if (!Object.values(candidate).every(Number.isFinite)) return null;
+
+  const result = updateOrganizationSchema.safeParse(candidate);
+  if (!result.success) return null;
+
+  const { latitude: lat, longitude: lon, clockInRadiusMeters } = result.data;
+  if (lat === undefined || lon === undefined || clockInRadiusMeters === undefined) {
+    return null;
+  }
+  return { latitude: lat, longitude: lon, clockInRadiusMeters };
 }
