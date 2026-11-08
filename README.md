@@ -12,7 +12,7 @@ their own team's attendance.
 ![PostgreSQL](https://img.shields.io/badge/PostgreSQL-16-4169E1?logo=postgresql&logoColor=white)
 ![Auth0](https://img.shields.io/badge/Auth0-identity-EB5424?logo=auth0&logoColor=white)
 ![Tests](https://img.shields.io/badge/tests-Vitest%20%2B%20Playwright-2E8B57)
-[![Version](https://img.shields.io/badge/version-1.7.0-1D6496)](CHANGELOG.md)
+[![Version](https://img.shields.io/badge/version-1.8.0-1D6496)](CHANGELOG.md)
 
 ## Why
 
@@ -63,6 +63,10 @@ attendance analytics, with no spreadsheets involved.
   most hours this week?") and get a plain-text answer computed from their own
   organization's shift records. Rate limited and cached. See
   [AI features](#ai-features).
+- **Workplace map preview** - the pin and clock-in radius drawn on a map in
+  workplace settings, updating live as the manager edits. A preview only; the
+  server-side geofence is untouched. See
+  [Workplace map preview](#workplace-map-preview).
 - **Installable PWA** - installable app shell with an offline fallback page
   (no offline clock-in implied - geolocation and the API both require a live
   connection).
@@ -199,7 +203,9 @@ start. `AskAnswer` stores a hash of the normalized question, never the question.
 | Layer | Choice |
 |---|---|
 | Framework | Next.js (App Router), React, TypeScript (strict, no `any`) |
-| Styling | Tailwind CSS v4 + shadcn/ui, Pourville design system (rollout in progress, see [Design system](#design-system)) |
+| Styling | Tailwind CSS v4 + shadcn/ui, Pourville design system (see [Design system](#design-system)) |
+| Fonts | Newsreader (display), Inter (UI), JetBrains Mono (times and labels), via `next/font` |
+| Maps | MapLibre GL JS with MapTiler tiles, workplace preview only, loaded lazily |
 | Icons | [Pikaicons](https://pikaicons.com), generated into `components/icons` by its CLI (`pikaicons.json` lists them) |
 | Data | PostgreSQL + Prisma ORM |
 | Identity | Auth0 (username/password, Google, email), roles via a namespaced session claim |
@@ -270,7 +276,7 @@ boot.
 
 ## Testing
 
-- **Unit + API + component tests** (Vitest, around 470 tests): the Haversine
+- **Unit + API + component tests** (Vitest, around 570 tests): the Haversine
   geofence utility and its boundary cases, shift duration formatting,
   analytics calculations, Zod validation schemas, authorization on every
   protected API route, clock-in/out business rules (perimeter rejection,
@@ -379,17 +385,23 @@ personal or non-commercial use, so a commercial deployment needs a paid plan.
 
 ## Design system
 
-The UI is moving to **Pourville**, a full visual redesign: warm paper
-backgrounds, ink buttons, Newsreader display type, an impressionist ocean-blue
-accent (`#1D6496`), and painterly coastal imagery, with a marketing layout
-modelled on Leedlime. Behaviour, data, routes, and the API do not change. The
-Pourville tokens, fonts, and motion rules are live in `app/globals.css` (21a);
-components move over screen by screen in 21b to 21j, so some still carry the
-earlier neobrutalist structure until their sub-feature lands.
+The UI uses **Pourville**, shipped in v1.8.0 as a full visual redesign of every
+screen: warm paper backgrounds, white cards on 1px hairlines, ink buttons,
+Newsreader display type, an ocean-blue accent (`#1D6496`) reserved for links,
+focus, active states, and Clock in, and painterly coastal imagery, with a
+marketing layout modelled on Leedlime. Status colours are seafoam (inside, on
+shift), sand (long shift), and muted coral (outside, error), each on a soft
+tint. Behaviour, data, routes, and the API did not change. The tokens, fonts,
+and motion rules live in `app/globals.css`.
+
+Motion is limited to press feedback, state changes, and one-time entrances under
+300ms, with a reduced-motion path that keeps fades and drops movement. Icons
+are Pikaicons only. The audit of motion, contrast, and accessibility is in
+[docs/redesign/qa-report.md](docs/redesign/qa-report.md).
 
 | What | Where |
 |---|---|
-| Overview, decisions, and the proposed build-plan entry (feature 21, split 21a to 21j) | [docs/redesign/README.md](docs/redesign/README.md) |
+| Overview, decisions, and the build-plan entry (feature 21, split 21a to 21j) | [docs/redesign/README.md](docs/redesign/README.md) |
 | Locked tokens | [docs/redesign/tokens/theme.css](docs/redesign/tokens/theme.css) |
 | Reference screenshots | [docs/redesign/screens/](docs/redesign/screens/) |
 | Motion and polish rules | [docs/redesign/motion-and-polish.md](docs/redesign/motion-and-polish.md) |
@@ -437,7 +449,7 @@ Releases up to v1.6.0 were tagged retroactively, at these commits:
 
 ```
 app/            Next.js App Router - pages, layouts, and REST API routes
-components/     Worker/manager UI components + shadcn/ui primitives
+components/     Worker/manager UI components, shadcn/ui primitives, Pikaicons (components/icons)
 lib/            Auth, Prisma client, geofence math, validation
 lib/services/   Service layer: shifts, staff, analytics, handover digest, ask
 lib/ai/         Gemini client, scrubber, alias layer, attendance tools and loop

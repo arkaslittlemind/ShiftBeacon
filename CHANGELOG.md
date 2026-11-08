@@ -26,6 +26,67 @@ first production deployment.
 
 ## [Unreleased]
 
+## [1.8.0] - 2026-11-09
+
+### Added
+
+- **Workplace map preview.** Workplace settings shows the pin and clock-in
+  radius on a map that updates live as the manager edits the coordinates and
+  radius. It is a preview only: the numeric fields stay the source of truth and
+  the server-side geofence is unchanged. It falls back to a text card when
+  there is no key, the draft is invalid, WebGL is unavailable, or tiles fail to
+  load, and the form saves identically in every state.
+- `NEXT_PUBLIC_MAPTILER_KEY` (optional, public by design). Without it the map
+  is off and nothing else changes; restrict the key to your domains in the
+  MapTiler dashboard. MapLibre GL JS is loaded lazily, so it only ships with the
+  workplace route.
+- A "Live" pulse on the staff card, and a This week strip on the worker home
+  built from shifts the page already loads.
+
+### Changed
+
+- **UI revamp: the Pourville design system.** Every screen moves from the
+  neobrutalist look to warm paper backgrounds, white cards with 1px hairlines
+  and soft shadows, ink buttons, Newsreader display type with Inter for the UI
+  and JetBrains Mono for times and labels, and a Pourville blue accent kept for
+  links, focus, and the Clock in action. Status uses seafoam (inside, on shift),
+  sand (long shift), and muted coral (outside, error) on soft tints. Every text
+  colour meets WCAG AA (4.5:1) on the surfaces it is used on.
+- Redesigned screens: the app shell (manager sidebar and top bar, worker top
+  bar, avatar menu), the worker home (one shift card where Clock in becomes
+  Clock out in place), the manager dashboard (welcome banner, stat tiles, staff
+  table, charts, handover digest and ask cards), staff detail, workplace
+  settings, the shared forbidden, error, not-found, and offline screens, and the
+  public landing page.
+- Painterly coastal imagery on the landing page, dashboard banner, and footer,
+  and a rebuilt share image for link previews. Photographs are served as AVIF
+  with WebP as the fallback, resized per device: the landing page's eight
+  images measure 92 KB on a 375px phone and 274 KB at 1280px.
+- The ShiftBeacon logo is recoloured once to the new palette; the app icons and
+  favicon follow.
+- Icons come from Pikaicons instead of `lucide-react`, which is removed.
+- Motion is limited to press feedback, state changes, and one-time entrances,
+  all under 300ms, with a reduced-motion path that keeps fades and drops
+  movement. The button press now eases, and the dashboard banner chip no longer
+  uses blur.
+- The worker home loads the workplace once from the page instead of fetching it
+  again in the browser, and uses one geolocation watcher instead of three.
+- The landing page copy and illustrations describe only what the app does
+  today.
+- README: Pourville design system, workplace map preview, and the MapTiler
+  privacy boundary.
+
+### Fixed
+
+- Pages check sign-in and the session role before running any query. A
+  signed-out request now redirects to sign-in and returns to the requested path
+  afterwards, and a wrong-role request no longer ships the page's data behind
+  the forbidden screen.
+- The perimeter banner on the worker home no longer causes a hydration
+  mismatch.
+- The manager dashboard no longer stretches wider than the screen on phones.
+- The avatar menu button's accessible name now includes its visible initials.
+
 ## [1.7.0] - 2026-11-08
 
 ### Added
@@ -244,7 +305,8 @@ First production release.
 - Public landing page and the role-aware application shell for care workers
   and managers, with shared loading, error, and empty states.
 
-[Unreleased]: https://github.com/arkaslittlemind/ShiftBeacon/compare/v1.7.0...HEAD
+[Unreleased]: https://github.com/arkaslittlemind/ShiftBeacon/compare/v1.8.0...HEAD
+[1.8.0]: https://github.com/arkaslittlemind/ShiftBeacon/compare/v1.7.0...v1.8.0
 [1.7.0]: https://github.com/arkaslittlemind/ShiftBeacon/compare/v1.6.0...v1.7.0
 [1.6.0]: https://github.com/arkaslittlemind/ShiftBeacon/compare/v1.5.1...v1.6.0
 [1.5.1]: https://github.com/arkaslittlemind/ShiftBeacon/compare/v1.5.0...v1.5.1
