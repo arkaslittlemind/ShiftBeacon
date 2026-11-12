@@ -32,6 +32,7 @@ to decorate something a manager sees fifty times a day.
 | `backdrop-filter: blur(14px)` on large frosted panels | `blur(12px)` maximum, only on the marketing page, never on scrolling app surfaces | Large blurs are expensive in Safari and on low-end phones |
 | Ask card answer replaces the loading text instantly | Answer fades in over 200ms; the loading indicator is a fast spinner or a shimmer, never a slow pulse | A faster spinner makes the wait feel shorter; a fade marks "new content arrived" |
 | "Live" badge dot is static | Optional: a 2s opacity pulse on the dot only, disabled under reduced motion | The one place constant motion carries meaning (the list is live). Keep it to the dot |
+| Trust bar names are a static row | Optional: a slow (60s) linear `translateX` marquee on the landing trust bar only; paused on hover, edges masked, a second set marked `aria-hidden`; under reduced motion it stops and shows the static wrapping row | Ambient motion, so a second constant-motion exception after the live dot. Transform only, marketing page only, never on app surfaces |
 | Paintings load as plain `background-image` | `next/image` with `placeholder="blur"`, explicit `sizes`, and a reserved aspect ratio | No layout shift, a soft colour placeholder while the art loads, and responsive sizes on phones |
 
 ## Tokens

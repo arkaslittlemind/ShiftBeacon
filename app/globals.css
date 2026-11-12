@@ -209,7 +209,8 @@
   }
 
   .animate-spin,
-  .animate-live-dot {
+  .animate-live-dot,
+  .animate-marquee {
     animation: none;
   }
 }
@@ -246,6 +247,19 @@
 
 @utility animate-live-dot {
   animation: live-dot 2s var(--ease-in-out) infinite;
+}
+
+/* Landing trust bar. Ambient and slow, so it is the second constant-motion
+   exception (see docs/redesign/motion-and-polish.md); linear because a marquee
+   that eases would visibly pulse. Transform only. */
+@keyframes marquee {
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+@utility animate-marquee {
+  animation: marquee 60s linear infinite;
 }
 
 /* Dotted section backdrop for the marketing page (heading bands, closing CTA). */
