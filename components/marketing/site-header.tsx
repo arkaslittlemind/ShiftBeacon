@@ -18,7 +18,7 @@ export async function SiteHeader() {
 
   return (
     <header className="sticky top-0 z-40 border-b border-border-soft bg-background/90 backdrop-blur-[10px]">
-      <div className="grid h-17 grid-cols-[1fr_auto] items-center gap-4 px-5 md:grid-cols-[1fr_auto_1fr] md:px-10">
+      <div className="grid h-17 grid-cols-[1fr_auto] items-center gap-2 px-4 sm:gap-4 sm:px-5 md:grid-cols-[1fr_auto_1fr] md:px-10">
         <Link href="/" className={cn("w-fit rounded-lg", focusRingClass)}>
           <BrandLockup />
         </Link>
@@ -57,7 +57,12 @@ export async function SiteHeader() {
                 <a href="/auth/login?screen_hint=signup">Sign up</a>
               </Button>
               <Button asChild size="sm">
-                <a href="#demo">Request a demo</a>
+                <a href="#demo">
+                  <span aria-hidden className="sm:hidden">
+                    Demo
+                  </span>
+                  <span className="sr-only sm:not-sr-only">Request a demo</span>
+                </a>
               </Button>
             </>
           )}

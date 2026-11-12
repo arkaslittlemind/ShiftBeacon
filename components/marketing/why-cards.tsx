@@ -22,7 +22,7 @@ const ON_SHIFT = [
 
 function ResultRow({ children, badge }: { children: React.ReactNode; badge: React.ReactNode }) {
   return (
-    <div className="flex items-center justify-between gap-3 rounded-lg bg-surface-alt px-3 py-2 text-sm text-foreground">
+    <div className="flex items-center justify-between gap-3 rounded-lg max-md:flex-wrap max-md:gap-y-1 bg-surface-alt px-3 py-2 text-sm text-foreground">
       <span className="min-w-0 truncate">{children}</span>
       {badge}
     </div>
@@ -46,11 +46,11 @@ function WhyCard({
 }) {
   return (
     <article>
-      <div className="relative grid place-items-center overflow-hidden rounded-[22px] border border-border-soft p-5 py-8 md:aspect-4/3 md:py-5">
+      <div className="relative grid grid-cols-1 place-items-center overflow-hidden rounded-[22px] border border-border-soft p-5 py-8 md:aspect-4/3 md:py-5">
         <Painting src={painting} alt="" sizes={ART_SIZES} className={crop} />
         <GlassFrame className="relative w-full max-w-sm">
           {/* The card is an illustration of the product, not a control. */}
-          <div aria-hidden className="grid gap-2">
+          <div aria-hidden className="grid grid-cols-1 gap-2">
             {children}
           </div>
         </GlassFrame>
@@ -81,7 +81,7 @@ export function WhyCards() {
         description="Sign-in sheets get filled in from memory at the end of a shift. ShiftBeacon records arrival the moment it happens, on site."
         className="mb-12"
       />
-      <div className="grid gap-8 md:grid-cols-2">
+      <div className="grid grid-cols-1 gap-8 md:grid-cols-2">
         <WhyCard
           painting={whyVerified}
           crop="object-[50%_50%]"
