@@ -18,12 +18,12 @@ export async function SiteHeader() {
 
   return (
     <header className="sticky top-0 z-40 border-b border-border-soft bg-background/90 backdrop-blur-[10px]">
-      <div className="grid h-17 grid-cols-[1fr_auto] items-center gap-2 px-4 sm:gap-4 sm:px-5 md:grid-cols-[1fr_auto_1fr] md:px-10">
+      <div className="grid h-17 grid-cols-[1fr_auto] items-center gap-2 px-4 sm:gap-4 sm:px-5 md:px-10 lg:grid-cols-[1fr_auto_1fr]">
         <Link href="/" className={cn("w-fit rounded-lg", focusRingClass)}>
           <BrandLockup />
         </Link>
 
-        <nav aria-label="Main" className="hidden items-center gap-8 text-sm text-muted-foreground md:flex">
+        <nav aria-label="Main" className="hidden items-center gap-8 text-sm text-muted-foreground lg:flex">
           {NAV_LINKS.map((link) => (
             <a
               key={link.href}

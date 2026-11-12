@@ -22,7 +22,7 @@ const ON_SHIFT = [
 
 function ResultRow({ children, badge }: { children: React.ReactNode; badge: React.ReactNode }) {
   return (
-    <div className="flex items-center justify-between gap-3 rounded-lg max-md:flex-wrap max-md:gap-y-1 bg-surface-alt px-3 py-2 text-sm text-foreground">
+    <div className="flex items-center justify-between gap-3 rounded-lg max-lg:flex-wrap max-lg:gap-y-1 bg-surface-alt px-3 py-2 text-sm text-foreground">
       <span className="min-w-0 truncate">{children}</span>
       {badge}
     </div>
@@ -46,7 +46,7 @@ function WhyCard({
 }) {
   return (
     <article>
-      <div className="relative grid grid-cols-1 place-items-center overflow-hidden rounded-[22px] border border-border-soft p-5 py-8 md:aspect-4/3 md:py-5">
+      <div className="relative grid grid-cols-1 place-items-center overflow-clip rounded-[22px] border border-border-soft p-5 py-8 lg:aspect-4/3 lg:py-5">
         <Painting src={painting} alt="" sizes={ART_SIZES} className={crop} />
         <GlassFrame className="relative w-full max-w-sm">
           {/* The card is an illustration of the product, not a control. */}
